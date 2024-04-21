@@ -799,6 +799,7 @@ class Controller extends Object {
  * @link http://book.cakephp.org/1.3/en/The-Manual/Developing-With-CakePHP/Controllers.html#authorize
  */
 	function isAuthorized() {
+		echo "aqui en controller";
 		trigger_error(sprintf(
 			__('%sController::isAuthorized() is not defined.', true), $this->name
 		), E_USER_WARNING);
