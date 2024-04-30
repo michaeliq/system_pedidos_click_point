@@ -448,8 +448,6 @@ class InformesController extends AppController {
 
     function info_general_pedidos() {
         ini_set('memory_limit', '1024M');
-        //Configure::write('debug', 2);
-        //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
         $sucursales_permisos = array();
@@ -460,15 +458,6 @@ class InformesController extends AppController {
         $conditions = array('VInformeGeneral.empresa_id' => array_unique($empresas_permisos), 'VInformeGeneral.sucursal_id' => array_unique($sucursales_permisos));
         $conditions_empresa = array('id' => $empresas_permisos);
         $conditions_sucursales = array('Sucursale.id' => $sucursales_permisos, 'Sucursale.estado_sucursal' => true);
-        //31052018 
-
-        /* if ($this->Session->read('Auth.User.rol_id') == '1') {
-          $conditions_empresa = array(); // Muestra todas las empresas
-          $conditions_sucursales = array('Sucursale.estado_sucursal' => true);
-          } else {
-          $conditions_empresa = array('Empresa.id' => $this->Session->read('Auth.User.empresa_id')); // Muestra solo la empresa del usuario
-          $conditions_sucursales = array('id_empresa' => $this->Session->read('Auth.User.empresa_id'), 'Sucursale.estado_sucursal' => true); // Muestra solo las sucursales del usuario
-          } */
 
         $this->set('pedidos', array());
         $this->VInformeGeneral->set($this->data);
@@ -478,8 +467,6 @@ class InformesController extends AppController {
                 $this->Session->setFlash(__('La fecha de inicio (' . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . ') es mayor a la fecha de corte (' . $this->data['PedidosDetalle']['pedido_fecha_corte'] . ').', true));
             } else {
 
-                // print_r($this->data);
-                // $conditions = array();
                 if (($this->data['PedidosDetalle']['empresa_id']) > 0) {
                     $where = "+VInformeGeneral+.+empresa_id+ = '" . $this->data['PedidosDetalle']['empresa_id'] . "'";
                     $where = str_replace('+', '"', $where);
@@ -499,7 +486,6 @@ class InformesController extends AppController {
                     array_push($conditions, $where);
                 }
                 if (!empty($this->data['PedidosDetalle']['pedido_fecha_inicio']) && !empty($this->data['PedidosDetalle']['pedido_fecha_corte'])) {
-                    // $where = "+VInformeGeneral+.+pedido_fecha+ BETWEEN +'" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "'+  AND +'" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'+";
                     $where = "+VInformeGeneral+.+fecha_aprobado_pedido::date+ BETWEEN +'" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "'+  AND +'" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'+";
                     $where = str_replace('+', '"', $where);
                     array_push($conditions, $where);
@@ -514,15 +500,10 @@ class InformesController extends AppController {
                     $where = str_replace('+', '"', $where);
                     array_push($conditions, $where);
                 }
-// print_r($conditions);
                 $pedidos = $this->VInformeGeneral->find('all', array('conditions' => $conditions));
                 $this->set('pedidos', $pedidos);
             }
         }
-
-//
-//        $pedidos = $this->VInformeGeneral->find('all', array());
-//        $this->set('pedidos', $pedidos);
 
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
