@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * 
+ */
 class AdministracionController extends AppController {
 
     var $name = "Administracion";

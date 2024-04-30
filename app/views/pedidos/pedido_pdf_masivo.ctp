@@ -94,7 +94,7 @@ $pdf->setHeaderData($ln='', $lw=2, $ht='', $hs='<span align="center">N°. Pedido
 // add a page
 $pdf->AddPage();
 // Print a text
-$pdf->Image(K_PATH_IMAGES.'cise_logo.png', 10, 11, 27, '', '', '', '', false, 300);
+//$pdf->Image(K_PATH_IMAGES.'cise_logo.png', 10, 11, 27, '', '', '', '', false, 300);
 $html = '<table cellspacing="1" cellpadding="1">
     <tr>
         <td style="border-top: 1px solid #000000;  border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000;" align="center"><h3>ORDEN DE ALISTAMIENTO</h3><br>GESTION DE LOGISTICA</td>
@@ -109,7 +109,7 @@ $html = '<table cellspacing="1" cellpadding="1">
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; background-color:#C0C0C0;" align="center"><b>DESTINATARIO</b></td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b> CENTRO ASEO MANTENIMIENTO PROFESIONAL S.A.S </td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b> CLICK POINT SAS </td>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>CLIENTE:</b> ' . $pedido['Sucursale']['regional_sucursal'] . '</td>
     </tr>
     <tr>
@@ -125,7 +125,7 @@ $html = '<table cellspacing="1" cellpadding="1">
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;"><b>TEL:</b> '.$pedido['Sucursale']['telefono_sucursal'].' | <b># GUIA:</b> '.$pedido['Pedido']['guia_despacho'].'</td>
     </tr>
     <tr>
-        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por CENTRO ASEO MANTENIMIENTO PROFESIONAL S.A.S<br>Nit 900073254-1 | CR 28 No. 77-12 Bogota - Tel: (601) 6068433.</b></td>
+        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por CLICK POINT SAS<br>Nit 900073254-1 | CR 28 No. 77-12 Bogota - Tel: (601) 6068433.</b></td>
         <td style=" border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><span style="color:red"><b>N°. Pedido: #000' . $pedido['Pedido']['id'] . '</b></span><br><b>ORDEN INTERNA: '.$pedido['Sucursale']['oi_sucursal'].'</b><br><b>TIPO DE PEDIDO:</b> ' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '<br><span style="font-size: 29px;"><b>FECHA ENTREGA:</b> Desde el <b>'.$pedido['Pedido']['fecha_entrega_1'].'</b> hasta el <b>'.$pedido['Pedido']['fecha_entrega_2'].'</b></span><br><span style="font-size: 29px;"><b>MES PEDIDO:</b> '.$meses[$pedido['Pedido']['mes_pedido']].'</span><br><span style="font-size: 29px;"><b>CLASIFICACION:</b> '.$pedido['Pedido']['clasificacion_pedido'].'</span></td>
     </tr>
 </table>';
