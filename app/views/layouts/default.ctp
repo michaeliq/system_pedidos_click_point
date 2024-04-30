@@ -17,7 +17,7 @@
     </head>
     <body>
         <div class="container">
-            <div class="text-center" ><?php  echo $html->image('cabezote.png?id=20220614', array('alt' => 'Kopan&Coba')) ?></div>
+            <div style="display: flex; padding:4rem;" class="text-center" ><?php /* echo $html->image('cabezote.png?id=20220614', array('alt' => 'Kopan&Coba')) */ ?></div>
             <?php if ($this->Session->read('Auth.User.id') > 0) { ?>
             <div class="text-right"><b>Bienvenido:</b> <?php echo $this->Session->read('Auth.User.nombres_persona'); ?></div>
             <?php } ?>

@@ -100,7 +100,7 @@ echo $this->Html->script(array('productos/productos_edit')); ?>
                     </tr>
                     <tr>
                         <td>Proveedor: </td>
-                        <td colspan="3"><?php echo $this->Form->input('proveedor_producto', array('type' => 'checkbox', 'label' => 'CENTRO ASEO', 'onclick' => 'label_int_ext(this.id)')); ?></td>
+                        <td colspan="3"><?php echo $this->Form->input('proveedor_producto', array('type' => 'checkbox', 'label' => 'CLICK POINT', 'onclick' => 'label_int_ext(this.id)')); ?></td>
                     </tr>
                     <tr>
                         <td>Mensaje / Advertencia:</td>

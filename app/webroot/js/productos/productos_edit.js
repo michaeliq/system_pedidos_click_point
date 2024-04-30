@@ -34,7 +34,7 @@ $(function () {
 
 function label_int_ext(parameter) {
     if ($('#' + parameter).is(":checked")) {
-        $("label[for='" + parameter + "']").text("CENTRO ASEO");
+        $("label[for='" + parameter + "']").text("CLICK POINT");
     } else {
         $("label[for='" + parameter + "']").text("Otro");
     }

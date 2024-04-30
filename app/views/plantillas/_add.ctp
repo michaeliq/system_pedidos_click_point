@@ -80,7 +80,7 @@ $(document).ready(function () {
             <td>
                 <?php 
                     if ($producto['Producto']['proveedor_producto']) {
-                        echo " CENTRO ASEO";
+                        echo " CLICK POINT";
                     } else {
                         echo " Otro";
                     }

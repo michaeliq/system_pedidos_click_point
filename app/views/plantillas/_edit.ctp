@@ -117,7 +117,7 @@ echo $this->Html->script(array('plantillas/plantillas_search'));
             <td>
                 <?php 
                      if ($producto['Producto']['proveedor_producto']) {
-                        echo " CENTRO ASEO";
+                        echo " CLICK POINT ";
                     } else {
                         echo " Otro";
                     }
