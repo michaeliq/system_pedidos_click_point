@@ -1,6 +1,6 @@
 <?php
 
-// echo $this->Session->read('Auth.User.sucursal_id');
+    echo $this->Session->read('Auth.User.sucursal_id');
     echo $this->Html->script(array('pedidos/orden_pedido.js?var='.date('dymhmis')));
     echo $this->Html->script(array('pedidos/fechas_entrega')); 
     

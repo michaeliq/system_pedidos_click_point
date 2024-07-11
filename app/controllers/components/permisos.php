@@ -22,7 +22,11 @@ class PermisosComponent extends Object {
         $Instancia = ClassRegistry::init('MenuUser');
 
         $authorize = array();
-        $allows = $Instancia->find('all', array('fields' => array('MenuAction.menus_actions_accion'), 'conditions' => array('MenuUser.rol_id' => $User_id, 'Menu.menu_controller' => $Controller, 'MenuUser.allow_deny' => TRUE)));
+        $allows = $Instancia->find('all', array('fields' => array(
+            'MenuAction.menus_actions_accion'), 
+            'conditions' => array('MenuUser.rol_id' => $User_id, 
+            'Menu.menu_controller' => $Controller, 
+            'MenuUser.allow_deny' => TRUE)));
         foreach ($allows as $allow) :
             array_push($authorize, $allow['MenuAction']['menus_actions_accion']);
         endforeach;

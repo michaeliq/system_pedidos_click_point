@@ -72,11 +72,7 @@ class UsersController extends AppController {
                 $where = str_replace('+', '"', $where);
                 array_push($conditions, $where);
             }
-//            if (!empty($this->data['User']['user_apellidos_f'])) {
-//                $where = "+User+.+user_apellidos+ LIKE '" . $this->data['User']['user_apellidos_f'] . "%'";
-//                $where = str_replace('+', '"', $where);
-//                array_push($conditions, $where);
-//            }
+
             if (!empty($this->data['User']['no_identificacion_persona_f'])) {
                 $where = "+User+.+no_identificacion_persona+ = '" . $this->data['User']['no_identificacion_persona_f'] . "'";
                 $where = str_replace('+', '"', $where);
@@ -149,7 +145,6 @@ class UsersController extends AppController {
             }
         }
 
-        // $parametro_precio = array('0' => 'Todos', '1' => 'Precios CLEANEST L&C', '2' => 'Precios CENTRO ASEO', '3' => 'Ninguno'); //31052018
         $parametro_precio = array('0' => 'Todos', '1' => 'Precio Centro Aseo', '2' => 'Precio Venta', '3' => 'Ninguno'); // 2022-11-17 
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
         $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));

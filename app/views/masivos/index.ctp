@@ -1,6 +1,7 @@
 <?php ?>
 <script>
     var arr_tipos = [];
+
     function fn_aprobar_orden() {
         window.location = 'pedidos/aprobar_orden';
     }
@@ -20,6 +21,7 @@
             dataType: "json",
             success: onSuccess
         });
+
         function onSuccess(data) {
             if (data == null) {
                 alert('No hay respuesta');
@@ -50,7 +52,7 @@
     }
 
 
-    $(function () {
+    $(function() {
         $('#MasivoFechaEntrega1').datepicker({
             changeMonth: false,
             changeYear: false,
@@ -90,7 +92,7 @@ $meses_pedidos[$mes_actual] = $meses[$mes_actual];
 $meses_pedidos[$mes_siguiente] = $meses[$mes_siguiente];
 $meses_pedidos[$mes_siguiente_2] = $meses[$mes_siguiente_2];
 
-$clasificacion = array('Tarifa integral'=>'Tarifa integral','Facturacion sobre pedido'=>'Facturacion sobre pedido');
+$clasificacion = array('Tarifa integral' => 'Tarifa integral', 'Facturacion sobre pedido' => 'Facturacion sobre pedido');
 ?>
 <h2>Cargador Masivo de Pedidos</h2>
 <?php echo $this->Form->create('Masivo', array('type' => 'file')); ?>
@@ -109,76 +111,86 @@ $clasificacion = array('Tarifa integral'=>'Tarifa integral','Facturacion sobre p
         </td>
     </tr>
     <tr>
-        <td colspan="2" align='center'><b>Empresa:</b> <?php echo $this->Form->input('empresa_id', array('type' => 'select', 'options' => $empresa, 'empty' => 'Seleccione una Opción', 'label' => false, 'required'=>true,'onchange'=>'consultar_cronogramas()')); ?></td>
+        <td colspan="2" align='center'><b>Empresa:</b> <?php echo $this->Form->input('empresa_id', array('type' => 'select', 'options' => $empresa, 'empty' => 'Seleccione una Opción', 'label' => false, 'required' => true, 'onchange' => 'consultar_cronogramas()')); ?></td>
     </tr>
     <tr>
-        <td colspan="2" align='center'><b>Tipo de Pedido:</b> <?php echo $this->Form->input('tipo_pedido_id', array('type' => 'select', 'options' => $tipo_pedido, 'empty' => 'Seleccione una Opción', 'label' => false, 'required'=>true)); ?></td>
+        <td colspan="2" align='center'><b>Tipo de Pedido:</b> <?php echo $this->Form->input('tipo_pedido_id', array('type' => 'select', 'options' => $tipo_pedido, 'empty' => 'Seleccione una Opción', 'label' => false, 'required' => true)); ?></td>
     </tr>
     <tr>
-        <td align='center'><b>Fecha de Entrega: </b>             <br>
-            <?php echo $this->Form->input('fecha_entrega_1', array('type' => 'text', 'label' => false,'maxlength'=>'10','placeholder'=>'Desde ... ','required'=>true)); ?> <br> 
-            <?php echo $this->Form->input('fecha_entrega_2', array('type' => 'text', 'label' => false,'maxlength'=>'10','placeholder'=>'Hasta ... ','required'=>true)); ?>
+        <td align='center'><b>Fecha de Entrega: </b> <br>
+            <?php echo $this->Form->input('fecha_entrega_1', array('type' => 'text', 'label' => false, 'maxlength' => '10', 'placeholder' => 'Desde ... ', 'required' => true)); ?> <br>
+            <?php echo $this->Form->input('fecha_entrega_2', array('type' => 'text', 'label' => false, 'maxlength' => '10', 'placeholder' => 'Hasta ... ', 'required' => true)); ?>
         </td>
         <td align='center'><b>Mes Pedido: </b><br>
-        <?php echo $this->Form->input('mes_pedido', array('type' => 'select', 'options' => $meses_pedidos, 'label' => false, 'empty'=>'Seleccione una Opción','required'=>true)); //2021-07-28 ?><br>
+            <?php echo $this->Form->input('mes_pedido', array('type' => 'select', 'options' => $meses_pedidos, 'label' => false, 'empty' => 'Seleccione una Opción', 'required' => true)); //2021-07-28 
+            ?><br>
             <b>Clasificación:</b><br>
-        <?php echo $this->Form->input('clasificacion_pedido', array('type' => 'select', 'options' => $clasificacion, 'label' => false, 'empty'=>'Seleccione una Opción','required'=>true)); //2021-07-28 ?></td>
+            <?php echo $this->Form->input('clasificacion_pedido', array('type' => 'select', 'options' => $clasificacion, 'label' => false, 'empty' => 'Seleccione una Opción', 'required' => true)); //2021-07-28 
+            ?>
+        </td>
     </tr>
     <tr>
-        <td colspan="2" align='center'><?php echo $this->Form->input('archivo_csv', array('type' => 'file', 'class' => 'btn btn-file','label'=>false,'div'=>false)); ?></td>
+        <td colspan="2" align='center'><?php echo $this->Form->input('archivo_csv', array('type' => 'file', 'class' => 'btn btn-file', 'label' => false, 'div' => false)); ?></td>
     </tr>
     <tr>
-        <td colspan="2" class="text-center"><?php if($pendiente_aprobacion>0){ echo $this->Form->button('Aprobar Ordenes!', array('type' => 'button', 'class' => 'btn btn-danger','onclick'=>'fn_aprobar_orden()')); }else{echo $this->Form->button('Cargar Archivo', array('type' => 'submit', 'class' => 'btn btn-success'));} ?>
-        <?php echo $this->Form->input('fecha_hora_carga',array('type'=>'hidden', 'value'=>date('Y-m-d H:i:s')));?></td>
+        <td colspan="2" class="text-center">
+            <?php if ($pendiente_aprobacion > 0) {
+                echo $this->Form->button('Aprobar Ordenes!', array('type' => 'button', 'class' => 'btn btn-danger', 'onclick' => 'fn_aprobar_orden()'));
+            } else {
+                echo $this->Form->button('Cargar Archivo', array('type' => 'submit', 'class' => 'btn btn-success'));
+            } ?>
+            <?php echo $this->Form->input('fecha_hora_carga', array('type' => 'hidden', 'value' => date('Y-m-d H:i:s'))); ?>
+        </td>
     </tr>
 </table>
-<?php if(count($errores) > 0){ 
+<?php if (count($errores) > 0) {
     $i = 0;
-    echo "Se generaron ".count($errores)." errores";
-foreach ($errores as $errore):
-    $class = null;
-    if ($i++ % 2 == 0) {
-        $class = ' class="altrow"';
-    }
-    echo "<div ".$class.">".$i." - ".$errore['0']['error_generado']."</div>";
+    echo "Se generaron " . count($errores) . " errores";
+    foreach ($errores as $errore) :
+        $class = null;
+        if ($i++ % 2 == 0) {
+            $class = ' class="altrow"';
+        }
+        echo "<div " . $class . ">" . $i . " - " . $errore['0']['error_generado'] . "</div>";
 
- endforeach; 
-
-    } 
-    ?>
-<?php if(count($pedidos_creados) > 0){ ?>
-<table class="table table-striped table-bordered table-hover table-condensed">
-    <tr>
-        <td colspan="4"  align='center'><h2>DETALLE DE LOS PEDIDOS CREADOS</h2></td>
-    </tr>
-
-    <tr>
-        <td><b>No.</b></td>
-        <td><b>No. Pedido</b></td>
-        <td><b>Sucursal</b></td>
-        <td><b>Cantidad de Productos</b></td>
-    </tr>
-<?php
-$j = 0;
-$total =  0;
-foreach ($pedidos_creados as $pedidos_creado):
-if ($j++ % 2 == 0) {
-        $class = ' class="altrow"';
-    }
-    $total = $total + $pedidos_creado['0']['sum'];
-    ?>
-    <tr<?php echo $class; ?>>
-        <td><?php echo $j;?></td>
-        <td>000<?php echo $pedidos_creado['0']['pedido_id']; ?></td>
-        <td><?php echo $pedidos_creado['0']['nombre_sucursal']; ?></td>
-        <td><?php echo $pedidos_creado['0']['sum']; ?></td>
-    </tr>  
-<?php
-endforeach;
+    endforeach;
+}
 ?>
-    <tr>
-        <td colspan="3">TOTAL PRODUCTOS</td>
-        <td><?php echo $total; ?></td>
-    </tr>
-    <?php } ?>
-</table>
+<?php if (count($pedidos_creados) > 0) { ?>
+    <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+            <td colspan="4" align='center'>
+                <h2>DETALLE DE LOS PEDIDOS CREADOS</h2>
+            </td>
+        </tr>
+
+        <tr>
+            <td><b>No.</b></td>
+            <td><b>No. Pedido</b></td>
+            <td><b>Sucursal</b></td>
+            <td><b>Cantidad de Productos</b></td>
+        </tr>
+        <?php
+        $j = 0;
+        $total =  0;
+        foreach ($pedidos_creados as $pedidos_creado) :
+            if ($j++ % 2 == 0) {
+                $class = ' class="altrow"';
+            }
+            $total = $total + $pedidos_creado['0']['sum'];
+        ?>
+            <tr<?php echo $class; ?>>
+                <td><?php echo $j; ?></td>
+                <td>000<?php echo $pedidos_creado['0']['pedido_id']; ?></td>
+                <td><?php echo $pedidos_creado['0']['nombre_sucursal']; ?></td>
+                <td><?php echo $pedidos_creado['0']['sum']; ?></td>
+                </tr>
+            <?php
+        endforeach;
+            ?>
+            <tr>
+                <td colspan="3">TOTAL PRODUCTOS</td>
+                <td><?php echo $total; ?></td>
+            </tr>
+        <?php } ?>
+    </table>

@@ -16,7 +16,6 @@
     <tr>
         <td><div class="empresas"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-asterisk"></i> Empresas y Sucursales', true), array('action' => '/index', 'controller' => 'empresas'), array('escape' => false)); ?></div></td>
         <td><div class="usuarios"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-user"></i> Usuarios del Sistema', true), array('action' => '/index', 'controller' => 'users'), array('escape' => false)); ?></div></td>        
-        <td>link</td>        
     </tr>
     <tr>
         <td><div class="productos"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-leaf"></i> Productos', true), array('action' => '/index', 'controller' => 'productos'), array('escape' => false)); ?></div></td>
@@ -29,7 +28,9 @@
     <tr>
         <td><div class="vendedore"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-phone"></i> Vendedores', true), array('action' => '/index', 'controller' => 'vendedores'), array('escape' => false)); ?></div></td>
         <td><div class="tipo_solicitudes"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-tasks"></i> Tipo Solicitudes PQR', true), array('action' => '/index', 'controller' => 'tipoSolicitudes'), array('escape' => false)); ?></div></td>
-        <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td><div class="vendedore"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-map-marker"></i> Rutas', true), array('action' => '/index', 'controller' => 'rutas'), array('escape' => false)); ?></div></td>
     </tr>
 </table>
 <div>&nbsp;</div>

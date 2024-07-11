@@ -119,18 +119,14 @@ class Sucursale extends AppModel {
             'fields' => '',
             'order' => ''
         ),
-    );
-    /*
-    var $hasMany  = array(
-        'SucursalesPresupuestosPedido' => array(
-            'className' => 'SucursalesPresupuestosPedido',
-            'foreignKey' => 'sucursal_id',
+        'Ruta' => array(
+            'className' => 'Ruta',
+            'foreignKey' => 'ruta_id',
             'conditions' => '',
             'fields' => '',
             'order' => ''
         ),
-    );*/
-
+    );
 }
 
 ?>

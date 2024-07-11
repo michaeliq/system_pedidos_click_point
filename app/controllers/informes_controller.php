@@ -1394,7 +1394,7 @@ class InformesController extends AppController {
     function info_pdf_masivo() {
         // Configure::write('debug', 2);
         // ini_set('memory_limit', '1024M');
-        ini_set('memory_limit', '2048M');
+        ini_set('memory_limit', 536870912);
         $this->Pedido->set($this->data);
         if (!empty($this->data['Pedido'])) {
 
@@ -1403,7 +1403,12 @@ class InformesController extends AppController {
                 array_push($pedidos, $value);
             }
             $this->Session->write('Pedido.pdf_masivos', $pedidos);
-            $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
+            
+            if($this->data['Pedido']["optional_report"]){
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_shalom'));
+            }else{
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
+            }
         }
 
         if (!empty($this->data['PedidoDespacho'])) {

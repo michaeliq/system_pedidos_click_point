@@ -99,7 +99,7 @@ $pdf->AddPage();
 //endforeach;
 
 // Print a text
-//$pdf->Image(K_PATH_IMAGES.'cise_logo.png', 10, 11, 27, '', '', '', '', false, 300);
+// $pdf->Image(K_PATH_IMAGES.'cise_logo.png', 10, 11, 27, '', '', '', '', false, 300);
 $html = '<table cellspacing="1" cellpadding="1">
     <tr>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000;" align="center"><h3>ORDEN DE ALISTAMIENTO</h3><br>GESTION DE LOGISTICA</td>

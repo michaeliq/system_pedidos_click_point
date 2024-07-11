@@ -120,9 +120,10 @@ class PedidosController extends AppController {
             $this->data['Pedido']['fecha_orden_pedido'] = date('Y-m-d H:i:s');
             $this->data['Pedido']['pedido_fecha_creacion'] = date('Y-m-d H:i:s'); /* 2020-01-31 */
             $this->data['Pedido']['pedido_estado_pedido'] = '1'; // En proceso
-            $this->data['Pedido']['tipo_categoria_id'] = implode(",", $this->data['Pedido']['tipo_categoria_id2']);
-
+            $this->data['Pedido']['tipo_categoria_id'] = implode(",", $this->data['Pedido']['tipo_categoria_id']);
+            
             $this->Pedido->create();
+            
             if ($this->Pedido->save($this->data)) {
                 $this->PedidosAuditoria->AuditoriaCambioEstado($this->Pedido->getInsertID(), '1', $this->Session->read('Auth.User.id'));
 
@@ -210,6 +211,7 @@ class PedidosController extends AppController {
 
         //        $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.id' => $cronograma)));
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true, 'TipoPedido.id' => explode(',', $cronograma[0]['Cronograma']['tipo_pedido_id_2']))));
+        debug($tipo_pedido);
         //31052018
 //         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $permisos = $this->EmpresasAprobadore->find('all', array('fields' => 'EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
@@ -1044,8 +1046,17 @@ class PedidosController extends AppController {
         Configure::write('debug', 0);
         $this->layout = 'pdf';
 
-        //$detalles = $this->PedidosDetalle->find('all', array('order' => 'TipoCategoria.tipo_categoria_orden,Producto.codigo_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
+        $this->set('detalles', $detalles);
+    }
+    
+    function pedido_pdf_shalom($id = null) {
+
+        Configure::write('debug', 0);
+        $this->layout = 'pdf';
+
+        $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
+        
         $this->set('detalles', $detalles);
     }
 
@@ -1060,7 +1071,27 @@ class PedidosController extends AppController {
 
     function pedido_pdf_masivo() {
         Configure::write('debug', 0);
-        ini_set('memory_limit', '4096M');
+        ini_set('memory_limit', 536870912);
+        // ini_set('memory_limit', '3072M');
+        $this->layout = 'pdf';
+        if (count($this->Session->read('Pedido.pdf_masivos')) > 0) {
+            $pedidos = $this->Pedido->find('all', array('order' => 'Pedido.id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'Pedido.pedido_estado' => true, 'Pedido.id' => $this->Session->read('Pedido.pdf_masivos'))));
+            $this->set('pedidos', $pedidos);
+
+            // $detalles = $this->PedidosDetalle->find('all', array('order' => 'TipoCategoria.tipo_categoria_orden,Producto.codigo_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))));
+            $detalles = $this->PedidosDetalle->find('all', array(
+                'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto',
+                'order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))));
+            $this->set('detalles', $detalles);
+        } else {
+            $this->set('pedidos', array());
+            $this->set('detalles', array());
+        }
+    }
+
+    function pedido_pdf_masivo_shalom() {
+        Configure::write('debug', 0);
+        ini_set('memory_limit', 536870912);
         // ini_set('memory_limit', '3072M');
         $this->layout = 'pdf';
         if (count($this->Session->read('Pedido.pdf_masivos')) > 0) {

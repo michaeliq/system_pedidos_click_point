@@ -82,12 +82,7 @@ class Empresa extends AppModel {
                 'message' => 'Este campo tiene un limite de caracteres (20).',
             ),
         ),
-//        'user_id' => array(
-//            'notempty' => array(
-//                'rule' => array('notempty'),
-//                'message' => 'Este campo no debe estar vacio.',
-//            ),
-//        ),
+
         'telefono_contacto' => array(
             'notempty' => array(
                 'rule' => array('notempty'),

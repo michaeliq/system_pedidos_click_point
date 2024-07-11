@@ -1,5 +1,7 @@
 <h2><span class="glyphicon glyphicon-lock"></span> Roles de Usuario</h2>
-<div class="add"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nuevo Rol', true), array('action' => 'add'), array('escape' => false)); ?></div>
+<div class="add">
+    <?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nuevo Rol', true), array('action' => 'add'), array('escape' => false)); ?>
+</div>
 <div class="index">
     <table class="table table-striped table-bordered table-hover table-condensed">
         <tr>
@@ -33,8 +35,12 @@
                     <?php
                     if ($role['Role']['rol_id'] > 1) {
                         ?>
-                        <div class="view" title="Ver"><?php echo $this->Html->link(__('', true), array('action' => 'view', $role['Role']['rol_id']), array('class' => 'glyphicon glyphicon-search', 'escape' => false)); ?></div>
-                        <div class="edit" title="Editar"><?php echo $this->Html->link(__('', true), array('action' => 'edit', $role['Role']['rol_id']), array('class' => 'glyphicon glyphicon-edit', 'escape' => false)); ?></div>
+                        <div class="view" title="Ver">
+                            <?php echo $this->Html->link(__('', true), array('action' => 'view', $role['Role']['rol_id']), array('class' => 'glyphicon glyphicon-search', 'escape' => false)); ?>
+                        </div>
+                        <div class="edit" title="Editar">
+                            <?php echo $this->Html->link(__('', true), array('action' => 'edit', $role['Role']['rol_id']), array('class' => 'glyphicon glyphicon-edit', 'escape' => false)); ?>
+                        </div>
                         <div class="delete" title="Cambiar Estado">
                             <?php
                             if ($role['Role']['rol_estado']) {

@@ -237,6 +237,8 @@
                 }else{
                 ?>
             <div class="ver_pedido" title="Ver"><?php echo $this->Html->link(__('', true), array('action' => 'ver_pedido', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-search', 'escape' => false)); ?></div>
+            <div title="Imprimir Reporte Shalom"><?php echo $this->Html->link(__('', true), array('controller' => 'pedidos', 'action' => 'pedido_pdf_shalom', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-print', 'target' => '_blank', 'escape' => false)); ?></div>
+
             <div class="copiar_pedido" title="Copiar Pedido"><?php echo $this->Html->link(__(' ', true), array('action' => 'copiar_pedido', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-transfer', 'escape' => false)); ?></div>
             <div class="rotulos" title="Rotulos Pedido"><a class="glyphicon glyphicon-barcode" onclick="rotulos(<?php echo $pedido['Pedido']['id']; ?>)"> </a>
                 <?php // echo $this->Html->link(__(' ', true), array('action' => 'rotulos', ), array('class' => 'glyphicon glyphicon-barcode', 'escape' => false)); ?>
