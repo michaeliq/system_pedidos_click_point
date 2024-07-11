@@ -1,4 +1,4 @@
-<h2><span class="glyphicon glyphicon-map-marker"></span> Rutas</h2>
+<h2><span class="glyphicon glyphicon-road"></span> Rutas</h2>
 <div class="add row">
     <div class="col-md-2">
         <?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nueva Ruta', true), array('action' => 'add'), array('escape' => false)); ?>

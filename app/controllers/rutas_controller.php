@@ -126,7 +126,7 @@ class RutasController extends AppController
                 $this->Session->setFlash('Ruta ' . $this->data["Ruta"]["nombre"] . ' Agregada', 'flash_success');
                 $this->redirect(array('controller' => 'rutas', 'action' => 'index'));
             } else {
-                $this->Session->setFlash('La Ruta no se puede guardar, verifique los campos obligatorios e intente de nuevo.', 'flash_success');
+                $this->Session->setFlash('La Ruta no se puede guardar, verifique los campos obligatorios e intente de nuevo.', 'flash_failure');
             }
         }
         $this->set(compact("departamentos", "municipios"));

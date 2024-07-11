@@ -14,10 +14,11 @@
         $j(".pedidos").css("display","none");
         $j(".informes").css("display","none");
         $j(".movimientosentradas").css("display","none");
-	$j(".callcenter").css("display","none");
-	$j(".solicitudes").css("display","none");
-	$j(".ordencompras").css("display","none");
+        $j(".callcenter").css("display","none");
+        $j(".solicitudes").css("display","none");
+        $j(".ordencompras").css("display","none");
 <?php
+
 foreach ($menus as $menu) :
     ?>
                 $j(".<?php echo strtolower($menu['Menu']['menu_controller']); ?>").css("display","block");

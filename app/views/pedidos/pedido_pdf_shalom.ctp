@@ -135,7 +135,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     $pdf->writeHTML($html, false, false, false, false, '');
     $timestamp = strtotime($detalles[0]['Pedido']['fecha_entrega_1']);
     $semana_numero =  idate('W', $timestamp);
-    $fecha_entrega = date("j-n-Y",$timestamp);
+    $fecha_entrega = date("j-n-Y",$timestamp); 
 
     $html = '
     <table>
@@ -203,7 +203,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
 
         $html .= '
         <tr>
-            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center">' . $codigo . '</td>
+            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center">' . $i . '</td>
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="left">' . $nombre . '</td>
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $marca . '</td>     
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $unidad . '</td>
@@ -211,9 +211,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $lote . '</td>             
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $fecha_vencimiento . '</td>             
         </tr>';
-        if (!empty($detalle['PedidosDetalle']['observacion_producto'])) {
-            $observaciones .= $detalle['Producto']['codigo_producto'] . ' - ' . $detalle['PedidosDetalle']['observacion_producto'] . '<br>';
-        }
+        
         $i++;
 
     endforeach;
@@ -250,7 +248,14 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
             <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000; background-color:#C0C0C0;" colspan="7"  align="center"><b>OBSERVACIONES</b></td>
         </tr>
         <tr>
-            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" colspan="7">' . $detalles['Pedido']['observaciones'] . ' ' . $observaciones . '</td>
+            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" colspan="7">
+            <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+            </td>
         </tr>
         <tr>
             <td colspan="7"></td>

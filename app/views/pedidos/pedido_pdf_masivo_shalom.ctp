@@ -129,7 +129,7 @@ foreach ($pedidos as $pedido) :
     $pdf->writeHTML($html, false, false, false, false, '');
     $timestamp = strtotime($pedido['Pedido']['fecha_entrega_1']);
     $semana_numero =  idate('W', $timestamp);
-
+    $fecha_entrega = date("j-n-Y",$timestamp);
     $html = '
     <table>
         <tr style="">
@@ -152,7 +152,7 @@ foreach ($pedidos as $pedido) :
             <td style="border-top: 1px solid #000000; width:10%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>Grupo:</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>Fecha de entrega:</b></td>
-            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>' . $pedido['Pedido']['fecha_entrega_1'] . '</b></td>
+            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>' . $fecha_entrega . '</b></td>
         </tr>
     </table>
     <table>
@@ -197,7 +197,7 @@ foreach ($pedidos as $pedido) :
 
             $html .= '
     <tr>
-        <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center">' . $codigo . '</td>
+        <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center">' . $i . '</td>
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="left">' . $nombre . '</td>
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $marca . '</td>     
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $unidad . '</td>
@@ -205,9 +205,6 @@ foreach ($pedidos as $pedido) :
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $lote . '</td>             
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $fecha_vencimiento . '</td>             
     </tr>';
-            if (!empty($detalle['PedidosDetalle']['observacion_producto'])) {
-                $observaciones .= $detalle['Producto']['codigo_producto'] . ' - ' . $detalle['PedidosDetalle']['observacion_producto'] . '<br>';
-            }
             $i++;
         }
 
@@ -245,7 +242,13 @@ foreach ($pedidos as $pedido) :
             <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000; background-color:#C0C0C0;" colspan="7"  align="center"><b>OBSERVACIONES</b></td>
         </tr>
         <tr>
-            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" colspan="7">' . $pedido['Pedido']['observaciones'] . ' ' . $observaciones . '</td>
+            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" colspan="7">
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+            </td>
         </tr>
         <tr>
             <td colspan="7"></td>
