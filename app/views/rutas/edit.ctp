@@ -23,35 +23,5 @@
             <?php echo $this->Form->button('Guardar', array('type' => 'submit', 'class' => 'btn btn-info')); ?>
         </div>
     </div>
-    <div>
-        <br>
-    </div>
-    <table class="table table-striped table-bordered table-hover table-condensed" align="center">
-        <tr>
-            <th>Sucursal</th>
-            <th>Empresa</th>
-            <th>Departamento</th>
-            <th>Municipio</th>
-            <th>Acciones</th>
-        </tr>
-        <?php foreach ($sucursales as $sucursale) : ?>
-            <tr>
-
-                <td><?= $sucursale["Sucursale"]["nombre_sucursal"] ?></td>
-                <td><?= $sucursale["Empresa"]["nombre_empresa"] ?></td>
-                <td><?= $sucursale["Departamento"]["nombre_departamento"] ?></td>
-                <td><?= $sucursale["Municipio"]["nombre_municipio"] ?></td>
-                <td class="actions">
-                    <div id=<?= $sucursale["Sucursale"]["id"] ?> class="edit RutaSucursal" title="Vincular/Desvincular Sucursal">
-                        <?php if ($sucursale["Sucursale"]["ruta_id"]) { ?>
-                            <a href="#" class="glyphicon glyphicon-remove"></a>
-                        <?php } else { ?>
-                            <a href="#" class="glyphicon glyphicon-ok"></a>
-                        <?php } ?>
-                    </div>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
 </fieldset>
 <?php echo $this->Form->end(); ?>

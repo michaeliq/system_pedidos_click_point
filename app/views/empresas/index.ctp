@@ -131,7 +131,8 @@ foreach ($empresas as $empresa):
     echo $this->Paginator->counter(array(
         'format' => __('Página %page% de %pages%, mostrando %current% registros de %count% total, iniciando en %start%, finalizando en %end%', true)
     ));
-    ?>	</p>
+    ?>	
+</p>
 
 <div class="text-center">
     <?php echo $this->Paginator->prev('<< ' . __('Anterior', true), array(), null, array('class' => 'disabled')); ?>

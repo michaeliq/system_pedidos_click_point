@@ -25,7 +25,11 @@ echo $this->Html->script(array('sucursales/sucursales_index')); ?>
 </div>
 <?php echo $this->Form->end(); ?>
 <div>&nbsp;</div>
-<div class="add"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nueva sucursal', true), array('action' => 'add', $id_empresa), array('escape' => false)); ?></div>
+<div class="row">
+    <div class="add col-md-2"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nueva sucursal', true), array('action' => 'add', $id_empresa), array('escape' => false)); ?></div>
+
+    <div class="upload_sucursales_from_file col-md-2"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-arrow-up"></i> Carga Masiva', true), array('action' => 'upload_sucursales_from_file', $id_empresa), array('escape' => false)); ?></div>
+</div>
 <div class="index">
     <table class="table table-striped table-bordered table-hover table-condensed">
         <tr>

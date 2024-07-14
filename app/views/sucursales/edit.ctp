@@ -34,6 +34,10 @@ echo $this->Html->script(array('sucursales/sucursales_edit')); ?>
             <td><?php echo $this->Form->input('telefono_sucursal', array('type' => 'text', 'label' => false, 'maxlength' => '20')); ?></td>
         </tr>
         <tr>
+            <td>Localidad: </td>
+            <td><?php echo $this->Form->input('localidad_ruta_id', array('type' => 'select', 'options' => $localidades, 'default' => $localidad , 'label' => false)); ?></td>
+        </tr>
+        <tr>
             <td>E-mail Sucursal: *</td>
             <td><?php echo $this->Form->input('email_sucursal', array('type' => 'text', 'label' => false, 'size' => '50', 'maxlength' => '120')); ?></td>
             <td>Regional: </td>

@@ -10,14 +10,14 @@
 <div class="index">
     <table class="table table-striped table-bordered table-hover table-condensed">
         <tr>
-            <th><?php echo $this->Paginator->sort('Código SIRBE', 'codigo_sirbe'); ?></th>
+            <th><?php echo $this->Paginator->sort('ID', 'ruta_id'); ?></th>
             <th><?php echo $this->Paginator->sort('Ruta', 'nombre'); ?></th>
             <th class="actions"><?php __('Acciones'); ?></th>
         </tr>
 
         <?php foreach ($rutas as $ruta) : ?>
             <tr>
-                <td><?= $ruta["Ruta"]["codigo_sirbe"] ?></td>
+                <td><?= $ruta["Ruta"]["ruta_id"] ?></td>
                 <td><?= $ruta["Ruta"]["nombre"] ?></td>
                 <td class="actions">
                     <div class="view" title="Ver">

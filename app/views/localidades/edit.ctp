@@ -7,10 +7,6 @@
             <td>Localidad: </td>
             <td><?php echo $this->Form->input('nombre_localidad', array('type' => 'text', 'label' => false, 'value' => $localidad["Localidad"]["nombre_localidad"])); ?></td>
         </tr>
-        <tr>
-            <td>Ruta: </td>
-            <td><?php echo $this->Form->input('ruta_id', array('type' => 'select', 'option' => $rutas, 'label' => false, 'default' => $localidad["Localidad"]["ruta_id"])); ?></td>
-        </tr>
     </table>
     <div class="row">
         <div class="col-md-6" align="center">

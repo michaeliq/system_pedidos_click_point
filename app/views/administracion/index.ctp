@@ -17,8 +17,8 @@
     .tipos_movimiento,
     .cronogramas_inventarios,
     .regionale,
-    .ruta,
-    .localidad,
+    .rutas,
+    .localidades,
     .vendedore {
         display: none;
     }
@@ -60,10 +60,10 @@
     </tr>
     <tr>
         <td>
-            <div class=""><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-road"></i> Rutas', true), array('action' => '/index', 'controller' => 'rutas'), array('escape' => false)); ?></div>
+            <div class="rutas"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-road"></i> Rutas', true), array('action' => '/index', 'controller' => 'rutas'), array('escape' => false)); ?></div>
         </td>
         <td>
-            <div class=""><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-map-marker"></i> Localidades', true), array('action' => '/index', 'controller' => 'localidades'), array('escape' => false)); ?></div>
+            <div class="localidades"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-map-marker"></i> Localidades', true), array('action' => '/index', 'controller' => 'localidades'), array('escape' => false)); ?></div>
         </td>
     </tr>
 </table>

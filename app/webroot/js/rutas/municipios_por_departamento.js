@@ -1,7 +1,15 @@
 $(function () {
     $('#RutaDepartamentoId').change(function () {
+        let url = ""
+        const pathArray = window.location.pathname.split("/")
+        
+        if(pathArray.at(-1) == "add"){
+            url = "../users/municipios"
+        } else{
+            url = '../../users/municipios'
+        }
         $.ajax({
-            url: '../users/municipios/',
+            url: url,
             type: 'POST',
             data: {
                 UserDepartamentoId: $('#RutaDepartamentoId').val()

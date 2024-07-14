@@ -3,8 +3,8 @@
 class RutasController extends AppController
 {
     var $name = "Rutas";
+    var $helpers = array('Ajax', 'Html', 'Javascript');
     var $components = array('RequestHandler', 'Auth', 'Permisos');
-    var $helpers = array('Ajax');
     var $uses = array('Ruta', 'TempRuta', 'Departamento', 'Municipio', 'Sucursale', 'MenuAction');
 
     function isAuthorized()
@@ -38,7 +38,7 @@ class RutasController extends AppController
         if (!empty($this->data)) { # Post Request
             if ($this->Ruta->save($this->data)) {
                 $this->Session->setFlash('Ruta ' . $this->data["Ruta"]["nombre"] . ' Actualizada.', 'flash_info');
-                $this->redirect(array('controller' => 'rutas', 'action' => 'index'));
+                return $this->redirect("/rutas/index");
             } else {
                 $this->Session->setFlash('La Ruta no se pudo actualizar, verifique e intente de nuevo.', 'flash_warning');
             }
@@ -51,20 +51,12 @@ class RutasController extends AppController
                 $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
                 $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));
 
-                $sucursales = $this->Sucursale->find("all", array(
-                    'conditions' => array(
-                        'Sucursale.departamento_id' => $this->Ruta->read(null, $ruta_id)["Ruta"]["departamento_id"],
-                        'Sucursale.municipio_id' => $this->Ruta->read(null, $ruta_id)["Ruta"]["municipio_id"],
-                    ),
-                    'fields' => array("Sucursale.nombre_sucursal", "Empresa.nombre_empresa", "Departamento.nombre_departamento", "Municipio.nombre_municipio", "Sucursale.ruta_id", "Sucursale.id")
-                ));
                 $this->set("ruta", $ruta);
                 $this->set('departamentos', $departamentos);
                 $this->set('municipios', $municipios);
-                $this->set('sucursales', $sucursales);
             } else {
                 $this->Session->setFlash('ID de Ruta no encontrado', 'flash_failure');
-                $this->redirect(array('action' => 'index'));
+                return $this->redirect("/rutas/index");
             }
         }
     }
@@ -73,16 +65,16 @@ class RutasController extends AppController
     {
         if (!$ruta_id) {
             $this->Session->setFlash('ID de Ruta faltante', 'flash_failure');
-            $this->redirect(array('action' => 'index'));
+            return $this->redirect("/rutas/index");
         } else {
             $ruta = $this->Ruta->find("first", array("conditions" => array("Ruta.ruta_id" => $ruta_id)));
             if ($ruta) {
                 $this->Ruta->delete($ruta_id, false);
                 $this->Session->setFlash('Ruta eliminada', 'flash_success');
-                $this->redirect(array('action' => 'index'));
+                return $this->redirect("/rutas/index");
             } else {
                 $this->Session->setFlash('ID de Ruta no encontrado', 'flash_failure');
-                $this->redirect(array('action' => 'index'));
+                return $this->redirect("/rutas/index");
             }
         }
     }
@@ -101,18 +93,9 @@ class RutasController extends AppController
 
         $municipio = $this->Municipio->find('first', array('conditions' => array('Municipio.id' => $this->Ruta->read(null, $ruta_id)["Ruta"]["municipio_id"]), 'fields' => 'Municipio.nombre_municipio'));
 
-        $sucursales = $this->Sucursale->find("all", array(
-            'conditions' => array(
-                'Sucursale.departamento_id' => $this->Ruta->read(null, $ruta_id)["Ruta"]["departamento_id"],
-                'Sucursale.municipio_id' => $this->Ruta->read(null, $ruta_id)["Ruta"]["municipio_id"],
-            ),
-            'fields' => array("Sucursale.nombre_sucursal", "Empresa.nombre_empresa", "Departamento.nombre_departamento", "Municipio.nombre_municipio", "Sucursale.ruta_id", "Sucursale.id")
-        ));
-        #debug(count($sucursales));
         $this->set('ruta', $this->Ruta->read(null, $ruta_id));
         $this->set('departamento', $departamento["Departamento"]["nombre_departamento"]);
         $this->set('municipio', $municipio["Municipio"]["nombre_municipio"]);
-        $this->set('sucursales', $sucursales);
     }
 
     function add()
@@ -124,7 +107,7 @@ class RutasController extends AppController
             $this->Ruta->create();
             if ($this->Ruta->save($this->data)) {
                 $this->Session->setFlash('Ruta ' . $this->data["Ruta"]["nombre"] . ' Agregada', 'flash_success');
-                $this->redirect(array('controller' => 'rutas', 'action' => 'index'));
+                return $this->redirect("/rutas/index");
             } else {
                 $this->Session->setFlash('La Ruta no se puede guardar, verifique los campos obligatorios e intente de nuevo.', 'flash_failure');
             }
@@ -145,8 +128,6 @@ class RutasController extends AppController
         if ($this->RequestHandler->isPost()) {
 
             # Reset de tabla temporal de rutas
-            $sql_truncate = "TRUNCATE TABLE temp_rutas;";
-            $this->TempRuta->query($sql_truncate);
 
             if ($this->data['Ruta']['archivo_csv']['name']) {
                 if (($this->data['Ruta']['archivo_csv']['type'] == 'text/csv') || ($this->data['Ruta']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
@@ -167,17 +148,19 @@ class RutasController extends AppController
                                     }
                                     $ruta_from_db = $this->Ruta->find("first", array(
                                         'conditions' => array(
-                                            'Ruta.codigo_sirbe' => $data_ruta["CODIGO_SIRBE"]
+                                            'Ruta.ruta_id' => $data_ruta["ID"]
                                         )
                                     ));
+                                    $sql_truncate = "DELETE FROM temp_rutas where ruta_id = ".$data_ruta["ID"].";";
+                                    $this->TempRuta->query($sql_truncate);
+
                                     $this->TempRuta->create();
                                     $this->TempRuta->save(array(
                                         "TempRuta" => array(
-                                            "codigo_sirbe" => $data_ruta["CODIGO_SIRBE"],
                                             "nombre" => $data_ruta["RUTA"],
                                             "departamento_id" => $data_ruta["DEPARTAMENTO"],
                                             "municipio_id" => $data_ruta["MUNICIPIO"],
-                                            "ruta_id" => $ruta_from_db["Ruta"]["ruta_id"],
+                                            "ruta_id" => $data_ruta["ID"],
                                             "to_create" => $ruta_from_db ? false : true,
                                         )
                                     ));
@@ -195,7 +178,6 @@ class RutasController extends AppController
                         $this->set("rutas_validas", $rutas_validas);
                         fclose($file);
                         unlink($dir_file . '/' . $this->data['Ruta']['archivo_csv']['name']);
-                        
                     } else {
                         $this->Session->setFlash('El tamaño del archivo supera el maximo establecido (20MB).', 'flash_failure');
                     }
@@ -214,7 +196,8 @@ class RutasController extends AppController
     {
         $rutas_validas = [];
         $data = array();
-        $rutas_temporales = $this->TempRuta->find("all", array("fields" => array("TempRuta.nombre", "TempRuta.codigo_sirbe", "TempRuta.departamento_id", "TempRuta.municipio_id", "TempRuta.ruta_id", "TempRuta.to_create")));
+        $id_rutas = $this->data["Ruta"]["id_rutas"];
+        $rutas_temporales = $this->TempRuta->find("all", array("conditions" => array("TempRuta.ruta_id" => explode(",", $id_rutas)), "fields" => array("TempRuta.nombre", "TempRuta.departamento_id", "TempRuta.municipio_id", "TempRuta.ruta_id", "TempRuta.to_create")));
 
         foreach ($rutas_temporales as $ruta_temp) {
             if ($ruta_temp["TempRuta"]["to_create"]) {
@@ -222,7 +205,6 @@ class RutasController extends AppController
                 array_push(
                     $data,
                     array("Ruta" => array(
-                        "codigo_sirbe" => $ruta_temp["TempRuta"]["codigo_sirbe"],
                         "nombre" => $ruta_temp["TempRuta"]["nombre"],
                         "departamento_id" => $ruta_temp["TempRuta"]["departamento_id"],
                         "municipio_id" => $ruta_temp["TempRuta"]["municipio_id"],
@@ -231,7 +213,6 @@ class RutasController extends AppController
             } else {
                 $this->Ruta->save(array(
                     "Ruta" => array(
-                        "codigo_sirbe" => $ruta_temp["TempRuta"]["codigo_sirbe"],
                         "nombre" => $ruta_temp["TempRuta"]["nombre"],
                         "departamento_id" => $ruta_temp["TempRuta"]["departamento_id"],
                         "municipio_id" => $ruta_temp["TempRuta"]["municipio_id"],
@@ -241,7 +222,7 @@ class RutasController extends AppController
             }
         };
         $this->Ruta->saveAll($data);
-        $sql_truncate = "TRUNCATE TABLE temp_rutas;";
+        $sql_truncate = "DELETE FROM temp_rutas WHERE ruta_id IN (" . $id_rutas . ");";
         $this->TempRuta->query($sql_truncate);
 
         $this->Session->setFlash('Se han añadido las rutas validas', 'flash_success');

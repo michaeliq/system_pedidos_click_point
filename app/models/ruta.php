@@ -7,16 +7,6 @@ class Ruta extends AppModel
     var $primaryKey = 'ruta_id';
     var $order = 'Ruta.ruta_id';
     var $validate = array(
-        'codigo_sirbe' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'Este campo no debe estar vacio.',
-            ),
-            'isUnique' => array(
-                'rule' => array('isUnique'),
-                'message' => 'El CODIGO_SIRBE debe ser unico',
-            )
-        ),
         'nombre' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
@@ -49,12 +39,14 @@ class Ruta extends AppModel
         ),
     );
 
-    var $belongsTo = array(
-        'Sucursale' => array(
-            'className' => 'Sucursale',
-            'foreignKey' => 'sucursale_id',
+    var $hasMany = array(
+        'LocalidadRelRuta' => array(
+            'className' => 'LocalidadRelRuta',
+            'foreignKey' => 'id',
         ),
     );
+
+
 }
 
 class TempRuta extends AppModel
@@ -64,16 +56,6 @@ class TempRuta extends AppModel
     var $primaryKey = 'ruta_id';
     var $order = 'TempRuta.ruta_id';
     var $validate = array(
-        'codigo_sirbe' => array(
-            'notempty' => array(
-                'rule' => array('notempty'),
-                'message' => 'Este campo no debe estar vacio.',
-            ),
-            'isUnique' => array(
-                'rule' => array('isUnique'),
-                'message' => 'El CODIGO_SIRBE debe ser unico',
-            )
-        ),
         'nombre' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
@@ -106,3 +88,4 @@ class TempRuta extends AppModel
         ),
     );
 }
+

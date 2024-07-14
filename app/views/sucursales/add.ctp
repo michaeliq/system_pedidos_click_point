@@ -1,5 +1,4 @@
 <?php
-
 echo $this->Html->script(array('sucursales/sucursales_add')); ?>
 <script>
     /*$(function () {

@@ -26,7 +26,7 @@ echo $this->Html->script(array('empresas/empresas_aprobadores')); ?>
                     <td colspan="7">
                         <div class="alert alert-info">
                             Con esta opción podrá asignar permisos para todas las sucursales de la empresa <b><?php echo $empresa['0']['Empresa']['nombre_empresa']; ?></b>.
-                        </div>
+                        </div> 
                     </td>
                 </tr>
                 <tr>

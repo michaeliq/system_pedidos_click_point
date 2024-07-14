@@ -130,6 +130,7 @@ foreach ($pedidos as $pedido) :
     $timestamp = strtotime($pedido['Pedido']['fecha_entrega_1']);
     $semana_numero =  idate('W', $timestamp);
     $fecha_entrega = date("j-n-Y",$timestamp);
+    $nombre_localidad = explode("-",$pedido['LocalidadRelRuta'])[0];
     $html = '
     <table>
         <tr style="">
@@ -158,7 +159,7 @@ foreach ($pedidos as $pedido) :
     <table>
         <tr>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>Localidad de entrega:</b></td>
-            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>' . $pedido['Municipio2']['nombre_municipio'] . '</b></td>
+            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>' . $nombre_localidad . '</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>Nombre de unidad operativa:</b></td>
             <td style="border-top: 1px solid #000000; width:40%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>' . $pedido['Sucursale']['nombre_sucursal'] . '</b></td>
         </tr>

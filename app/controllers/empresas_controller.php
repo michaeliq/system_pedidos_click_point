@@ -112,7 +112,7 @@ class EmpresasController extends AppController {
     }
 
     function aprobadores($id = null) {
-        Configure::write('debug', 2);
+        //Configure::write('debug', 2);
         ini_set('memory_limit', '1024M');
         $this->Session->write('EmpresasAprobadore.empresa_id', $id);
         if (!empty($this->data)) {

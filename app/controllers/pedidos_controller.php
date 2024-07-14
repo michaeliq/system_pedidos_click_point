@@ -1,15 +1,19 @@
 <?php
 
-class PedidosController extends AppController {
+class PedidosController extends AppController
+{
 
     var $name = 'Pedidos';
     var $helpers = array('Html', 'Ajax', 'Javascript');
     var $components = array('RequestHandler', 'Auth', 'Permisos', 'PedidosAuditoria');
-    var $uses = array('Pedido', 'PedidosDetalle', 'Producto', 'TipoCategoria', 'Empresa', 'EmpresasAprobadore',
-        'Sucursale', 'EstadoPedido', 'User', 'PlantillasDetalle', 'TipoPedido', 'SucursalesPlantilla',
-        'Cronograma', 'SucursalesPresupuestosPedido', 'TipoMovimiento', 'PedidosAudit', 'Encuesta', 'EncuestasDiligenciada');
+    var $uses = array(
+        'Pedido', 'PedidosDetalle', 'Producto', 'TipoCategoria', 'Empresa', 'EmpresasAprobadore',
+        'Sucursale', 'EstadoPedido', 'User', 'PlantillasDetalle', 'TipoPedido', 'SucursalesPlantilla', 'LocalidadRelRuta',
+        'Cronograma', 'SucursalesPresupuestosPedido', 'TipoMovimiento', 'PedidosAudit', 'Encuesta', 'EncuestasDiligenciada'
+    );
 
-    function isAuthorized() {
+    function isAuthorized()
+    {
         $this->Auth->authorize = 'controller';
 
         $authorize = $this->Permisos->Allow('Pedidos', $this->Session->read('Auth.User.rol_id'));
@@ -25,11 +29,13 @@ class PedidosController extends AppController {
         }
     }
 
-    function index() {
+    function index()
+    {
         $this->set('interno', array_search($this->Session->read('Auth.User.rol_id'), $this->Permisos->RolesInternos()));
     }
 
-    function observaciones($id = null) {
+    function observaciones($id = null)
+    {
         $pedidos = $this->PedidosDetalle->find('all', array('fields' => 'Pedido.id, Pedido.mes_pedido, Pedido.clasificacion_pedido, Pedido.guia_despacho, PedidosDetalle.id, PedidosDetalle.observacion_producto, Pedido.observaciones, Producto.codigo_producto, Producto.nombre_producto, Producto.marca_producto, TipoCategoria.tipo_categoria_descripcion, Pedido.fecha_entrega_1, Pedido.fecha_entrega_2', 'conditions' => array('PedidosDetalle.pedido_id' => $id)));
         $this->set('pedidos', $pedidos);
 
@@ -56,7 +62,8 @@ class PedidosController extends AppController {
         }
     }
 
-    function cambiar_estado() {
+    function cambiar_estado()
+    {
         date_default_timezone_set('America/Bogota');
         if ($this->Session->read('Auth.User.rol_id') == '1') {
 
@@ -90,7 +97,7 @@ class PedidosController extends AppController {
                         if ($this->data['Pedido']['pedido_estado_pedido'] == '4') {
                             $this->Pedido->updateAll(array("Pedido.fecha_aprobado_pedido" => "'" . date('Y-m-d H:i:s') . "'"), array("Pedido.pedido_estado_pedido <" => '6', "Pedido.id" => $pedidos_marcados));
                         }
-                        if (/* $this->data['Pedido']['pedido_estado_pedido'] == '1' || */ $this->data['Pedido']['pedido_estado_pedido'] == '2') {
+                        if (/* $this->data['Pedido']['pedido_estado_pedido'] == '1' || */$this->data['Pedido']['pedido_estado_pedido'] == '2') {
                             $this->Pedido->updateAll(array("Pedido.fecha_aprobado_pedido" => "null"), array("Pedido.pedido_estado_pedido <" => '6', "Pedido.id" => $pedidos_marcados));
                             // Eliminar los productos que tenga anteriormente el pedido
                             $delete = "DELETE FROM pedidos_detalles WHERE pedido_id IN (" . implode(',', $pedidos_marcados) . ");";
@@ -110,7 +117,8 @@ class PedidosController extends AppController {
         }
     }
 
-    function orden_pedido() {
+    function orden_pedido()
+    {
         ini_set('memory_limit', '1024M');
         date_default_timezone_set('America/Bogota');
         if (!empty($this->data)) {
@@ -121,9 +129,9 @@ class PedidosController extends AppController {
             $this->data['Pedido']['pedido_fecha_creacion'] = date('Y-m-d H:i:s'); /* 2020-01-31 */
             $this->data['Pedido']['pedido_estado_pedido'] = '1'; // En proceso
             $this->data['Pedido']['tipo_categoria_id'] = implode(",", $this->data['Pedido']['tipo_categoria_id']);
-            
+
             $this->Pedido->create();
-            
+
             if ($this->Pedido->save($this->data)) {
                 $this->PedidosAuditoria->AuditoriaCambioEstado($this->Pedido->getInsertID(), '1', $this->Session->read('Auth.User.id'));
 
@@ -187,17 +195,21 @@ class PedidosController extends AppController {
 
         // Consultar cronogramas
         $cronograma = $this->Cronograma->find('all', array('fields' => 'tipo_pedido_id_2', 'conditions' =>
-            array('Cronograma.empresa_id' => $this->Session->read('Auth.User.empresa_id'),
-                'Cronograma.estado_cronograma' => true)));
+        array(
+            'Cronograma.empresa_id' => $this->Session->read('Auth.User.empresa_id'),
+            'Cronograma.estado_cronograma' => true
+        )));
 
         // Consultar presupuestos por sucursal - Informativo
         $presupuestos = $this->SucursalesPresupuestosPedido->find('all', array('conditions' => array('sucursal_id' => $this->Session->read('Auth.User.sucursal_id'), /* 'tipo_pedido_id'=>$this->Session->read('Pedido.tipo_pedido_id'), */ 'SucursalesPresupuestosPedido.presupuesto_asignado > SucursalesPresupuestosPedido.presupuesto_utilizado')));
         $this->set('presupuestos', $presupuestos);
 
-        $conditions = array('Pedido.user_id' => $this->Session->read('Auth.User.id'),
+        $conditions = array(
+            'Pedido.user_id' => $this->Session->read('Auth.User.id'),
             'Pedido.pedido_estado' => true,
             'Pedido.pedido_estado_pedido' => array('1'),
-            'EmpresasAprobadore.user_id' => '1'); // Muestra solo las que estan en proceso.
+            'EmpresasAprobadore.user_id' => '1'
+        ); // Muestra solo las que estan en proceso.
         $this->paginate = array('limit' => 1);
         $this->paginate($conditions); // $pedidos = array();
         $pedidos = $this->Pedido->find('all', array('conditions' => $conditions));
@@ -213,7 +225,7 @@ class PedidosController extends AppController {
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true, 'TipoPedido.id' => explode(',', $cronograma[0]['Cronograma']['tipo_pedido_id_2']))));
         debug($tipo_pedido);
         //31052018
-//         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
+        //         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $permisos = $this->EmpresasAprobadore->find('all', array('fields' => 'EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
         $sucursales_permisos = array();
@@ -246,7 +258,8 @@ class PedidosController extends AppController {
         $this->set(compact('empresas', 'tipo_pedido', 'sucursales1', 'tipoMovimientos', 'tipoCategoria', 'regional'));
     }
 
-    function detalle_pedido($id = null) {
+    function detalle_pedido($id = null)
+    {
         if ($this->Session->read('Auth.User.id') == '97') {
             //  Configure::write('debug', 2);
         }
@@ -264,7 +277,7 @@ class PedidosController extends AppController {
         }
 
         if ($this->Session->read('Auth.User.id') == '97') {
-/*
+            /*
             if (count($plantilla) > 1) {
                 foreach ($plantilla as $key => $value) {
                     if ($this->Session->read('Pedido.tipo_pedido_id') == $value['TipoPedido']['id']) {
@@ -309,7 +322,8 @@ class PedidosController extends AppController {
 
                 if ($this->data['PedidosDetalle']['cantidad_pedido_' . $producto['Producto']['id']] > 0) {
 
-                    $pedido_detalle = array('pedido_id' => $this->Session->read('Pedido.pedido_id'),
+                    $pedido_detalle = array(
+                        'pedido_id' => $this->Session->read('Pedido.pedido_id'),
                         'producto_id' => $producto['Producto']['id'],
                         'precio_producto' => $this->data['PedidosDetalle']['precio_producto_' . $producto['Producto']['id']],
                         'cantidad_pedido' => $this->data['PedidosDetalle']['cantidad_pedido_' . $producto['Producto']['id']],
@@ -320,29 +334,33 @@ class PedidosController extends AppController {
                         'observacion_producto' => null,
                     );
 
-//                    print_r($pedido_detalle);
-//                    exit;
+                    //                    print_r($pedido_detalle);
+                    //                    exit;
                     $this->PedidosDetalle->save($pedido_detalle, FALSE);
                 }
 
             endforeach;
             // TERMINAR PEDIDO
             if ($this->data['PedidosDetalle']['pedido_entrega_parcial']) {
-                if ($this->Pedido->updateAll(array("Pedido.pedido_estado" => 'true',
-                            "Pedido.pedido_estado_pedido" => '1',
-                            "Pedido.pedido_fecha" => "'" . date('Y-m-d') . "'",
-                            "Pedido.pedido_hora" => "'" . date('H:i:s') . "'",
-                            "Pedido.fecha_orden_pedido" => "'" . date('Y-m-d H:i:s') . "'"), array("Pedido.id" => $this->Session->read('Pedido.pedido_id')))) {
+                if ($this->Pedido->updateAll(array(
+                    "Pedido.pedido_estado" => 'true',
+                    "Pedido.pedido_estado_pedido" => '1',
+                    "Pedido.pedido_fecha" => "'" . date('Y-m-d') . "'",
+                    "Pedido.pedido_hora" => "'" . date('H:i:s') . "'",
+                    "Pedido.fecha_orden_pedido" => "'" . date('Y-m-d H:i:s') . "'"
+                ), array("Pedido.id" => $this->Session->read('Pedido.pedido_id')))) {
                     $this->PedidosAuditoria->AuditoriaCambioEstado($this->Session->read('Pedido.pedido_id'), '1', $this->Session->read('Auth.User.id'));
                     $this->Session->setFlash(__('La orden de pedido se ha guardado exitosamente. Estado: En Proceso.', true));
                     $this->redirect(array('controller' => 'pedidos', 'action' => 'search_orden/'));
                 }
             } else {
-                if ($this->Pedido->updateAll(array("Pedido.pedido_estado" => 'true',
-                            "Pedido.pedido_estado_pedido" => '3',
-                            "Pedido.pedido_fecha" => "'" . date('Y-m-d') . "'",
-                            "Pedido.pedido_hora" => "'" . date('H:i:s') . "'",
-                            "Pedido.fecha_orden_pedido" => "'" . date('Y-m-d H:i:s') . "'"), array("Pedido.id" => $this->Session->read('Pedido.pedido_id')))) {
+                if ($this->Pedido->updateAll(array(
+                    "Pedido.pedido_estado" => 'true',
+                    "Pedido.pedido_estado_pedido" => '3',
+                    "Pedido.pedido_fecha" => "'" . date('Y-m-d') . "'",
+                    "Pedido.pedido_hora" => "'" . date('H:i:s') . "'",
+                    "Pedido.fecha_orden_pedido" => "'" . date('Y-m-d H:i:s') . "'"
+                ), array("Pedido.id" => $this->Session->read('Pedido.pedido_id')))) {
                     $this->PedidosAuditoria->AuditoriaCambioEstado($this->Session->read('Pedido.pedido_id'), '3', $this->Session->read('Auth.User.id'));
                     $this->Session->setFlash(__('La orden de pedido se ha terminado exitosamente. Nuevo estado: Pendiente Aprobacion.', true));
                     $this->redirect(array('controller' => 'pedidos', 'action' => 'ver_pedido/' . $this->Session->read('Pedido.pedido_id')));
@@ -435,7 +453,8 @@ class PedidosController extends AppController {
     /* INACTIVAR FUNCION ORIGINAL DE PEDIDOS
       2022-12-21 */
 
-    function detalle_pedido_1($id = null) {
+    function detalle_pedido_1($id = null)
+    {
         ini_set('memory_limit', '1024M');
         date_default_timezone_set('America/Bogota');
 
@@ -557,7 +576,8 @@ class PedidosController extends AppController {
 
     /*  */
 
-    function detalle_pedido_aprobacion() {
+    function detalle_pedido_aprobacion()
+    {
         date_default_timezone_set('America/Bogota');
         if (!empty($this->data)) {
 
@@ -608,8 +628,9 @@ class PedidosController extends AppController {
         $this->set('productos', $this->Producto->find('all', array('conditions' => array('Producto.estado' => true))));
     }
 
-    function modificar_pedido() {
-        if ($this->RequestHandler->isAjax()) {//condición que pregunta si la petición es AJAX
+    function modificar_pedido()
+    {
+        if ($this->RequestHandler->isAjax()) { //condición que pregunta si la petición es AJAX
             if (!empty($_REQUEST['PedidosDetalleId']) && !empty($_REQUEST['PedidosDetalleCantidadPedido'])) {
                 $this->PedidosDetalle->id = $_REQUEST['PedidosDetalleId'];
                 $this->PedidosDetalle->cantidad_pedido = $_REQUEST['PedidosDetalleCantidadPedido'];
@@ -625,8 +646,9 @@ class PedidosController extends AppController {
         }
     }
 
-    function quitar_pedido() {
-        if ($this->RequestHandler->isAjax()) {//condición que pregunta si la petición es AJAX
+    function quitar_pedido()
+    {
+        if ($this->RequestHandler->isAjax()) { //condición que pregunta si la petición es AJAX
             if (!empty($_REQUEST['PedidosDetalleId'])) {
                 $this->PedidosDetalle->id = $_REQUEST['PedidosDetalleId'];
                 if ($this->PedidosDetalle->delete()) {
@@ -640,8 +662,9 @@ class PedidosController extends AppController {
         }
     }
 
-    function cancelar_pedido() {
-        if ($this->RequestHandler->isAjax()) {//condición que pregunta si la petición es AJAX
+    function cancelar_pedido()
+    {
+        if ($this->RequestHandler->isAjax()) { //condición que pregunta si la petición es AJAX
             if (!empty($_REQUEST['PedidosDetalleId'])) {
                 if ($this->Pedido->updateAll(array("Pedido.pedido_estado" => 'false', "Pedido.pedido_estado_pedido" => '2'), array("Pedido.id" => $_REQUEST['PedidosDetalleId']))) {
                     $this->PedidosAuditoria->AuditoriaCambioEstado($_REQUEST['PedidosDetalleId'], '2', $this->Session->read('Auth.User.id'));
@@ -656,21 +679,24 @@ class PedidosController extends AppController {
         }
     }
 
-    function terminar_pedido() {
+    function terminar_pedido()
+    {
         date_default_timezone_set('America/Bogota');
-        if ($this->RequestHandler->isAjax()) {//condición que pregunta si la petición es AJAX
+        if ($this->RequestHandler->isAjax()) { //condición que pregunta si la petición es AJAX
             if (!empty($_REQUEST['PedidosDetalleId'])) {
                 /* 2020-01-31 - Ajuste fecha de pedido 
                  * Agregar un nuevo campo que se guarde cuando se creea el pedido
                  * ALTER TABLE pedidos  ADD COLUMN pedido_fecha_creacion timestamp without time zone;               
                  */
 
-                if ($this->Pedido->updateAll(array("Pedido.observaciones" => "concat(observaciones,'" . $_REQUEST['PedidosDetalleObservaciones'] . "<br>')",
-                            "Pedido.pedido_estado" => 'true',
-                            "Pedido.pedido_estado_pedido" => '3',
-                            "Pedido.pedido_fecha" => "'" . date('Y-m-d') . "'",
-                            "Pedido.pedido_hora" => "'" . date('H:i:s') . "'",
-                            "Pedido.fecha_orden_pedido" => "'" . date('Y-m-d H:i:s') . "'"), array("Pedido.id" => $_REQUEST['PedidosDetalleId']))) {
+                if ($this->Pedido->updateAll(array(
+                    "Pedido.observaciones" => "concat(observaciones,'" . $_REQUEST['PedidosDetalleObservaciones'] . "<br>')",
+                    "Pedido.pedido_estado" => 'true',
+                    "Pedido.pedido_estado_pedido" => '3',
+                    "Pedido.pedido_fecha" => "'" . date('Y-m-d') . "'",
+                    "Pedido.pedido_hora" => "'" . date('H:i:s') . "'",
+                    "Pedido.fecha_orden_pedido" => "'" . date('Y-m-d H:i:s') . "'"
+                ), array("Pedido.id" => $_REQUEST['PedidosDetalleId']))) {
                     $this->PedidosAuditoria->AuditoriaCambioEstado($_REQUEST['PedidosDetalleId'], '3', $this->Session->read('Auth.User.id'));
                     echo true;
                     $this->Session->setFlash(__('La orden de pedido se ha terminado exitosamente. Nuevo estado: Pendiente Aprobacion.', true));
@@ -682,7 +708,8 @@ class PedidosController extends AppController {
         }
     }
 
-    function ver_pedido($id = null) {
+    function ver_pedido($id = null)
+    {
         date_default_timezone_set('America/Bogota');
         if (!empty($id)) {
             $this->set('detalles', $this->PedidosDetalle->find('all', array('order' => 'TipoCategoria.tipo_categoria_orden,Producto.codigo_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id))));
@@ -741,7 +768,8 @@ class PedidosController extends AppController {
         }
     }
 
-    function list_ordenes() {
+    function list_ordenes()
+    {
         ini_set('memory_limit', '1024M');
         //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('fields' => 'EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
@@ -755,21 +783,21 @@ class PedidosController extends AppController {
         $conditions = array('Pedido.pedido_estado' => true, 'Pedido.pedido_estado_pedido' => array('1', '3'), 'EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'EmpresasAprobadore.empresa_id' => array_unique($empresas_permisos), 'EmpresasAprobadore.sucursal_id' => $sucursales_permisos);
         $conditions_empresa = array('id' => $empresas_permisos);
         $conditions_sucursales = array('Sucursale.id' => $sucursales_permisos, 'Sucursale.estado_sucursal' => true);
-//31052018
-//       //       if ($this->Session->read('Auth.User.rol_id') == '1') {
-//            $conditions = array('EmpresasAprobadore.user_id' => '1', // $this->Session->read('Auth.User.id'),
-//                'Pedido.pedido_estado' => true,
-//                'Pedido.pedido_estado_pedido' => array('1', '3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobaci�n.
-//            $conditions_empresa = array();
-//            $conditions_sucursales = array('id_empresa !=' => '1', 'Sucursale.estado_sucursal' => true);
-//        } else {
-//            $conditions = array('Pedido.user_id' => $this->Session->read('Auth.User.id'),
-//                'EmpresasAprobadore.user_id' => '1',
-//                'Pedido.pedido_estado' => true,
-//                'Pedido.pedido_estado_pedido' => array('1', '3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobaci�n.
-//            $conditions_empresa = array('id' => $this->Session->read('Auth.User.empresa_id'));
-//            $conditions_sucursales = array('id_empresa' => $this->Session->read('Auth.User.empresa_id'), 'Sucursale.estado_sucursal' => true);
-//        }
+        //31052018
+        //       //       if ($this->Session->read('Auth.User.rol_id') == '1') {
+        //            $conditions = array('EmpresasAprobadore.user_id' => '1', // $this->Session->read('Auth.User.id'),
+        //                'Pedido.pedido_estado' => true,
+        //                'Pedido.pedido_estado_pedido' => array('1', '3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobaci�n.
+        //            $conditions_empresa = array();
+        //            $conditions_sucursales = array('id_empresa !=' => '1', 'Sucursale.estado_sucursal' => true);
+        //        } else {
+        //            $conditions = array('Pedido.user_id' => $this->Session->read('Auth.User.id'),
+        //                'EmpresasAprobadore.user_id' => '1',
+        //                'Pedido.pedido_estado' => true,
+        //                'Pedido.pedido_estado_pedido' => array('1', '3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobaci�n.
+        //            $conditions_empresa = array('id' => $this->Session->read('Auth.User.empresa_id'));
+        //            $conditions_sucursales = array('id_empresa' => $this->Session->read('Auth.User.empresa_id'), 'Sucursale.estado_sucursal' => true);
+        //        }
 
 
         $this->Pedido->set($this->data);
@@ -819,7 +847,7 @@ class PedidosController extends AppController {
         }
 
         $this->paginate = array('limit' => 500, 'order' => array(
-                'Pedido.id' => 'desc'
+            'Pedido.id' => 'desc'
         ));
         $this->set('pedidos', $this->paginate($conditions));
 
@@ -837,7 +865,8 @@ class PedidosController extends AppController {
         $this->set(compact('empresas', 'estados', 'sucursales', 'tipo_pedido'));
     }
 
-    function aprobar_orden() {
+    function aprobar_orden()
+    {
         ini_set('memory_limit', '1024M');
         date_default_timezone_set('America/Bogota');
         //31052018
@@ -852,21 +881,21 @@ class PedidosController extends AppController {
         $conditions = array('Pedido.pedido_estado' => true, 'Pedido.pedido_estado_pedido' => array('3'), 'EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'EmpresasAprobadore.empresa_id' => array_unique($empresas_permisos), 'EmpresasAprobadore.sucursal_id' => $sucursales_permisos);
         $conditions_empresa = array('id' => $empresas_permisos);
         $conditions_sucursales = array('Sucursale.id' => $sucursales_permisos, 'Sucursale.estado_sucursal' => true);
-//31052018
-//        if ($this->Session->read('Auth.User.rol_id') == '1') {
-//            $conditions = array('EmpresasAprobadore.user_id' => '1', // $this->Session->read('Auth.User.id'),
-//                'Pedido.pedido_estado' => true,
-//                'Pedido.pedido_estado_pedido' => array('3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobación.
-//
-//            $conditions_empresa = array();
-//            $conditions_sucursales = array('id_empresa !=' => '1', 'Sucursale.estado_sucursal' => true);
-//        } else {
-//            $conditions = array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'),
-//                'Pedido.pedido_estado' => true,
-//                'Pedido.pedido_estado_pedido' => array('3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobación.            
-//            $conditions_empresa = array('id' => $this->Session->read('Auth.User.empresa_id'));
-//            $conditions_sucursales = array('id_empresa' => $this->Session->read('Auth.User.empresa_id'), 'Sucursale.estado_sucursal' => true);
-//        }
+        //31052018
+        //        if ($this->Session->read('Auth.User.rol_id') == '1') {
+        //            $conditions = array('EmpresasAprobadore.user_id' => '1', // $this->Session->read('Auth.User.id'),
+        //                'Pedido.pedido_estado' => true,
+        //                'Pedido.pedido_estado_pedido' => array('3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobación.
+        //
+        //            $conditions_empresa = array();
+        //            $conditions_sucursales = array('id_empresa !=' => '1', 'Sucursale.estado_sucursal' => true);
+        //        } else {
+        //            $conditions = array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'),
+        //                'Pedido.pedido_estado' => true,
+        //                'Pedido.pedido_estado_pedido' => array('3'/* , '4' */)); // Muestra solo las que estan pendientes de aprobación.            
+        //            $conditions_empresa = array('id' => $this->Session->read('Auth.User.empresa_id'));
+        //            $conditions_sucursales = array('id_empresa' => $this->Session->read('Auth.User.empresa_id'), 'Sucursale.estado_sucursal' => true);
+        //        }
 
         $this->Pedido->set($this->data);
         if (!empty($this->data)) {
@@ -904,7 +933,7 @@ class PedidosController extends AppController {
         }
 
         $this->paginate = array('limit' => 500, 'order' => array(
-                'Pedido.id' => 'desc'
+            'Pedido.id' => 'desc'
         ));
         $this->set('pedidos', $this->paginate($conditions));
 
@@ -922,7 +951,8 @@ class PedidosController extends AppController {
         $this->set(compact('empresas', 'sucursales', 'tipo_pedido'));
     }
 
-    function aprobar_pedido($id = null) {
+    function aprobar_pedido($id = null)
+    {
         ini_set('memory_limit', '512M');
         date_default_timezone_set('America/Bogota');
         if (!empty($id)) {
@@ -953,7 +983,8 @@ class PedidosController extends AppController {
         }
     }
 
-    function aprobar_masivo() {
+    function aprobar_masivo()
+    {
         ini_set('memory_limit', '512M');
         date_default_timezone_set('America/Bogota');
         $ordenes_aprobadas = '';
@@ -966,9 +997,10 @@ class PedidosController extends AppController {
         $this->redirect(array('controller' => 'pedidos', 'action' => 'aprobar_orden'));
     }
 
-    function aprobar_pedido_ok($id = null) {
+    function aprobar_pedido_ok($id = null)
+    {
         date_default_timezone_set('America/Bogota');
-        if ($this->RequestHandler->isAjax() || !empty($id)) {//condición que pregunta si la petición es AJAX
+        if ($this->RequestHandler->isAjax() || !empty($id)) { //condición que pregunta si la petición es AJAX
             if (!empty($_REQUEST['PedidosDetalleId']) || !empty($id)) {
                 if (!empty($id)) {
                     $_REQUEST['PedidosDetalleId'] = $id;
@@ -1042,25 +1074,30 @@ class PedidosController extends AppController {
         }
     }
 
-    function pedido_pdf($id = null) {
+    function pedido_pdf($id = null)
+    {
         Configure::write('debug', 0);
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
         $this->set('detalles', $detalles);
     }
-    
-    function pedido_pdf_shalom($id = null) {
+
+    function pedido_pdf_shalom($id = null)
+    {
 
         Configure::write('debug', 0);
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        
+        $localidad = $this->LocalidadRelRuta->find('first', array("conditions" => ["LocalidadRelRuta.id" => $detalles[0]["Sucursale"]["localidad_ruta_id"]]));
+
         $this->set('detalles', $detalles);
+        $this->set('localidad', $localidad);
     }
 
-    function pedido_pdf_v2($id = null) {
+    function pedido_pdf_v2($id = null)
+    {
         Configure::write('debug', 0);
         $this->layout = 'pdf';
 
@@ -1069,7 +1106,8 @@ class PedidosController extends AppController {
         $this->set('detalles', $detalles);
     }
 
-    function pedido_pdf_masivo() {
+    function pedido_pdf_masivo()
+    {
         Configure::write('debug', 0);
         ini_set('memory_limit', 536870912);
         // ini_set('memory_limit', '3072M');
@@ -1081,7 +1119,9 @@ class PedidosController extends AppController {
             // $detalles = $this->PedidosDetalle->find('all', array('order' => 'TipoCategoria.tipo_categoria_orden,Producto.codigo_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))));
             $detalles = $this->PedidosDetalle->find('all', array(
                 'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto',
-                'order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))));
+                'order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))
+            ));
+
             $this->set('detalles', $detalles);
         } else {
             $this->set('pedidos', array());
@@ -1089,19 +1129,34 @@ class PedidosController extends AppController {
         }
     }
 
-    function pedido_pdf_masivo_shalom() {
+    function pedido_pdf_masivo_shalom()
+    {
         Configure::write('debug', 0);
         ini_set('memory_limit', 536870912);
         // ini_set('memory_limit', '3072M');
         $this->layout = 'pdf';
         if (count($this->Session->read('Pedido.pdf_masivos')) > 0) {
-            $pedidos = $this->Pedido->find('all', array('order' => 'Pedido.id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'Pedido.pedido_estado' => true, 'Pedido.id' => $this->Session->read('Pedido.pdf_masivos'))));
+            $pedidos = array();
+            $pedidos_data = $this->Pedido->find('all', array('order' => 'Pedido.id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'Pedido.pedido_estado' => true, 'Pedido.id' => $this->Session->read('Pedido.pdf_masivos'))));
+
+            foreach ($pedidos_data as $detalle) {
+                $localidad_nombre = $this->LocalidadRelRuta->find('first', array(
+                    "conditions" => ["LocalidadRelRuta.id" => $detalle["Sucursale"]["localidad_ruta_id"]],
+                    "fields" => "LocalidadRelRuta.nombre_rel"
+                ));
+                if ($localidad_nombre) {
+                    $detalle["LocalidadRelRuta"] = $localidad_nombre["LocalidadRelRuta"]["nombre_rel"];
+                }
+                array_push($pedidos, $detalle);
+            };
+            
             $this->set('pedidos', $pedidos);
 
-            // $detalles = $this->PedidosDetalle->find('all', array('order' => 'TipoCategoria.tipo_categoria_orden,Producto.codigo_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))));
             $detalles = $this->PedidosDetalle->find('all', array(
                 'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto',
-                'order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))));
+                'order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))
+            ));
+            
             $this->set('detalles', $detalles);
         } else {
             $this->set('pedidos', array());
@@ -1109,9 +1164,10 @@ class PedidosController extends AppController {
         }
     }
 
-    function search_orden() {
+    function search_orden()
+    {
         ini_set('memory_limit', '1024M');
-//31052018
+        //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('fields' => 'DISTINCT EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
         $sucursales_permisos = array();
@@ -1123,7 +1179,7 @@ class PedidosController extends AppController {
         $conditions = array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'EmpresasAprobadore.empresa_id' => array_unique($empresas_permisos), 'EmpresasAprobadore.sucursal_id' => $sucursales_permisos);
         $conditions_empresa = array('id' => array_unique($empresas_permisos));
         $conditions_sucursales = array('Sucursale.id' => array_unique($sucursales_permisos), 'Sucursale.estado_sucursal' => true);
-//31052018
+        //31052018
 
         /*
           if ($this->Session->read('Auth.User.rol_id') == '2') {
@@ -1193,14 +1249,14 @@ class PedidosController extends AppController {
                 array_push($conditions, $where);
             }
             $this->paginate = array('limit' => 500, 'order' => array(
-                    'Pedido.id' => 'desc'
+                'Pedido.id' => 'desc'
             ));
             $this->set('pedidos', $this->paginate($conditions));
         } else {
             $this->Pedido->recursive = 0;
             $this->helpers['Paginator'] = array('ajax' => 'Ajax');
             $this->paginate = array('limit' => 100, 'order' => array(
-                    'Pedido.id' => 'desc'
+                'Pedido.id' => 'desc'
             ));
             $this->set('pedidos', $this->paginate($conditions));
         }
@@ -1219,7 +1275,8 @@ class PedidosController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function despacho() {
+    function despacho()
+    {
         ini_set('memory_limit', '512M');
         date_default_timezone_set('America/Bogota');
         //31052018
@@ -1274,13 +1331,13 @@ class PedidosController extends AppController {
                 }
             }
 
-//                echo $key;
-//                echo ";";
-//                echo $value;
-//                /*echo $this->data['Pedido'][$key];
-//                echo ";";
-//                echo $this->data['Pedido']['guia_' . $key];*/
-//                echo "<br>";
+            //                echo $key;
+            //                echo ";";
+            //                echo $value;
+            //                /*echo $this->data['Pedido'][$key];
+            //                echo ";";
+            //                echo $this->data['Pedido']['guia_' . $key];*/
+            //                echo "<br>";
 
 
             /* if ($value > 0) {
@@ -1342,7 +1399,7 @@ class PedidosController extends AppController {
         $this->Pedido->recursive = 0;
         $this->helpers['Paginator'] = array('ajax' => 'Ajax');
         $this->paginate = array('limit' => 250, 'order' => array(
-                'Pedido.id' => 'desc'
+            'Pedido.id' => 'desc'
         ));
         $this->set('pedidos', $this->paginate($conditions));
 
@@ -1360,7 +1417,8 @@ class PedidosController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function entregas_parciales($id = null) {
+    function entregas_parciales($id = null)
+    {
         if (!empty($id)) {
             $pedido_detalle = $this->PedidosDetalle->find('all', array('order' => 'TipoCategoria.tipo_categoria_orden,Producto.codigo_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'Pedido.pedido_estado_pedido' => '4', 'PedidosDetalle.pedido_id' => base64_decode($id))));
             $this->set('detalles', $pedido_detalle);
@@ -1390,7 +1448,8 @@ class PedidosController extends AppController {
         }
     }
 
-    function entregas_parciales_refresh($id = null) {
+    function entregas_parciales_refresh($id = null)
+    {
         if (!empty($id)) {
             $pedido_detalle = $this->PedidosDetalle->find('all', array('fields' => 'PedidosDetalle.pedido_id', 'groupby' => 'PedidosDetalle.pedido_id', 'conditions' => array('Pedido.pedido_estado' => true, 'Pedido.pedido_estado_pedido' => '4', 'PedidosDetalle.id' => $id)));
             if ($this->PedidosDetalle->updateAll(array("PedidosDetalle.fecha_pedido_parcial" => null, "PedidosDetalle.cantidad_pedido_parcial" => null), array("PedidosDetalle.id" => $id))) {
@@ -1402,7 +1461,8 @@ class PedidosController extends AppController {
 
     /* ENTREGADO */
 
-    function entregado() {
+    function entregado()
+    {
         ini_set('memory_limit', '512M');
         date_default_timezone_set('America/Bogota');
         //31052018
@@ -1451,7 +1511,6 @@ class PedidosController extends AppController {
                                 rename($dir_arc . $this->data['Pedido']['archivo_cumplido_' . $key]['name'], $dir_arc . $key . '_' . $this->data['Pedido']['guia_' . $key] . '.' . $aux[1]);
                                 $archivo_cumplido = $dir_arc . $key . '_' . $this->data['Pedido']['guia_' . $key] . '.' . $aux[1];
                                 if ($this->Pedido->updateAll(array("Pedido.archivo_cumplido" => "'" . $archivo_cumplido . "'"), array("Pedido.id" => $value, 'Pedido.pedido_estado_pedido' => '6'))) {
-                                    
                                 }
                             }
                         }
@@ -1508,7 +1567,7 @@ class PedidosController extends AppController {
         $this->Pedido->recursive = 0;
         $this->helpers['Paginator'] = array('ajax' => 'Ajax');
         $this->paginate = array('limit' => 250, 'order' => array(
-                'Pedido.id' => 'desc'
+            'Pedido.id' => 'desc'
         ));
         $this->set('pedidos', $this->paginate($conditions));
 
@@ -1528,7 +1587,8 @@ class PedidosController extends AppController {
 
     /* FIN ENTREGADO */
 
-    function copiar_pedido($id = null) {
+    function copiar_pedido($id = null)
+    {
         date_default_timezone_set('America/Bogota');
         if (!empty($id)) {
             $this->set('detalles', $this->PedidosDetalle->find('all', array('order' => 'PedidosDetalle.producto_id', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id))));
@@ -1652,7 +1712,8 @@ class PedidosController extends AppController {
         $this->set(compact('empresas', 'sucursales'));
     }
 
-    function rotulos($id = null) {
+    function rotulos($id = null)
+    {
         $this->layout = 'none';
 
         $id = $this->params['url']['id'];
@@ -1664,7 +1725,8 @@ class PedidosController extends AppController {
         }
     }
 
-    function facturado() {
+    function facturado()
+    {
         ini_set('memory_limit', '512M');
         date_default_timezone_set('America/Bogota');
         $pedido_inicial = 18139;
@@ -1747,7 +1809,7 @@ class PedidosController extends AppController {
         $this->Pedido->recursive = 0;
         $this->helpers['Paginator'] = array('ajax' => 'Ajax');
         $this->paginate = array('limit' => 500, 'order' => array(
-                'Pedido.numero_factura' => 'desc'
+            'Pedido.numero_factura' => 'desc'
         ));
         $this->set('pedidos', $this->paginate($conditions));
 
@@ -1765,11 +1827,9 @@ class PedidosController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function auditorias($id = null) {
+    function auditorias($id = null)
+    {
         $auditorias = $this->PedidosAudit->find('all', array('conditions' => array('PedidosAudit.pedido_id' => base64_decode($id))));
         $this->set('auditorias', $auditorias);
     }
-
 }
-
-?>

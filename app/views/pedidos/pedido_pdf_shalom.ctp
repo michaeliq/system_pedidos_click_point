@@ -136,7 +136,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     $timestamp = strtotime($detalles[0]['Pedido']['fecha_entrega_1']);
     $semana_numero =  idate('W', $timestamp);
     $fecha_entrega = date("j-n-Y",$timestamp); 
-
+    $localidad_nombre = explode("-",$localidad["LocalidadRelRuta"]["nombre_rel"])[0];
     $html = '
     <table>
         <tr style="">
@@ -165,7 +165,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     <table>
         <tr>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>Localidad de entrega:</b></td>
-            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>' . $detalles['0']['Municipio']['nombre_municipio'] . '</b></td>
+            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>' . $localidad_nombre . '</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>Nombre de unidad operativa:</b></td>
             <td style="border-top: 1px solid #000000; width:40%; border-right: 1px solid #000000; border-left: 1px solid #000000;border-bottom: 1px solid #000000;" align="center"><b>' . $detalles['0']['Sucursale']['nombre_sucursal'] . '</b></td>
         </tr>

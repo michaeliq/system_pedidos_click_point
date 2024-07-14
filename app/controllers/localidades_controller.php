@@ -4,7 +4,8 @@ class LocalidadesController extends AppController
 {
 
     var $name = "Localidades";
-    var $uses = array("Localidad", "Sucursale", "Ruta");
+    var $helpers = array('Ajax', 'Html', 'Javascript');
+    var $uses = array("Localidad", "Sucursale", "Ruta", "TempLocalidad", "LocalidadRelRuta");
     var $components = array("RequestHandler", "Auth", "Permisos");
 
     function isAuthorized()
@@ -45,11 +46,10 @@ class LocalidadesController extends AppController
             if ($this->Localidad->save(array(
                 "Localidad" => array(
                     "nombre_localidad" => $this->data["Localidades"]["nombre_localidad"],
-                    "ruta_id" => $this->data["Localidades"]["ruta_id"],
                 )
             ))) {
                 $this->Session->setFlash('Localidad ' . $this->data["Localidad"]["nombre_localidad"] . ' Agregada', 'flash_success');
-                $this->redirect(array('controller' => 'localidades', 'action' => 'index'));
+                $this->redirect("/localidades/index");
             } else {
                 $this->Session->setFlash('La Localidad no se puede guardar, verifique los campos obligatorios e intente de nuevo.', 'flash_failure');
             }
@@ -66,16 +66,15 @@ class LocalidadesController extends AppController
                 "Localidad" => array(
                     "localidad_id" => $this->data["Localidades"]["localidad_id"],
                     "nombre_localidad" => $this->data["Localidades"]["nombre_localidad"],
-                    "ruta_id" => $this->data["Localidades"]["ruta_id"],
                 )
             ))) {
                 $this->Session->setFlash('Localidad ' . $this->data["Localidad"]["nombre_localidad"] . ' ha sido actualizada', 'flash_success');
-                $this->redirect(array('controller' => 'localidades', 'action' => 'index'));
+                $this->redirect("/localidades/index");
             } else {
                 $this->Session->setFlash('La Localidad no se puedo actualizar, verifique e intente de nuevo.', 'flash_failure');
             }
         }
-        $this->set("localidad", $this->Localidad->read(null,$location_id));
+        $this->set("localidad", $this->Localidad->read(null, $location_id));
         $this->set(compact("rutas"));
     }
 
@@ -83,25 +82,210 @@ class LocalidadesController extends AppController
     {
         if (!$location_id) {
             $this->Session->setFlash('ID de Ruta faltante', 'flash_failure');
-            $this->redirect(array('action' => 'index'));
+            $this->redirect("/localidades/index");
         } else {
             $ruta = $this->Localidad->find("first", array("conditions" => array("Localidad.localidad_id" => $location_id)));
             if ($ruta) {
                 $this->Localidad->delete($location_id, false);
                 $this->Session->setFlash('Ruta eliminada', 'flash_success');
-                $this->redirect(array('action' => 'index'));
+                $this->redirect("/localidades/index");
             } else {
                 $this->Session->setFlash('ID de Ruta no encontrado', 'flash_failure');
-                $this->redirect(array('action' => 'index'));
+                $this->redirect("/localidades/index");
             }
         }
     }
 
     function upload_file_locations()
     {
+        date_default_timezone_set('America/Bogota');
+        $dir_file = 'localidades/masivos/';
+        $max_file = 20145728;
+        $localidades_validas = array();
+        if (!is_dir($dir_file)) {
+            mkdir($dir_file, 0777, true);
+        }
+
+        if ($this->RequestHandler->isPost()) {
+
+            if ($this->data['Localidades']['archivo_csv']['name']) {
+                if (($this->data['Localidades']['archivo_csv']['type'] == 'text/csv') || ($this->data['Localidades']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
+                    if ($this->data['Localidades']['archivo_csv']['size'] < $max_file) {
+                        move_uploaded_file($this->data['Localidades']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Localidades']['archivo_csv']['name']);
+                        $file = fopen($dir_file . '/' . $this->data['Localidades']['archivo_csv']['name'], 'r');
+                        if ($file) {
+                            $row = 0;
+                            $headers = [];
+                            while (($data = fgetcsv($file, null, ";")) !== FALSE) {
+                                #echo '<pre>'; print_r($data); echo '</pre>';
+                                if ($row == 0) {
+                                    $headers = $data;
+                                } else {
+                                    $data_localidades = array();
+                                    for ($i = 0; $i < count($headers); $i++) {
+                                        $data_localidades[$headers[$i]] = utf8_encode($data[$i]);
+                                    }
+                                    $localidad_from_db = $this->Localidad->find("first", array(
+                                        'conditions' => array(
+                                            'Localidad.localidad_id' => $data_localidades["ID"]
+                                        )
+                                    ));
+                                    $sql_truncate = "DELETE FROM temp_localidades where localidad_id = " . $data_localidades["ID"] . ";";
+                                    $this->TempLocalidad->query($sql_truncate);
+
+                                    $this->TempLocalidad->create();
+                                    $this->TempLocalidad->save(array(
+                                        "TempLocalidad" => array(
+                                            "nombre_localidad" => $data_localidades["LOCALIDAD"],
+                                            "localidad_id" => $data_localidades["ID"],
+                                            "to_create" => $localidad_from_db ? false : true,
+                                        )
+                                    ));
+                                    if ($localidad_from_db) {
+                                        $data_localidades["existe"] = true;
+                                    } else {
+                                        $data_localidades["existe"] = false;
+                                    }
+                                    array_push($localidades_validas, $data_localidades);
+                                }
+                                $row++;
+                            }
+                        }
+
+                        $this->set("localidades_validas", $localidades_validas);
+                        fclose($file);
+                        unlink($dir_file . '/' . $this->data['Localidades']['archivo_csv']['name']);
+                    } else {
+                        $this->set("localidades_validas", $localidades_validas);
+                        $this->Session->setFlash('El tamaño del archivo supera el maximo establecido (20MB).', 'flash_failure');
+                    }
+                } else {
+                    $this->set("localidades_validas", $localidades_validas);
+                    $this->Session->setFlash('El tipo de archivo no es el admitido para este proceso.', 'flash_failure');
+                }
+            } else {
+                $this->set("localidades_validas", $localidades_validas);
+                $this->Session->setFlash('Hubo un error al cargar el archivo. Verifique y vuelva a intentar.', 'flash_failure');
+            }
+        } else {
+            $this->set("localidades_validas", $localidades_validas);
+        }
     }
 
     function add_many_locations()
     {
+        $localidades_validas = [];
+        $data = array();
+        $id_localidades = $this->data["Localidades"]["id_localidades"];
+        $localidades_temporales = $this->TempLocalidad->find("all", array("conditions" => array("TempLocalidad.localidad_id" => explode(",", $id_localidades)), "fields" => array("TempLocalidad.nombre_localidad", "TempLocalidad.localidad_id", "TempLocalidad.to_create")));
+
+        foreach ($localidades_temporales as $localidad_temp) {
+            if ($localidad_temp["TempLocalidad"]["to_create"]) {
+
+                array_push(
+                    $data,
+                    array("Localidad" => array(
+                        "nombre_localidad" => $localidad_temp["TempLocalidad"]["nombre_localidad"],
+                    ))
+                );
+            } else {
+                $this->Localidad->save(array(
+                    "Localidad" => array(
+                        "nombre_localidad" => $localidad_temp["TempLocalidad"]["nombre_localidad"],
+                        "localidad_id" => $localidad_temp["TempLocalidad"]["localidad_id"],
+                    )
+                ));
+            }
+        };
+        $this->Localidad->saveAll($data);
+        $sql_truncate = "DELETE FROM temp_localidades WHERE localidad_id IN (" . $id_localidades . ");";
+        $this->Localidad->query($sql_truncate);
+
+        $this->Session->setFlash('Se han añadido las localidades validas', 'flash_success');
+        $this->set("localidades_validas", $localidades_validas);
+        $this->redirect(array('controller' => 'localidades', 'action' => 'upload_file_locations'));
+    }
+
+    function add_location_routes_relations()
+    {
+        date_default_timezone_set('America/Bogota');
+        $dir_file = 'localidades/masivos/';
+        $max_file = 20145728;
+        $localidades_validas = array();
+
+        if (!is_dir($dir_file)) {
+            mkdir($dir_file, 0777, true);
+        }
+
+        if ($this->RequestHandler->isPost()) {
+
+            if ($this->data['Localidades']['archivo_csv']['name']) {
+                if (($this->data['Localidades']['archivo_csv']['type'] == 'text/csv') || ($this->data['Localidades']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
+                    if ($this->data['Localidades']['archivo_csv']['size'] < $max_file) {
+                        move_uploaded_file($this->data['Localidades']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Localidades']['archivo_csv']['name']);
+                        $file = fopen($dir_file . '/' . $this->data['Localidades']['archivo_csv']['name'], 'r');
+                        if ($file) {
+                            $row = 0;
+                            $headers = [];
+                            $sql_query_instert_array = array();
+                            while (($data = fgetcsv($file, null, ";")) !== FALSE) {
+                                #echo '<pre>'; print_r($data); echo '</pre>';
+                                if ($row == 0) {
+                                    $headers = $data;
+                                } else {
+                                    $data_localidades = array();
+                                    for ($i = 0; $i < count($headers); $i++) {
+                                        $data_localidades[$headers[$i]] = utf8_encode($data[$i]);
+                                    }
+                                    $localidad_from_db = $this->LocalidadRelRuta->find("first", array(
+                                        'conditions' => array(
+                                            'LocalidadRelRuta.codigo_sirbe' => $data_localidades["CODIGO_SIRBE"]
+                                        ),
+                                        'fields' => array("LocalidadRelRuta.codigo_sirbe"),
+                                    ));
+
+                                    if ($localidad_from_db) {
+                                        $data_localidades["existe"] = true;
+                                    } else {
+                                        $data_localidades["existe"] = false;
+                                    }
+
+                                    array_push($sql_query_instert_array, array(
+                                        "LocalidadRelRuta" => array(
+                                            "localidad_id" => $data_localidades["LOCALIDAD"],
+                                            "ruta_id" => $data_localidades["RUTA"],
+                                            "codigo_sirbe" => $data_localidades["CODIGO_SIRBE"],
+                                            "nombre_rel" => $data_localidades["LOCALIDAD_N"] . " - " . $data_localidades["RUTA_N"],
+                                        )
+                                    ));
+
+                                    array_push($localidades_validas, $data_localidades);
+                                }
+                                $row++;
+                            }
+
+                            $this->LocalidadRelRuta->create();
+                            $this->LocalidadRelRuta->saveAll($sql_query_instert_array);
+                        }
+
+
+                        $this->set("localidades_validas", $localidades_validas);
+                        fclose($file);
+                        unlink($dir_file . '/' . $this->data['Localidades']['archivo_csv']['name']);
+                    } else {
+                        $this->set("localidades_validas", $localidades_validas);
+                        $this->Session->setFlash('El tamaño del archivo supera el maximo establecido (20MB).', 'flash_failure');
+                    }
+                } else {
+                    $this->set("localidades_validas", $localidades_validas);
+                    $this->Session->setFlash('El tipo de archivo no es el admitido para este proceso.', 'flash_failure');
+                }
+            } else {
+                $this->set("localidades_validas", $localidades_validas);
+                $this->Session->setFlash('Hubo un error al cargar el archivo. Verifique y vuelva a intentar.', 'flash_failure');
+            }
+        } else {
+            $this->set("localidades_validas", $localidades_validas);
+        }
     }
 }

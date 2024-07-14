@@ -90,6 +90,16 @@ class Sucursale extends AppModel {
             ),
         ),
     );
+
+    var $hasMany = array(
+        'LocalidadRelRuta' => array(
+            'className' => 'LocalidadRelRuta',
+            'foreignKey' => 'id',
+            'conditions' => '',
+            'fields' => 'LocalidadRelRuta.nombre_rel',
+        ),
+    );
+
     var $belongsTo = array(
         'Municipio' => array(
             'className' => 'Municipio',
@@ -115,13 +125,6 @@ class Sucursale extends AppModel {
         'Regionale' => array(
             'className' => 'Regionale',
             'foreignKey' => 'regional_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        ),
-        'Ruta' => array(
-            'className' => 'Ruta',
-            'foreignKey' => 'ruta_id',
             'conditions' => '',
             'fields' => '',
             'order' => ''
