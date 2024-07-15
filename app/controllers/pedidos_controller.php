@@ -311,6 +311,7 @@ class PedidosController extends AppController
         $this->set('municipio_bs', $municipio_bs);
         // echo $municipio_bs['Municipio']['municipio_bogota_sabana'];
         if (!empty($this->data)) {
+            
             // Eliminar los productos que tenga anteriormente el pedido
             $delete = "DELETE FROM pedidos_detalles WHERE pedido_id =" . $this->Session->read('Pedido.pedido_id') . ";";
             $this->PedidosDetalle->query($delete);
@@ -321,12 +322,14 @@ class PedidosController extends AppController
                 $this->PedidosDetalle->create();
 
                 if ($this->data['PedidosDetalle']['cantidad_pedido_' . $producto['Producto']['id']] > 0) {
-
+                    
                     $pedido_detalle = array(
                         'pedido_id' => $this->Session->read('Pedido.pedido_id'),
                         'producto_id' => $producto['Producto']['id'],
                         'precio_producto' => $this->data['PedidosDetalle']['precio_producto_' . $producto['Producto']['id']],
                         'cantidad_pedido' => $this->data['PedidosDetalle']['cantidad_pedido_' . $producto['Producto']['id']],
+                        'lote' => $this->data['PedidosDetalle']['lote_' . $producto['Producto']['id']],
+                        'fecha_expiracion' => $this->data['PedidosDetalle']['fecha_expiracion_' . $producto['Producto']['id']],
                         'iva_producto' => $producto['Producto']['iva_producto'],
                         'medida_producto' => $producto['Producto']['medida_producto'],
                         'tipo_categoria_id' => $producto['Producto']['tipo_categoria_id'],
@@ -1153,7 +1156,7 @@ class PedidosController extends AppController
             $this->set('pedidos', $pedidos);
 
             $detalles = $this->PedidosDetalle->find('all', array(
-                'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto',
+                'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto,PedidosDetalle.lote,PedidosDetalle.fecha_expiracion',
                 'order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))
             ));
             

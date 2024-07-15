@@ -29,6 +29,15 @@ class PedidosDetalle extends AppModel {
                 'message' => 'Este campo solo acepta valores numéricos.',
             ),
         ),
+        'lote' => array(
+            'maxlength' => array(
+                'rule' => array('maxlength', '50'),
+                'message' => 'Este campo tiene un limite de caracteres (50).',
+            ),
+        ),
+        'fecha_expiración' => array(
+            'datetime'
+        ),
     );
     var $belongsTo = array(
         'Pedido' => array(

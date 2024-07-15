@@ -136,7 +136,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     $timestamp = strtotime($detalles[0]['Pedido']['fecha_entrega_1']);
     $semana_numero =  idate('W', $timestamp);
     $fecha_entrega = date("j-n-Y",$timestamp); 
-    $localidad_nombre = explode("-",$localidad["LocalidadRelRuta"]["nombre_rel"])[0];
+    $localidad_nombre = explode("-",$localidad["LocalidadRelRuta"]["nombre_rel"])[0]; 
     $html = '
     <table>
         <tr style="">
@@ -184,7 +184,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;" width="15%" align="center"><b>PRESENTACIÓN</b></td>
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;" width="10%" align="center"><b>CANTIDAD</b></td>        
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;" width="10%" align="center"><b>LOTE</b></td>        
-        <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;" width="15%" align="center"><b>FECHA DE VEMCIMIENTO</b></td>        
+        <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;" width="15%" align="center"><b>FECHA DE VENCIMIENTO</b></td>        
     </tr>';
     $i = 1;
     $total_final = 0;
@@ -196,8 +196,9 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
         $marca = $detalle['Producto']['marca_producto'];
         $unidad = utf8_decode($detalle['Producto']['medida_producto']);
         $cantidad = $detalle['PedidosDetalle']['cantidad_pedido'];
-        $lote = 12;
-        $fecha_vencimiento = "12-04-2024";
+        $lote = $detalle['PedidosDetalle']['lote'];
+        $timestamp_expiracion = strtotime($detalle['PedidosDetalle']['fecha_expiracion']);
+        $fecha_vencimiento = date("j-n-Y",$timestamp_expiracion); 
         $observacion_producto = $detalle['PedidosDetalle']['observacion_producto'];
         $cantidad_final = $cantidad_final + $detalle['PedidosDetalle']['cantidad_pedido'];
 

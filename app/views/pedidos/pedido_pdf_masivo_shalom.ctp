@@ -7,8 +7,9 @@ ob_end_clean();
 
 class MYPDF extends TCPDF
 {
-    public function GetDate(){
-        return $this-> getAliasNumPage()." de ".$this->getAliasNbPages();
+    public function GetDate()
+    {
+        return $this->getAliasNumPage() . " de " . $this->getAliasNbPages();
     }
 
     //Page header
@@ -102,7 +103,7 @@ foreach ($pedidos as $pedido) :
     $pdf->AddPage();
     // Print a text
     $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false, 300);
-    $page_num = "<span style='display=flex;'>Página ".$pdf->GetDate()."</span>";
+    $page_num = "<span style='display=flex;'>Página " . $pdf->GetDate() . "</span>";
     $html = '<table>
     <tr>
         <td style="border-top: 1px solid #000000;  border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000; width:17%" align="center">
@@ -121,7 +122,7 @@ foreach ($pedidos as $pedido) :
                     <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center">FORMATO NO CONTROLADO</td></tr>
                     <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000" align="center"></td></tr>
                     <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000" align="center">Versión: 2</td></tr>
-                    <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center">'.$page_num.'</td></tr>
+                    <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center">' . $page_num . '</td></tr>
             </table>
         </td>
         </tr>
@@ -129,8 +130,8 @@ foreach ($pedidos as $pedido) :
     $pdf->writeHTML($html, false, false, false, false, '');
     $timestamp = strtotime($pedido['Pedido']['fecha_entrega_1']);
     $semana_numero =  idate('W', $timestamp);
-    $fecha_entrega = date("j-n-Y",$timestamp);
-    $nombre_localidad = explode("-",$pedido['LocalidadRelRuta'])[0];
+    $fecha_entrega = date("j-n-Y", $timestamp);
+    $nombre_localidad = explode("-", $pedido['LocalidadRelRuta'])[0];
     $html = '
     <table>
         <tr style="">
@@ -191,8 +192,9 @@ foreach ($pedidos as $pedido) :
             $marca = $detalle['Producto']['marca_producto'];
             $unidad = utf8_decode($detalle['Producto']['medida_producto']);
             $cantidad = $detalle['PedidosDetalle']['cantidad_pedido'];
-            $lote = 12;
-            $fecha_vencimiento = "12-04-2024";
+            $lote = $detalle['PedidosDetalle']['lote'];
+            $timestamp_expiracion = strtotime($detalle['PedidosDetalle']['fecha_expiracion']);
+            $fecha_vencimiento = date("j-n-Y", $timestamp_expiracion);
             $observacion_producto = $detalle['PedidosDetalle']['observacion_producto'];
             $cantidad_final = $cantidad_final + $detalle['PedidosDetalle']['cantidad_pedido'];
 
@@ -307,7 +309,7 @@ foreach ($pedidos as $pedido) :
 
     $html = '
         <table>
-            <tr><td align="left"><h4>'. $pedido['Sucursale']['direccion_sucursal'] . ' | <b>DEPARTAMENTO:</b> ' . $pedido['Departamento']['nombre_departamento'] .'</h4></td></tr>
+            <tr><td align="left"><h4>' . $pedido['Sucursale']['direccion_sucursal'] . ' | <b>DEPARTAMENTO:</b> ' . $pedido['Departamento']['nombre_departamento'] . '</h4></td></tr>
         </table>
     ';
 

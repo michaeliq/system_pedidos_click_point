@@ -329,4 +329,9 @@ $(document).ready(function () {
             $("#id_terminar_pedido").html("Terminar Pedido");
         }
     });
+    
+    const fecha_vencimiento = $(".fecha_vencimiento");
+    fecha_vencimiento.each((i, obj)=>{
+        obj.type = "date"
+    })
 });
