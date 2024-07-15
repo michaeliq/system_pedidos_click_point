@@ -1,4 +1,6 @@
 <?php
+	$env = parse_ini_file('.env');
+	define("DEBUG_MODE",$env["DEBUG_MODE"]);
 /**
  * This is core configuration file.
  *
@@ -33,7 +35,7 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 1); 
+	Configure::write('debug', DEBUG_MODE); 
 
 	// Test
 
