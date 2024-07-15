@@ -26,7 +26,7 @@ class MYPDF extends TCPDF
         // Set font
         $this->SetFont('helvetica', 'I', 8);
         // Page number
-        $this->Cell(0, 10, $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, false, 'R', 0, '', 0, false, 'T', 'M');
+        //$this->Cell(0, 10, $this->getAliasNumPage() . ' / ' . $this->getAliasNbPages(), 0, false, 'R', 0, '', 0, false, 'T', 'M');
     }
 }
 
@@ -120,9 +120,13 @@ foreach ($pedidos as $pedido) :
         <td style="border-top: 1px solid #000000;  border-right: 1px solid #000000; border-bottom: 1px solid #000000; width:20%" align="center">
             <table>
                     <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center">FORMATO NO CONTROLADO</td></tr>
-                    <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000" align="center"></td></tr>
-                    <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000" align="center">Versión: 2</td></tr>
-                    <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center">' . $page_num . '</td></tr>
+                    <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center"></td></tr>
+                    <tr><td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center">Versión: 2</td></tr>
+                    <tr>
+                        <td style="border-right: 1px solid #000000;  border-left: 1px solid #000000;" align="center">
+                            Página 1 / 1
+                        </td>
+                     </tr>
             </table>
         </td>
         </tr>
