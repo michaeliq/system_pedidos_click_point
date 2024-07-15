@@ -2,3 +2,11 @@
 /plugins
 /vendors
 .env
+*.pdf
+*.csv
+/app/webroot/informes
+/app/webroot/localidades
+/app/webroot/pedidos
+/app/webroot/rutas
+/app/webroot/pqr
+/app/webroot/sucursales
