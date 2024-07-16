@@ -447,6 +447,7 @@ class InformesController extends AppController {
     }
 
     function info_general_pedidos() {
+
         ini_set('memory_limit', '1024M');
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
@@ -462,6 +463,7 @@ class InformesController extends AppController {
         $this->set('pedidos', array());
         $this->VInformeGeneral->set($this->data);
         if (!empty($this->data)) {
+            $conditions_test = array();
 
             if (strtotime($this->data['PedidosDetalle']['pedido_fecha_inicio']) > strtotime($this->data['PedidosDetalle']['pedido_fecha_corte'])) {
                 $this->Session->setFlash(__('La fecha de inicio (' . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . ') es mayor a la fecha de corte (' . $this->data['PedidosDetalle']['pedido_fecha_corte'] . ').', true));
@@ -470,6 +472,7 @@ class InformesController extends AppController {
                 if (($this->data['PedidosDetalle']['empresa_id']) > 0) {
                     $where = "+VInformeGeneral+.+empresa_id+ = '" . $this->data['PedidosDetalle']['empresa_id'] . "'";
                     $where = str_replace('+', '"', $where);
+                    $conditions_test["VInformeGeneral.empresa_id"] = $this->data['PedidosDetalle']['empresa_id'];
                     array_push($conditions, $where);
                 } else {
                     if (count($conditions_empresa) == 0) {
@@ -484,23 +487,31 @@ class InformesController extends AppController {
                     $where = "+VInformeGeneral+.+sucursal_id+ = '" . $this->data['PedidosDetalle']['sucursal_id'] . "'";
                     $where = str_replace('+', '"', $where);
                     array_push($conditions, $where);
+                    $conditions_test["VInformeGeneral.sucursal_id"] = $this->data['PedidosDetalle']['sucursal_id'];
                 }
                 if (!empty($this->data['PedidosDetalle']['pedido_fecha_inicio']) && !empty($this->data['PedidosDetalle']['pedido_fecha_corte'])) {
                     $where = "+VInformeGeneral+.+fecha_aprobado_pedido::date+ BETWEEN +'" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "'+  AND +'" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'+";
                     $where = str_replace('+', '"', $where);
                     array_push($conditions, $where);
+                    $conditions_test["VInformeGeneral.fecha_aprobado_pedido >= "] = $this->data['PedidosDetalle']['pedido_fecha_inicio'];
+                    $conditions_test["VInformeGeneral.fecha_aprobado_pedido <= "] = $this->data['PedidosDetalle']['pedido_fecha_corte'];
                 }
                 if (($this->data['PedidosDetalle']['pedido_estado_pedido']) > 0) {
                     $where = "+VInformeGeneral+.+pedido_estado_pedido+ = '" . $this->data['PedidosDetalle']['pedido_estado_pedido'] . "'";
                     $where = str_replace('+', '"', $where);
                     array_push($conditions, $where);
+                    $conditions_test["VInformeGeneral.pedido_estado_pedido"] = $this->data['PedidosDetalle']['pedido_estado_pedido'];
                 }
                 if (($this->data['PedidosDetalle']['tipo_pedido_id']) > 0) {
                     $where = "+VInformeGeneral+.+tipo_pedido_id+ = '" . $this->data['PedidosDetalle']['tipo_pedido_id'] . "'";
                     $where = str_replace('+', '"', $where);
                     array_push($conditions, $where);
+                    $conditions_test["VInformeGeneral.tipo_pedido_id"] = $this->data['PedidosDetalle']['tipo_pedido_id'];
                 }
-                $pedidos = $this->VInformeGeneral->find('all', array('conditions' => $conditions));
+                //$pedidos = $this->VInformeGeneral->find('all', array('conditions' => $conditions));
+                $pedidos = $this->VInformeGeneral->find('all', array('conditions' => $conditions_test));
+                debug($pedidos);
+                debug($conditions_test);
                 $this->set('pedidos', $pedidos);
             }
         }
