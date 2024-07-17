@@ -170,6 +170,9 @@ class MasivosController extends AppController {
                 // Configuración de la carga
                 $dir_file = 'pedidos/masivos/';
                 $max_file = 20145728; // 20,14 MB = 20145728 byte
+                if (!is_dir($dir_file)) {
+                    mkdir($dir_file, 0777, true);
+                }
                 // Verificar que se haya cargado un archivo
                 if (!empty($this->data['Masivo']['archivo_csv']['name'])) {
                     // echo "name<br>";

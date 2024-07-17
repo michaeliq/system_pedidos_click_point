@@ -168,6 +168,7 @@ class ProductosController extends AppController {
             'PAQ' => 'PAQUETE',
             'MTS' => 'METROS',
             'KG' => 'KILOS',
+            'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
             'ROLLO' => 'ROLLO');
@@ -386,6 +387,7 @@ class ProductosController extends AppController {
             'PAQ' => 'PAQUETE',
             'MTS' => 'METROS',
             'KG' => 'KILOS',
+            'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
             'ROLLO' => 'ROLLO');
@@ -535,6 +537,7 @@ class ProductosController extends AppController {
             'PAQ' => 'PAQUETE',
             'MTS' => 'METROS',
             'KG' => 'KILOS',
+            'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
             'ROLLO' => 'ROLLO');

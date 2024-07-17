@@ -203,6 +203,7 @@ class PlantillasController extends AppController {
             'PAQ' => 'PAQUETE',
             'MTS' => 'METROS',
             'KG' => 'KILOS',
+            'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR');
         $this->set(compact('tipoCategoria', 'unidadMedida', 'tipoPedido', 'empresas', 'plantillas_base', 'regionales'));
@@ -344,6 +345,7 @@ class PlantillasController extends AppController {
             'PAQ' => 'PAQUETE',
             'MTS' => 'METROS',
             'KG' => 'KILOS',
+            'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR');
         $this->set(compact('tipoCategoria', 'unidadMedida', 'tipoPedido', 'empresas', 'regionales'));
