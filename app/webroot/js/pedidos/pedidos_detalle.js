@@ -3,6 +3,13 @@
  * and open the template in the editor.
  */
 
+$(document).ready(function () {
+    const fecha_vencimiento = $(".fecha_vencimiento");
+    fecha_vencimiento.each((i, obj)=>{
+        obj.type = "date"
+    })
+});
+
 function modificar(texto_producto, cantidad_producto, id_detalle) {
     $('#add_producto').hide();
     $('#edit_producto').show();

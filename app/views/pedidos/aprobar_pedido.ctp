@@ -103,11 +103,14 @@ foreach ($productos as $value) {
         <td><?php echo $this->Form->input('producto_id2', array('type' => 'text', 'label' => false, 'placeholder' => 'Digite el producto', 'size' => '80', 'maxlength' => '120')); ?></td>
         <td><?php echo $this->Form->input('cantidad_pedido', array('type' => 'text', 'label' => false, 'placeholder' => 'Cantidad', 'size' => '5', 'maxlength' => '4')); ?></td>
         <td><?php echo $this->Form->button('Agregar', array('type' => 'submit', 'class' => 'btn btn-success  btn-xs')); ?></td>
+        <!-- <td><?php echo $this->Form->input("fecha_expiracion", array('type' => 'text', 'label' => false, 'class' => 'fecha_vencimiento', "placeholder" => "Ingresa una fecha valida"))?></td>
+        <td><?php echo $this->Form->input("lote", array('type' => 'text', 'label' => false)) ?></td> -->
     </tr>
     <tr>
         <td colspan="3" class="text-center">
             <?php echo $this->Form->input('sucursal_id', array('type' => 'hidden','value'=>$detalles['0']['Sucursale']['id'])); ?>
             <?php echo $this->Form->input('id_pedido', array('type' => 'hidden','value'=>$id)); ?>
+            <?php echo $this->Form->button('Regresar', array('type' => 'button', 'class' => 'btn btn-warning  btn-sm', 'onclick' => 'history.back();')); ?>            
             <?php echo $this->Form->button('Cancelar Pedido', array('type' => 'button', 'class' => 'btn btn-danger  btn-sm', 'onclick' => 'cancelar_pedido_2(' . $id . ');')); ?>
             <?php echo $this->Form->button('Aprobar Pedido', array('type' => 'button', 'class' => 'btn btn-primary  btn-sm', 'onclick' => 'aprobar_pedido_ok(' . $id . ');')); ?>            
         </td>
