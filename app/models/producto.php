@@ -81,4 +81,8 @@ class Producto extends AppModel {
 
 }
 
+class ProductoTemp extends AppModel{
+    var $name = 'ProductoTemp';
+    var $useTable = 'producto_temps';
+}
 ?>

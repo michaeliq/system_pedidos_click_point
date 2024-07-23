@@ -1,13 +1,15 @@
 <?php
 
-class ProductosController extends AppController {
+class ProductosController extends AppController
+{
 
     var $name = 'Productos';
     var $helpers = array('Html', 'Ajax', 'Javascript');
-    var $components = array('RequestHandler', 'Auth', 'Permisos');
-    var $uses = array('Producto', 'TipoCategoria', 'EstadoPedido', 'MovimientosEntradasDetalle', 'PlantillasDetalle');
+    var $components = array('RequestHandler', 'Auth', 'Permisos', 'Tools');
+    var $uses = array('Producto', 'ProductoTemp', 'TipoCategoria', 'EstadoPedido', 'MovimientosEntradasDetalle', 'PlantillasDetalle');
 
-    function isAuthorized() {
+    function isAuthorized()
+    {
         $this->Auth->authorize = 'controller';
 
         $authorize = $this->Permisos->Allow('Productos', $this->Session->read('Auth.User.rol_id'));
@@ -23,14 +25,8 @@ class ProductosController extends AppController {
         }
     }
 
-    function copiar($id = null) {
-
-//        // Configure::write('debug', 2);
-//        if (!$id && empty($this->data)) {
-//            $this->Session->setFlash(__('No se encontró el producto', true));
-//            // $this->redirect(array('action' => 'index'));
-//            header("Location: ../index");
-//        }
+    function copiar($id = null)
+    {
 
         if (!empty($this->data)) {
             // Configuración de la carga
@@ -155,10 +151,9 @@ class ProductosController extends AppController {
         }
         if (empty($this->data)) {
             $this->data = $this->Producto->read(null, $id);
-            
         }
 
-        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions'=>array('TipoCategoria.estado'=>true),'order' => 'TipoCategoria.id'));
+        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions' => array('TipoCategoria.estado' => true), 'order' => 'TipoCategoria.id'));
         $unidadMedida = array(
             'UNI' => 'UNIDAD',
             'GAL' => 'GAL�N',
@@ -171,7 +166,8 @@ class ProductosController extends AppController {
             'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
-            'ROLLO' => 'ROLLO');
+            'ROLLO' => 'ROLLO'
+        );
         $this->set(compact('tipoCategoria', 'unidadMedida'));
 
         $movimientosEntradas = $this->MovimientosEntradasDetalle->find('all', array(
@@ -184,7 +180,8 @@ class ProductosController extends AppController {
         $this->set('movimientosEntradas', $movimientosEntradas);
     }
 
-    function index() {
+    function index()
+    {
         $conditions = array('Producto.estado' => true, 'Producto.mostrar_producto' => true);
 
         $this->Producto->set($this->data);
@@ -215,37 +212,27 @@ class ProductosController extends AppController {
                 $where = str_replace('+', '"', $where);
                 array_push($conditions, $where);
             }
-//            if ($this->data['Producto']['proveedor_producto'] == '0' || $this->data['Producto']['proveedor_producto'] == '1') {
-//                $where = "+Producto+.+proveedor_producto+ = '" . $this->data['Producto']['proveedor_producto'] . "'";
-//                $where = str_replace('+', '"', $where);
-//                array_push($conditions, $where);
-//            }
+            
 
-            $this->paginate = array('limit' => 300);
+            $this->paginate = array('limit' => 20);
+            $this->helpers['Paginator'] = array('ajax' => 'Ajax');
             $this->set('productos', $this->paginate($conditions));
-
-//            $this->Session->write('Paginator.index', $conditions);
-//            $conditions = $this->Session->read('Paginator.index');
         } else {
 
             $this->Producto->recursive = 0;
-            $this->paginate = array('limit' => 300);
+            $this->paginate = array('limit' => 20);
             $this->helpers['Paginator'] = array('ajax' => 'Ajax');
             $this->set('productos', $this->paginate($conditions));
         }
 
-//        $conditions = array('Producto.estado' => true);
-//        $this->paginate = array('limit' => 100);
-//        $this->Producto->recursive = 0;
-//        $this->set('productos', $this->paginate($conditions));
         $estado = array('false' => 'Inactivo', 'true' => 'Activo');
-        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions'=>array('TipoCategoria.estado'=>true),'order' => 'TipoCategoria.id'));
+        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions' => array('TipoCategoria.estado' => true), 'order' => 'TipoCategoria.id'));
         $estadoPedido = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.nombre_estado'));
         $this->set(compact('tipoCategoria', 'estadoPedido', 'estado'));
     }
 
-    function add() {
-//	Configure::write('debug', 2);
+    function add()
+    {
         if (!empty($this->data)) {
             $existe = $this->Producto->find('count', array('conditions' => array('Producto.codigo_producto' => $this->data['Producto']['codigo_producto'])));
             if ($existe > 0) {
@@ -376,7 +363,7 @@ class ProductosController extends AppController {
             }
         }
 
-        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions'=>array('TipoCategoria.estado'=>true),'order' => 'TipoCategoria.id'));
+        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions' => array('TipoCategoria.estado' => true), 'order' => 'TipoCategoria.id'));
         $estadoPedido = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.nombre_estado'));
         $unidadMedida = array(
             'UNI' => 'UNIDAD',
@@ -390,11 +377,13 @@ class ProductosController extends AppController {
             'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
-            'ROLLO' => 'ROLLO');
+            'ROLLO' => 'ROLLO'
+        );
         $this->set(compact('tipoCategoria', 'estadoPedido', 'unidadMedida'));
     }
 
-    function edit($id = null) {
+    function edit($id = null)
+    {
         // Configure::write('debug', 2);
         if (!$id && empty($this->data)) {
             $this->Session->setFlash(__('No se encontró el producto', true));
@@ -527,7 +516,7 @@ class ProductosController extends AppController {
             $this->data = $this->Producto->read(null, $id);
         }
 
-        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions'=>array('TipoCategoria.estado'=>true),'order' => 'TipoCategoria.id'));
+        $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions' => array('TipoCategoria.estado' => true), 'order' => 'TipoCategoria.id'));
         $unidadMedida = array(
             'UNI' => 'UNIDAD',
             'GAL' => 'GAL�N',
@@ -540,7 +529,8 @@ class ProductosController extends AppController {
             'LB' => 'LIBRA',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
-            'ROLLO' => 'ROLLO');
+            'ROLLO' => 'ROLLO'
+        );
         $this->set(compact('tipoCategoria', 'unidadMedida'));
 
         $movimientosEntradas = $this->MovimientosEntradasDetalle->find('all', array(
@@ -553,7 +543,8 @@ class ProductosController extends AppController {
         $this->set('movimientosEntradas', $movimientosEntradas);
     }
 
-    function edit_porcentaje($id = null) {
+    function edit_porcentaje($id = null)
+    {
         if (!empty($this->data)) {
             if (is_numeric($this->data['Producto']['porcentaje'])) {
                 $plantillas_detalles = $this->PlantillasDetalle->find('all', array('conditions' => array('PlantillasDetalle.producto_id' => $this->data['Producto']['id'])));
@@ -590,34 +581,8 @@ class ProductosController extends AppController {
         }
     }
 
-    /* function delete($id = null) {
-      if (!$id) {
-      $this->Session->setFlash(__('Producto invalido.', true));
-      // $this->redirect(array('action' => 'index'));
-      header("Location: ../index");
-      }
-      if ($id > 0) {
-      $estado = $this->Producto->find('first', array('fields' => 'Producto.estado', 'conditions' => array('Producto.id' => $id)));
-      if ($estado['Producto']['estado']) {
-      $this->Producto->updateAll(array("Producto.estado" => 'false'), array("Producto.id" => $id));
-
-      $this->Session->setFlash(__('Se ha cambiado el estado a INACTIVO el Producto.', true));
-      // $this->redirect(array('action' => 'index'));
-      header("Location: ../index");
-      } else {
-      $this->Producto->updateAll(array("Producto.estado" => 'true'), array("Producto.id" => $id));
-
-      $this->Session->setFlash(__('Se ha cambiado el estado a ACTIVO el Producto.', true));
-      // $this->redirect(array('action' => 'index'));
-      header("Location: ../index");
-      }
-      }
-      $this->Session->setFlash(__('El producto indicado no fue encontrado.', true));
-      // $this->redirect(array('action' => 'index'));
-      header("Location: ../index");
-      } */
-
-    function delete($id = null) {
+    function delete($id = null)
+    {
         if (!$id) {
             $this->Session->setFlash(__('Producto invalido.', true));
             $this->redirect(array('action' => 'index'));
@@ -640,6 +605,156 @@ class ProductosController extends AppController {
         $this->redirect(array('action' => 'index'));
     }
 
-}
+    function upload_products_file()
+    {
+        $productos_validos = array();
+        $data = array();
+        $updated = 0;
+        $created = 0;
+        $productos_ids = explode(",", $this->data["Producto"]["productos_ids"]);
+        $productos_temporales = $this->ProductoTemp->find("all", array(
+            "conditions" => array("ProductoTemp.id" => $productos_ids),
+            "fields" => ["id", "nombre_producto", "codigo_producto", "precio_producto_bs", "precio_producto", "iva_producto", "medida_producto", "presentacion_producto", "existe"]
+        ));
+        $tipo_categorias = $this->TipoCategoria->find("list", array(
+            "fields" => ["sigla_categoria", "id"],
+            "conditions" => ["TipoCategoria.estado" => true]
+        ));
 
-?>
+        foreach ($productos_temporales as $producto_temp) {
+            $categoria = str_split($producto_temp["ProductoTemp"]["codigo_producto"], 3)[0];
+            array_push($data, array(
+                "Producto" => array(
+                    "id" => null,
+                    "nombre_producto" => $producto_temp["ProductoTemp"]["nombre_producto"],
+                    "codigo_producto" => $producto_temp["ProductoTemp"]["codigo_producto"],
+                    "precio_producto_bs" => intval($producto_temp["ProductoTemp"]["precio_producto_bs"]),
+                    "precio_producto" => intval($producto_temp["ProductoTemp"]["precio_producto"]),
+                    "iva_producto" => $producto_temp["ProductoTemp"]["iva_producto"],
+                    "medida_producto" => $producto_temp["ProductoTemp"]["medida_producto"],
+                    "presentacion_producto" => $producto_temp["ProductoTemp"]["presentacion_producto"],
+                    "estado" => true,
+                    "tipo_categoria_id" => $tipo_categorias[$categoria]
+                )
+            ));
+
+            if ($producto_temp["ProductoTemp"]["existe"]) {
+                $data[count($data) - 1]["Producto"]["id"] = $producto_temp["ProductoTemp"]["id"];
+                $updated++;
+            } else {
+                $created++;
+            }
+        };
+
+        $this->Producto->saveAll($data);
+
+        $this->ProductoTemp->deleteAll(array(
+            "ProductoTemp.id" => $productos_ids
+        ), false);
+
+        $this->set("productos_validos", $productos_validos);
+
+        $this->Session->setFlash('Se actualizaron ' . $updated . ' productos. Se han creado ' . $created . ' productos', 'flash_success');
+
+        $this->redirect(array('controller' => 'productos', 'action' => 'add_many_products'));
+    }
+
+    function add_many_products()
+    {
+        $productos_validos = array();
+
+        if ($this->RequestHandler->isPost()) {
+            date_default_timezone_set('America/Bogota');
+            $dir_file = 'productos/masivos/';
+            $max_file = 20145728;
+            if (!is_dir($dir_file)) {
+                mkdir($dir_file, 0777, true);
+            }
+
+            if ($this->data['Producto']['archivo_csv']['name']) {
+                if (($this->data['Producto']['archivo_csv']['type'] == 'text/csv') || ($this->data['Producto']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
+                    if ($this->data['Producto']['archivo_csv']['size'] < $max_file) {
+                        move_uploaded_file($this->data['Producto']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Producto']['archivo_csv']['name']);
+                        $file = fopen($dir_file . '/' . $this->data['Producto']['archivo_csv']['name'], 'r');
+                        if ($file) {
+                            $row = 0;
+                            $headers = [];
+                            $products_query_add = array();
+                            $products_temp_dalete = array();
+                            while (($data = fgetcsv($file, null, ";")) !== FALSE) {
+                                if ($row == 0) {
+                                    $array_headers = array_map(function ($item_head) {
+                                        if (!empty($item_head)) {
+                                            return trim($item_head);
+                                        }
+                                    }, $data);
+                                    $headers = $array_headers;
+                                } else {
+                                    $data_productos = array();
+                                    for ($i = 0; $i < count($headers); $i++) {
+                                        $data_productos[$headers[$i]] = strtoupper(trim($data[$i]));
+                                    }
+                                    if (!empty($data_productos["COD"]) && ($data_productos["PRECIO_BG"] > 0 || $data_productos["PRECIO_NC"])) {
+                                        $producto_from_db = $this->Producto->find("first", array(
+                                            'conditions' => array(
+                                                'Producto.codigo_producto' => $data_productos["COD"]
+                                            )
+                                        ));
+                                        if ($producto_from_db) {
+                                            $data_productos["existe"] = true;
+                                        } else {
+                                            $data_productos["existe"] = false;
+                                        }
+                                        array_push($products_query_add, array(
+                                            "id" => $producto_from_db["Producto"]["id"],
+                                            "nombre_producto" => $data_productos["PRODUCTO"],
+                                            "codigo_producto" => $data_productos["COD"],
+                                            "precio_producto_bs" => intval($data_productos["PRECIO_BG"]),
+                                            "precio_producto" => intval($data_productos["PRECIO_NC"]),
+                                            "iva_producto" => floatval(str_replace(",", ".", $data_productos["IVA"])),
+                                            "medida_producto" => $data_productos["UMI"],
+                                            "presentacion_producto" => $data_productos["DESCRIPCION"],
+                                            "existe" => $data_productos["existe"],
+                                        ));
+                                        array_push($products_temp_dalete, $data_productos["COD"]);
+                                        array_push($productos_validos, $data_productos);
+                                    }
+                                }
+
+                                $row++;
+                            }
+                            $this->ProductoTemp->deleteAll(array(
+                                "ProductoTemp.codigo_producto" => $products_temp_dalete
+                            ), false);
+
+                            $this->ProductoTemp->saveAll($products_query_add);
+
+                            $productos_ids = $this->ProductoTemp->find('list', [
+                                "conditions" => ["ProductoTemp.codigo_producto" => $products_temp_dalete],
+                                "fields" => ["id"]
+                            ]);
+
+                            $this->set("productos_ids", $productos_ids);
+
+                            fclose($file);
+                            unlink($dir_file . '/' . $this->data['Producto']['archivo_csv']['name']);
+                            $this->Tools->rrmdir(explode("/",$dir_file)[0]);
+
+                            $this->Session->setFlash('Hay ' . count($productos_validos) . ' productos validos para crear o actualizar. Revisa el listado de abajo.', 'flash_info');
+
+                            $this->set("productos_validos", $productos_validos);
+                        }
+                    } else {
+                        $this->Session->setFlash('El tamaño del archivo supera el maximo establecido (20MB).', 'flash_failure');
+                    }
+                } else {
+                    $this->Session->setFlash('El tipo de archivo no es el admitido para este proceso.', 'flash_failure');
+                }
+            } else {
+                $this->Session->setFlash('Hubo un error al cargar el archivo. Verifique y vuelva a intentar.', 'flash_failure');
+            }
+        } else {
+            $this->set("productos_validos", $productos_validos);
+        }
+    }
+}

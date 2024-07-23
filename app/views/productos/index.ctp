@@ -38,7 +38,10 @@
 </div>
 <?php echo $this->Form->end(); ?>
 <div>&nbsp;</div>
-<div class="add"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nuevo Producto', true), array('action' => 'add'), array('escape' => false)); ?></div>
+<div class="row">
+    <div class="add col-md-2"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nuevo Producto', true), array('action' => 'add'), array('escape' => false)); ?></div>
+    <div class="add col-md-2"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Cargue de Productos', true), array('action' => 'add_many_products'), array('escape' => false)); ?></div>
+</div>
 <div class="index">
     <table class="table table-striped table-bordered table-hover table-condensed">
         <tr>

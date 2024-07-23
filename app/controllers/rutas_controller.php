@@ -140,7 +140,12 @@ class RutasController extends AppController
                             while (($data = fgetcsv($file, null, ";")) !== FALSE) {
                                 #echo '<pre>'; print_r($data); echo '</pre>';
                                 if ($row == 0) {
-                                    $headers = $data;
+                                    $array_headers = array_map(function($item_head){
+                                        if(!empty($item_head)){
+                                            return trim($item_head);
+                                        }
+                                    },$data);
+                                    $headers = $array_headers;
                                 } else {
                                     $data_ruta = array();
                                     for ($i = 0; $i < count($headers); $i++) {
