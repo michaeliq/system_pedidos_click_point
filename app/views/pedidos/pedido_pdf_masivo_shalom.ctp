@@ -136,12 +136,16 @@ foreach ($pedidos as $pedido) :
     $semana_numero =  idate('W', $timestamp);
     $fecha_entrega = date("j-n-Y", $timestamp);
     $nombre_localidad = explode("-", $pedido['LocalidadRelRuta'])[0];
+    $numero_remision = $pedido['Pedido']['consecutivo'];
+    if(!empty($pedido["Pedido"]["pedido_id"])){
+        $numero_remision = "$numero_remision". "-R";
+    }
     $html = '
     <table>
         <tr style="">
             <td style=" border-right: 1px solid #000000; border-left: 1px solid #000000; width:30%;" align="center"><b>Nombre del Comitente Vendedor</b></td>
             <td style=" border-right: 1px solid #000000; width:40%;" align="center"><b>GRUPO EMPRESARIAL SHALOM GES SAS</b></td>
-            <td style=" border-right: 1px solid #000000; width:30%;" align="left"><b>Numero de remisión: ' . $pedido['Pedido']['consecutivo'] . '</b></td>
+            <td style=" border-right: 1px solid #000000; width:30%;" align="left"><b>Numero de remisión: ' . $numero_remision . '</b></td>
         </tr>
     </table>
     <table>
@@ -156,7 +160,7 @@ foreach ($pedidos as $pedido) :
             <td style="border-top: 1px solid #000000; width:15%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>No operación:</b></td>
             <td style="border-top: 1px solid #000000; width:15%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>'. $pedido['Pedido']['numero_contrato'] .'</b></td>
             <td style="border-top: 1px solid #000000; width:10%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>Grupo:</b></td>
-            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '</b></td>
+            <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>' . $pedido['TipoPedido']['nombre_tipo_pedido'] . '</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>Fecha de entrega:</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>' . $fecha_entrega . '</b></td>
         </tr>

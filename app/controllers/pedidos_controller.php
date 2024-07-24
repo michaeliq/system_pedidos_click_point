@@ -1448,10 +1448,24 @@ class PedidosController extends AppController
             }
             if (!empty($this->data['PedidosDetalle']['id_pedido'])) {
                 $sql_entregas_parciales = "SELECT pedidos_entregas_parciales(" . $this->data['PedidosDetalle']['id_pedido'] . "," . $this->Session->read('Auth.User.id') . ");";
-                $this->Pedido->query($sql_entregas_parciales);
-
-                $pedido_nuevo = $this->Pedido->find('all', array('fields' => 'Pedido.id', 'conditions' => array('Pedido.pedido_id' => $this->data['PedidosDetalle']['id_pedido'])));
-                $this->redirect(array('action' => 'ver_pedido/' . $pedido_nuevo['0']['Pedido']['id']));
+                //$this->Pedido->query($sql_entregas_parciales);
+                
+                $viejo_pedido = $this->Pedido->find("first",array("conditions" => ["Pedido.id" => $this->data['PedidosDetalle']['id_pedido']]));
+                
+                $nuevo_pedido = $this->Pedido->find("first",array(
+                    "conditions" => ["pedido_id" => $this->data['PedidosDetalle']['id_pedido']],
+                    "fields" => ["Pedido.id"]
+                ));
+                
+                $this->Pedido->save(array(
+                    "Pedido" => array(
+                        "id" => $nuevo_pedido["Pedido"]["id"],
+                        "contrato" => $viejo_pedido["Pedido"]["numero_contrato"],
+                        "consecutivo" => $viejo_pedido["Pedido"]["consecutivo"],
+                    )
+                ));
+                
+                $this->redirect(array('action' => 'ver_pedido/' . $nuevo_pedido['Pedido']['id']));
             }
         }
     }

@@ -139,12 +139,17 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     $semana_numero =  idate('W', $timestamp);
     $fecha_entrega = date("j-n-Y",$timestamp); 
     $localidad_nombre = explode("-",$localidad["LocalidadRelRuta"]["nombre_rel"])[0]; 
+    $numero_remision = $detalles[0]['Pedido']['consecutivo'];
+    if(!empty($detalles[0]["Pedido"]["pedido_id"])){
+        $numero_remision = "$numero_remision". "-R";
+    }
+
     $html = '
     <table>
         <tr style="">
             <td style=" border-right: 1px solid #000000; border-left: 1px solid #000000; width:30%;" align="center"><b>Nombre del Comitente Vendedor</b></td>
             <td style=" border-right: 1px solid #000000; width:40%;" align="center"><b>GRUPO EMPRESARIAL SHALOM GES SAS</b></td>
-            <td style=" border-right: 1px solid #000000; width:30%;" align="left"><b>Numero de remisión: ' . $detalles[0]['Pedido']['consecutivo'] . '</b></td>
+            <td style=" border-right: 1px solid #000000; width:30%;" align="left"><b>Numero de remisión: ' . $numero_remision . '</b></td>
         </tr>
     </table>
     <table>
