@@ -46,6 +46,7 @@
 <table class="table table-striped table-bordered table-hover table-condensed">
     <tr>
         <th>No. Orden</th>
+        <th>No. Consecutivo</th>
         <th>Datos Empresa</th>
         <th>Fecha Orden</th>
         <th>Direcci&oacute;n Envio</th>
@@ -59,6 +60,7 @@
             ?>
     <tr>
         <td><span style='color:red;'>#000<?php echo $pedido['Pedido']['id']; ?></span></td>
+        <td><span style='color:red; font-weight: bold;'><?php echo $pedido['Pedido']['consecutivo']; ?></span></td>
         <td><b>Emp:</b> <?php echo $pedido['Empresa']['nombre_empresa'];?><br><b>Suc:</b> <?php echo $pedido['Sucursale']['nombre_sucursal'];?><br><b>Reg:</b> <?php echo $pedido['Sucursale']['regional_sucursal'];?></td>
         <td><?php echo $pedido['Pedido']['pedido_fecha'] . ' ' . $pedido['Pedido']['pedido_hora']; ?> </td>
         <td><?php echo $pedido['Departamento2']['nombre_departamento']; ?> - <?php  echo $pedido['Municipio2']['nombre_municipio']; ?><br><?php echo $pedido['Sucursale']['direccion_sucursal']; ?> </td>

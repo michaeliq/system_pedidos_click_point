@@ -25,10 +25,8 @@ foreach ($productos as $value) {
 <h2>ORDEN DE PEDIDO <span style='color:red;'>#000<?php echo $id; ?></span></h2>
 <table class="table table-hover">
     <tr>
-        <th>
-<!--        <th>C&oacute;digo</th>-->
-            Descripci&oacute;n</th>
-        <th>Categor&iacute;a <?php // echo $this->Form->input('tipo_categoria_id', array('type' => 'select', 'options' => $categorias, 'empty' => '', 'label' => false, 'default' => '1'));                                  ?></th>
+        <th>Descripci&oacute;n</th>
+        <th>Categor&iacute;a <?php ?></th>
         <th>Precio</th>
         <th>IVA</th>
         <th>Valor Producto</th>

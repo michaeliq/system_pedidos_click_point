@@ -171,8 +171,8 @@ if (count($pedidos) > 0) {
     <tr>
         <th><input name="Todos" type="checkbox" value="1" class="check_todos" /></th>
         <th>Fecha Entrega</th>
-        <!-- <th>No. Factura</th>-->
         <th>No. Orden</th>
+        <th>No. Consecutivo</th>
         <th>Datos Empresa</th>
         <th>Fecha Orden</th>
         <th>Direcci&oacute;n Envio</th>
@@ -203,7 +203,7 @@ if (count($pedidos) > 0) {
                 });
             </script>
             <tr>
-                <td><?php echo $this->Form->input($pedido['Pedido']['id'], array('type' => 'checkbox', 'label' => false, 'value' => $pedido['Pedido']['id'], 'class' => 'ck')); ?></td>
+                <td><?php echo $this->Form->input($pedido['Pedido']['id'], array('type' => 'checkbox', 'label' => false, 'value' => $pedido['Pedido']['id'], 'class' => 'ck')); ?></td>                
                 <td><?php echo $this->Form->input('fecha_entregado_' . $pedido['Pedido']['id'], array('type' => 'text', 'label' => false, 'maxlength' => '20', 'size' => '20', 'placeholder' => 'Fecha Entregado')); ?><br>
                     <?php echo $this->Form->input('archivo_cumplido_' . $pedido['Pedido']['id'], array('type' => 'file', 'label' => false, 'title' => 'Archivo de cumplido - Guia')); ?>
                     <?php echo $this->Form->input('guia_' . $pedido['Pedido']['id'], array('type' => 'hidden', 'value' => $pedido['Pedido']['guia_despacho'])); ?><br>
@@ -213,6 +213,7 @@ if (count($pedidos) > 0) {
                 </td>
                 <!-- <td></td> --><?php echo $this->Form->input('factura_' . $pedido['Pedido']['id'], array('type' => 'hidden', 'label' => false, 'maxlength' => '20', 'size' => '20', 'placeholder' => 'No. Factura', 'value' => $pedido['Pedido']['id'])); ?>
                 <td><span style='color:red;  font-weight: bold;'>#000<?php echo $pedido['Pedido']['id']; ?></td>
+                <td><span style='color:red; font-weight: bold;'><?php echo $pedido['Pedido']['consecutivo']; ?></span></td>
                 <td><b>Emp:</b> <?php echo $pedido['Empresa']['nombre_empresa']; ?><br><b>Suc:</b> <?php echo $pedido['Sucursale']['nombre_sucursal']; ?><br><b>Reg:</b> <?php echo $pedido['Sucursale']['regional_sucursal']; ?></td>
                 <td style="font-size: 10px;"><b>Pedido:</b><br><?php echo substr($pedido['Pedido']['fecha_orden_pedido'], 0, 10); ?><br><b>Aprobado:</b><br><?php echo substr($pedido['Pedido']['fecha_aprobado_pedido'], 0, 10); ?><br><b>Despachado:</b><br><?php echo substr($pedido['Pedido']['fecha_despacho'], 0, 10); ?></td>
                 <td><?php echo $pedido['Departamento2']['nombre_departamento']; ?> - <?php echo $pedido['Municipio2']['nombre_municipio']; ?><br><?php echo $pedido['Sucursale']['direccion_sucursal']; ?> </td>

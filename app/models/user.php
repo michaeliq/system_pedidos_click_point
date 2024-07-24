@@ -175,6 +175,10 @@ class User extends AppModel {
             'conditions' => '',
             'fields' => '',
             'order' => ''
+        ),
+        'Asociado' => array(
+            'className' => 'Asociado',
+            'foreignKey' => 'asociado_id',
         )
     );
 

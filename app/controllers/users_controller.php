@@ -5,7 +5,7 @@ class UsersController extends AppController {
     var $name = 'Users';
     var $helpers = array('Html', 'Ajax', 'Javascript');
     var $components = array('RequestHandler', 'Auth', 'Permisos');
-    var $uses = array('User', 'Role', 'Departamento', 'Municipio', 'TipoSexo', 'TipoDocumento', 'Empresa', 'EmpresasAprobadore', 'Sucursale', 'Cronograma', 'Regionale', 'TipoPedido');
+    var $uses = array('User', 'Asociado', 'Role', 'Departamento', 'Municipio', 'TipoSexo', 'TipoDocumento', 'Empresa', 'EmpresasAprobadore', 'Sucursale', 'Cronograma', 'Regionale', 'TipoPedido');
 
     function beforeFilter() {
 
@@ -145,6 +145,7 @@ class UsersController extends AppController {
             }
         }
 
+        $asociados = $this->Asociado->find("list", ["fields" => ["Asociado.nombre_asociado"], "conditions" => ["Asociado.empresa_id" => 2]]);
         $parametro_precio = array('0' => 'Todos', '1' => 'Precio Centro Aseo', '2' => 'Precio Venta', '3' => 'Ninguno'); // 2022-11-17 
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
         $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));
@@ -153,7 +154,7 @@ class UsersController extends AppController {
         $roles = $this->Role->find('list', array('fields' => 'Role.rol_nombre', 'order' => 'Role.rol_nombre', 'conditions' => array('Role.rol_estado' => true)));
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => array('Empresa.estado_empresa' => true)));
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.v_regional_sucursal', 'order' => 'Sucursale.v_regional_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
-        $this->set(compact('departamentos', 'municipios', 'tipoDocumentos', 'tipoSexos', 'roles', 'empresas', 'sucursales', 'parametro_precio'));
+        $this->set(compact('departamentos', 'municipios', 'tipoDocumentos', 'tipoSexos', 'roles', 'empresas', 'sucursales', 'parametro_precio',"asociados"));
     }
 
     function edit($id = null) {
@@ -178,18 +179,16 @@ class UsersController extends AppController {
         }
 
         $aprobadores = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $id), 'order' => "EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id, EmpresasAprobadore.user_id"));
-//print_r($aprobadores);
+        $asociados = $this->Asociado->find("list", ["fields" => ["Asociado.nombre_asociado"], "conditions" => ["Asociado.empresa_id" => 2]]);
         $this->set('aprobadores', $aprobadores);
         $regionales_permisos = array();
         foreach ($aprobadores as $aprobador) {
             array_push($regionales_permisos, $aprobador['EmpresasAprobadore']['regional_id']);
         }
-
-        // print_r($regionales_permisos);
-        $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', 'conditions' => array('Regionale.estado_regional' => true, /* 'Regionale.id not' => $regionales_permisos */)));
+        $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', 'conditions' => array('Regionale.estado_regional' => true)));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
 
-        $parametro_precio = array('0' => 'Todos', '1' => 'Precios CLEANEST L&C', '2' => 'Precios CENTRO ASEO', '3' => 'Ninguno'); //31052018
+        $parametro_precio = array('0' => 'Todos', '1' => 'Precios CLEANEST L&C', '2' => 'Precios CENTRO ASEO', '3' => 'Ninguno'); 
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
         $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));
         $tipoDocumentos = $this->TipoDocumento->find('list', array('fields' => 'TipoDocumento.nombre_tipo_documento', 'order' => 'TipoDocumento.id'));
@@ -197,7 +196,7 @@ class UsersController extends AppController {
         $roles = $this->Role->find('list', array('fields' => 'Role.rol_nombre', 'order' => 'Role.rol_nombre', 'conditions' => array('Role.rol_estado' => true)));
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => array('Empresa.estado_empresa' => true)));
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.v_regional_sucursal', 'order' => 'Sucursale.v_regional_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
-        $this->set(compact('departamentos', 'municipios', 'tipoDocumentos', 'tipoSexos', 'roles', 'empresas', 'sucursales', 'parametro_precio', 'regionales', 'tipoPedido'));
+        $this->set(compact('departamentos', 'municipios', 'tipoDocumentos', 'tipoSexos', 'roles', 'empresas', 'sucursales', 'parametro_precio', 'regionales', 'tipoPedido', 'asociados'));
     }
 
     function view($id = null) {

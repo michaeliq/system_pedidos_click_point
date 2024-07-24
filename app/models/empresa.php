@@ -146,6 +146,10 @@ class Empresa extends AppModel {
             'fields' => '',
             'order' => ''
         ),
+        'Asociado' => array(
+            'className' => 'Asociado',
+            'foreignKey' => 'asociado_id',
+        )
     );
 
 }

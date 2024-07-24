@@ -195,7 +195,7 @@ if (count($pedidos) > 0) {
     <tr>
         <th><input name="Todos" type="checkbox" value="1" class="check_todos" /></th>
         <th>No. Guia</th>
-        <!-- <th>No. Factura</th>-->
+        <th>No. Consecutivo</th>
         <th>No. Orden</th>
         <th>Datos Empresa</th>
         <th>Fecha Orden</th>
@@ -217,6 +217,7 @@ if (count($pedidos) > 0) {
             <tr>
                 <td><?php echo $this->Form->input($pedido['Pedido']['id'], array('type' => 'checkbox', 'label' => false, 'value' => $pedido['Pedido']['id'], 'class' => 'ck')); ?></td>
                 <td><?php echo $this->Form->input('guia_' . $pedido['Pedido']['id'], array('type' => 'text', 'label' => false, 'maxlength' => '20', 'size' => '20', 'placeholder' => 'No. Guia')); ?></td>
+                <td><span style='color:red; font-weight: bold;'><?php echo $pedido['Pedido']['consecutivo']; ?></span></td>
                 <!-- <td></td> --><?php echo $this->Form->input('factura_' . $pedido['Pedido']['id'], array('type' => 'hidden', 'label' => false, 'maxlength' => '20', 'size' => '20', 'placeholder' => 'No. Factura', 'value' => $pedido['Pedido']['id'])); ?>
                 <td <?php echo $marcar_parcial; ?>><span style='color:red;  font-weight: bold;'>#000<?php echo $pedido['Pedido']['id']; ?></span><br><span style='color:green;  font-weight: bold;'><?php echo $pedido_original; ?></td>
                 <td><b>Emp:</b> <?php echo $pedido['Empresa']['nombre_empresa']; ?><br><b>Suc:</b> <?php echo $pedido['Sucursale']['nombre_sucursal']; ?><br><b>Reg:</b> <?php echo $pedido['Sucursale']['regional_sucursal']; ?></td>

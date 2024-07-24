@@ -89,9 +89,13 @@ $(function() {
                 $('#UserSucursalId').attr({
                     disabled: true
                 });
+                
             } else {
                 document.getElementById('UserSucursalId').innerHTML = '';
                 $('#UserSucursalId').attr({
+                    disabled: false
+                });
+                $('#UserAsociadoId').attr({
                     disabled: false
                 });
                 for (var i in data) {

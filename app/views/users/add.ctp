@@ -65,6 +65,10 @@ echo $this->Html->script(array('users/users_add.js?cache=1')); ?>
             <td colspan="3"><?php echo $this->Form->input('sucursal_id', array('type' => 'select', 'options' => $sucursales, 'empty' => 'Seleccione una Opción', 'label' => false, 'disabled'=>'disabled', 'required'=>true)); ?></td>
         </tr>
         <tr>
+            <td>Asociado: *</td>
+            <td colspan="3"><?php echo $this->Form->input('asociado_id', array('type' => 'select', 'options' => $asociados, 'empty' => 'Seleccione una Opción', 'label' => false, 'required'=>true)); ?></td>
+        </tr>
+        <tr>
             <td>Parametro Precio de Plantillas:</td>
             <td><?php echo $this->Form->input('parametro_precio', array('type' => 'select', 'options' => $parametro_precio, 'label' => false)); //31052018 ?></td>
             <td></td>

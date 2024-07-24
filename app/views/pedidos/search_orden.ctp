@@ -201,6 +201,7 @@
 <table class="table table-striped table-bordered table-hover table-condensed">
     <tr>
         <th>No. Orden</th>
+        <th>No. Consecutivo</th>
         <th>Datos Empresa</th>
         <th>Fechas Orden</th>
         <th>Direcci&oacute;n Envio</th>
@@ -215,6 +216,7 @@
             ?>
     <tr>
         <td><span style='color:red; font-weight: bold;'>#000<?php echo $pedido['Pedido']['id']; ?></span></td>
+        <td><span style='color:red; font-weight: bold;'><?php echo $pedido['Pedido']['consecutivo']; ?></span></td>
         <td><b>Emp:</b> <?php echo $pedido['Empresa']['nombre_empresa'];?><br><b>Suc:</b> <?php echo $pedido['Sucursale']['nombre_sucursal'];?><br><b>Reg:</b> <?php echo $pedido['Sucursale']['regional_sucursal'];?></td>
         <td style="font-size: 10px;" ><b>Pedido:</b><br><?php echo substr($pedido['Pedido']['fecha_orden_pedido'], 0, 10); ?><br><b>Aprobado:</b><br><?php echo substr($pedido['Pedido']['fecha_aprobado_pedido'], 0, 10); ?><br><b>Despachado:</b><br><?php echo substr($pedido['Pedido']['fecha_despacho'], 0, 10); ?><br><b>Entregado:</b><br><?php echo substr($pedido['Pedido']['fecha_entregado'], 0, 10); ?> </td>
         <td><?php echo $pedido['Departamento2']['nombre_departamento']; ?> - <?php  echo $pedido['Municipio2']['nombre_municipio']; ?><br>Dir: <?php echo $pedido['Sucursale']['direccion_sucursal']; ?><br><?php echo $pedido['Sucursale']['email_sucursal']; ?><br><?php echo $pedido['Sucursale']['telefono_contacto']; ?> </td>

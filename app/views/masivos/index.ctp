@@ -114,6 +114,9 @@ $clasificacion = array('Tarifa integral' => 'Tarifa integral', 'Facturacion sobr
         <td colspan="2" align='center'><b>Empresa:</b> <?php echo $this->Form->input('empresa_id', array('type' => 'select', 'options' => $empresa, 'empty' => 'Seleccione una Opción', 'label' => false, 'required' => true, 'onchange' => 'consultar_cronogramas()')); ?></td>
     </tr>
     <tr>
+        <td colspan="2" align='center'><b>Asociado:</b> <?php echo $this->Form->input('consecutivo_id', array('type' => 'select', 'options' => $consecutivos, 'empty' => 'Seleccione una Opción', 'label' => false, 'required' => true)); ?></td>
+    </tr>
+    <tr>
         <td colspan="2" align='center'><b>Tipo de Pedido:</b> <?php echo $this->Form->input('tipo_pedido_id', array('type' => 'select', 'options' => $tipo_pedido, 'empty' => 'Seleccione una Opción', 'label' => false, 'required' => true)); ?></td>
     </tr>
     <tr>

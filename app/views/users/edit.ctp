@@ -63,6 +63,10 @@ echo $this->Form->create('User');
             <td colspan="3"><?php echo $this->Form->input('sucursal_id', array('type' => 'select', 'options' => $sucursales, 'empty' => 'Seleccione una Opción', 'label' => false, 'disabled'=>'disabled')); ?></td>
         </tr>
         <tr>
+            <td>Asociado: *</td>
+            <td colspan="3"><?php echo $this->Form->input('asociado_id', array('type' => 'select', 'options' => $asociados, 'empty' => 'Seleccione una Opción', 'label' => false, 'required'=>true)); ?></td>
+        </tr>
+        <tr>
             <td colspan="2"><b>Parametro Precio Modificar Plantillas: *</b></td>
             <td colspan="2"><?php echo $this->Form->input('parametro_precio', array('type' => 'select', 'options' => $parametro_precio, 'label' => false)); //31052018 ?></td>
         </tr>
