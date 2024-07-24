@@ -419,11 +419,15 @@ class SucursalesController extends AppController
 
         $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.empresa_id' => $id_empresa)));
         $this->set("regionales",$regionales);
+        $sucursales = $this->Sucursale->find('all', array(
+            "conditions" => ["Sucursale.id_empresa" => $id_empresa],
+            "fields" => ["Sucursale.id","Sucursale.ceco_sucursal","Sucursale.oi_sucursal","Sucursale.nombre_sucursal","Sucursale.departamento_id","Sucursale.municipio_id","Sucursale.direccion_sucursal","Sucursale.telefono_sucursal","Sucursale.email_sucursal","Sucursale.nombre_contacto","Sucursale.telefono_contacto","Sucursale.email_contacto"]
+        ));
 
         if (!is_dir($dir_file)) {
             mkdir($dir_file, 0777, true);
         }
-
+        $this->set(compact("sucursales"));
 
         if ($this->RequestHandler->isPost()) {
             

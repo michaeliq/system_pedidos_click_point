@@ -1,5 +1,40 @@
 <?php
-//debug($rel_localidad_rutas);
+    //debug($rel_localidad_rutas);
+    $file_name = "plantillas/PlantillaSucursalesMasiva.csv";
+    $file = fopen($file_name, 'w');
+    $data_csv = utf8_decode("ID;CECO;OI;SUCURSAL;DEPARTAMENTO;MUNICIPIO;DIRECCION_SUCURSAL;TELEFONO_SUCURSAL;CORREO_SUCURSAL;NOMBRE_CONTACTO;TELEFONO_CONTACTO;CORREO_CONTACTO;Aseo;Cafeteria;Higienicos;EPP;Dotación;Maquinaria;ResPescado;Pollo\n");
+    fwrite($file, $data_csv);
+    foreach ($sucursales as $sucursal){
+        $data_csv = "";
+        $id = utf8_decode($sucursal['Sucursale']['id']);
+        $ceco = utf8_decode($sucursal['Sucursale']['ceco_sucursal']);
+        $oi = utf8_decode($sucursal['Sucursale']['oi_sucursal']);
+        $nombre_sucursal = utf8_decode($sucursal['Sucursale']['nombre_sucursal']);
+        $departamento = utf8_decode($sucursal['Sucursale']['departamento_id']);
+        $municipio = utf8_decode($sucursal['Sucursale']['municipio_id']);
+        $direccion_s = str_replace(array("\r", "\n"), '',utf8_decode($sucursal['Sucursale']['direccion_sucursal'])); 
+        $telefono_s = utf8_decode($sucursal['Sucursale']['telefono_sucursal']);
+        $email_s = utf8_decode($sucursal['Sucursale']['email_sucursal']);
+        $direccion_c = utf8_decode($sucursal['Sucursale']['nombre_contacto']);
+        $telefono_c = utf8_decode($sucursal['Sucursale']['telefono_contacto']);
+        $email_c = utf8_decode($sucursal['Sucursale']['email_contacto']);
+        $data_csv .= "$id;";
+        $data_csv .= "$ceco;";
+        $data_csv .= "$oi;";
+        $data_csv .= "$nombre_sucursal;";
+        $data_csv .= "$departamento;";
+        $data_csv .= "$municipio;";
+        $data_csv .= "$direccion_s;";
+        $data_csv .= "$telefono_s;";
+        $data_csv .= "$email_s;";
+        $data_csv .= "$direccion_c;";
+        $data_csv .= "$telefono_c;";
+        $data_csv .= "$email_c;";
+        $data_csv .= ";;;;;;";
+        fwrite($file, $data_csv);
+        fwrite($file, chr(13) . chr(10));
+    }
+    fclose($file);
 ?>
 
 <h2>Crear Sucursales a empresa <?php echo $empresa["Empresa"]["nombre_empresa"]; ?></h2>
@@ -37,6 +72,11 @@
             echo $this->Form->button('Cargar Archivo', array('type' => 'submit', 'class' => 'btn btn-info'));
             echo $this->Form->button('Regresar', array('type' => 'button', 'id' => 'regresar', 'onclick' => 'history.back()', 'class' => 'btn btn-warning col-md-3 col-md-offset-2'));
             ?>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+        <div class="text-center"><a href="../../<?php echo $file_name ; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Sucursales</a></div>
         </td>
     </tr>
 </table>

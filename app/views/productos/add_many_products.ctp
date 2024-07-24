@@ -34,6 +34,11 @@
             } ?>
         </td>
     </tr>
+    <tr>
+        <td colspan="2">
+        <div class="text-center"><a href="../<?php echo "plantillas/PlantillaProductosMasivo.csv"; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Productos</a></div>
+        </td>
+    </tr>
 </table>
 <br>
 <?php if (count($productos_validos) > 0) { ?>

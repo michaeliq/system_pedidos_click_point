@@ -145,6 +145,11 @@ $clasificacion = array('Tarifa integral' => 'Tarifa integral', 'Facturacion sobr
             <?php echo $this->Form->input('fecha_hora_carga', array('type' => 'hidden', 'value' => date('Y-m-d H:i:s'))); ?>
         </td>
     </tr>
+    <tr>
+        <td colspan="2">
+            <div class="text-center"><a href="<?php echo "plantillas/PlantillaPedidosMasivo.csv"; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Pedidos</a></div>
+        </td>
+    </tr>
 </table>
 <?php if (count($errores) > 0) {
     $i = 0;

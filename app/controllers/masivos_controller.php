@@ -245,7 +245,8 @@ class MasivosController extends AppController
                                         $mes_pedido = $this->data['Masivo']['mes_pedido'];
                                         $clasificacion_pedido = $this->data['Masivo']['clasificacion_pedido'];
                                         $cadena_masivo = null; 
-
+                                        $lote = $array_datos[7];
+                                        $fecha_expiracion = $array_datos[8];
                                         array_push($sql_cargas, array(
                                             "PedidosMasivo" => array(
                                                 "empresa_id" => $empresa_id,
@@ -265,6 +266,8 @@ class MasivosController extends AppController
                                                 "pedido_masivo" => $pedido_masivo,
                                                 "fecha_entrega_1" => $fecha_entrega_1,
                                                 "fecha_entrega_2" => $fecha_entrega_2,
+                                                "lote" => $lote,
+                                                "fecha_expiracion" => $fecha_expiracion,
                                             )
                                         ));
                                     }
@@ -334,7 +337,7 @@ class MasivosController extends AppController
 
                                     // Insertar detalles del pedido
                                     
-                                    $sql_pedidos_detalles = "ALTER TABLE pedidos_detalles DISABLE TRIGGER sucursales_presupuesto; INSERT INTO pedidos_detalles (producto_id, tipo_categoria_id, cantidad_pedido, pedido_id, precio_producto, iva_producto, medida_producto, fecha_pedido_detalle, observacion_producto) (SELECT producto_id, tipo_categoria_id, cantidad_pedido, pedido_id, precio_producto, iva_producto, medida_producto, '" . date('Y-m-d H:i:s') . "' fecha_pedido_detalle, cadena_masivo FROM pedidos_masivos WHERE pedido_masivo = " . $pedido_masivo . " AND pedido_id > 0 AND producto_id > 0 AND iva_producto is not null); ALTER TABLE pedidos_detalles ENABLE TRIGGER sucursales_presupuesto;";
+                                    $sql_pedidos_detalles = "ALTER TABLE pedidos_detalles DISABLE TRIGGER sucursales_presupuesto; INSERT INTO pedidos_detalles (producto_id, tipo_categoria_id, cantidad_pedido, pedido_id,  precio_producto, iva_producto, medida_producto, fecha_pedido_detalle, observacion_producto, lote, fecha_expiracion) (SELECT producto_id, tipo_categoria_id, cantidad_pedido, pedido_id, precio_producto, iva_producto, medida_producto, '" . date('Y-m-d H:i:s') . "' fecha_pedido_detalle, cadena_masivo, lote, fecha_expiracion FROM pedidos_masivos WHERE pedido_masivo = " . $pedido_masivo . " AND pedido_id > 0 AND producto_id > 0 AND iva_producto is not null); ALTER TABLE pedidos_detalles ENABLE TRIGGER sucursales_presupuesto;";
                                     $this->Pedido->query($sql_pedidos_detalles);
 
                                     $sql_pedidos_creados = "SELECT DISTINCT pedido_id, nombre_sucursal, SUM(cantidad_pedido) FROM pedidos_masivos WHERE pedido_masivo = " . $pedido_masivo . " GROUP BY pedido_id, nombre_sucursal ORDER BY pedido_id;";
