@@ -145,7 +145,7 @@ class UsersController extends AppController {
             }
         }
 
-        $asociados = $this->Asociado->find("list", ["fields" => ["Asociado.nombre_asociado"], "conditions" => ["Asociado.empresa_id" => 2]]);
+        $asociados = $this->Asociado->find("list", ["fields" => ["Asociado.nombre_asociado"]]);
         $parametro_precio = array('0' => 'Todos', '1' => 'Precio Centro Aseo', '2' => 'Precio Venta', '3' => 'Ninguno'); // 2022-11-17 
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
         $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));
@@ -179,7 +179,7 @@ class UsersController extends AppController {
         }
 
         $aprobadores = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $id), 'order' => "EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id, EmpresasAprobadore.user_id"));
-        $asociados = $this->Asociado->find("list", ["fields" => ["Asociado.nombre_asociado"], "conditions" => ["Asociado.empresa_id" => 2]]);
+        $asociados = $this->Asociado->find("list", ["fields" => ["Asociado.nombre_asociado"]]);
         $this->set('aprobadores', $aprobadores);
         $regionales_permisos = array();
         foreach ($aprobadores as $aprobador) {

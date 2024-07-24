@@ -123,9 +123,9 @@ class PedidosController extends AppController
         date_default_timezone_set('America/Bogota');
         if (!empty($this->data)) {
             
-            $consecutivo_data = $this->Consecutivo->find("first",array("conditions" => array("Consecutivo.id" => $this->data["Pedido"]["consecutivo_id"]),"fields" => ["numero_seq","id","asociado_id"]));
+            $consecutivo_data = $this->Consecutivo->find("first",array("conditions" => array("Consecutivo.id" => $this->data["Pedido"]["consecutivo_id"]),"fields" => ["numero_seq","id","numero_contrato"]));
             $consecutivo_pedido = $consecutivo_data["Consecutivo"]["numero_seq"] + 1;
-
+            
             $this->Consecutivo->save([
                 "Consecutivo" => array(
                     "id" => $consecutivo_data["Consecutivo"]["id"],
@@ -140,7 +140,7 @@ class PedidosController extends AppController
             $this->data['Pedido']['pedido_estado_pedido'] = '1'; // En proceso
             $this->data['Pedido']['tipo_categoria_id'] = implode(",", $this->data['Pedido']['tipo_categoria_id']);
             $this->data['Pedido']['consecutivo'] = $consecutivo_pedido;
-            $this->data['Pedido']['consecutivo'] =  $consecutivo_data["Consecutivo"]["asociado_id"];
+            $this->data['Pedido']['numero_contrato'] =  $consecutivo_data["Consecutivo"]["numero_contrato"];
 
             $this->Pedido->create();
 
@@ -233,11 +233,16 @@ class PedidosController extends AppController
             $this->Session->setFlash(__('ATENCIÓN: Tiene ordenes de pedido en proceso sin terminar. Haga click en el icono <div class="glyphicon glyphicon-arrow-right"></div> para continuar.', true));
         }
 
-        //        $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.id' => $cronograma)));
-        $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true, 'TipoPedido.id' => explode(',', $cronograma[0]['Cronograma']['tipo_pedido_id_2']))));
-        debug($tipo_pedido);
-        //31052018
-        //         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
+        $condition_cronograma = array('TipoPedido.estado' => true);
+        if($cronograma){
+            $condition_cronograma['TipoPedido.id'] = explode(",",$cronograma[0]['Cronograma']['tipo_pedido_id_2']);
+        }
+
+        $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array(
+            'TipoPedido.estado' => true, 
+            'TipoPedido.id' => $condition_cronograma)));
+        
+        
         $permisos = $this->EmpresasAprobadore->find('all', array('fields' => 'EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
         $sucursales_permisos = array();
@@ -259,8 +264,9 @@ class PedidosController extends AppController
         }
 
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
-        $sucursales1 = $this->Sucursale->find('list', array('fields' => 'Sucursale.v_regional_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales)); //, 'conditions' => array('Sucursale.estado_sucursal' => true)
-        $regional_data = $this->Sucursale->find('all', array('fields' => array('DISTINCT Sucursale.regional_sucursal', 'Sucursale.regional_sucursal'), 'conditions' => $conditions_sucursales, 'group' => 'Sucursale.regional_sucursal', 'order' => 'Sucursale.regional_sucursal'));
+        $sucursales1 = $this->Sucursale->find('list', array('fields' => ['Sucursale.v_regional_sucursal'], 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales)); //, 'conditions' => array('Sucursale.estado_sucursal' => true)
+        
+        $regional_data = $this->Sucursale->find('all', array('fields' => array('DISTINCT Sucursale.regional_sucursal', 'Sucursale.regional_sucursal'), 'conditions' => $conditions_sucursales, 'group' => ['Sucursale.regional_sucursal','Sucursale.id'], 'order' => 'Sucursale.regional_sucursal'));
         
         $regional = array();
         foreach ($regional_data as $value) {
@@ -268,12 +274,12 @@ class PedidosController extends AppController
         }
         $user_asociado = $this->User->find('first', ["conditions" => ["User.id" => $this->Session->read('Auth.User.id')],"fields" => "asociado_id"]);
         $consecutivos_empresa = $this->Consecutivo->find('all',array(
-            "fields" =>["Consecutivo.id","Asociado.nombre_asociado"], 
+            "fields" =>["Consecutivo.id","Asociado.nombre_asociado","Consecutivo.numero_contrato"], 
             "conditions" => array("Consecutivo.asociado_id" => $user_asociado["User"]["asociado_id"])
         ));
         $consecutivos = array();
         foreach ($consecutivos_empresa as $consecutivo){
-            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"];
+            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"].' - '.$consecutivo["Consecutivo"]["numero_contrato"];
         } 
         $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'order' => 'TipoCategoria.id'));
         $this->set('sucursales', $this->Sucursale->find('all', array('conditions' => array('Sucursale.id' => $this->Session->read('Auth.User.sucursal_id')))));
@@ -359,8 +365,7 @@ class PedidosController extends AppController
                         'observacion_producto' => null,
                     );
 
-                    //                    print_r($pedido_detalle);
-                    //                    exit;
+                    
                     $this->PedidosDetalle->save($pedido_detalle, FALSE);
                 }
 

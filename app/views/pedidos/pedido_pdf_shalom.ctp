@@ -144,7 +144,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
         <tr style="">
             <td style=" border-right: 1px solid #000000; border-left: 1px solid #000000; width:30%;" align="center"><b>Nombre del Comitente Vendedor</b></td>
             <td style=" border-right: 1px solid #000000; width:40%;" align="center"><b>GRUPO EMPRESARIAL SHALOM GES SAS</b></td>
-            <td style=" border-right: 1px solid #000000; width:30%;" align="left"><b>Numero de remisión: ' . $detalles[0]['Pedido']['id'] . '</b></td>
+            <td style=" border-right: 1px solid #000000; width:30%;" align="left"><b>Numero de remisión: ' . $detalles[0]['Pedido']['consecutivo'] . '</b></td>
         </tr>
     </table>
     <table>
@@ -157,7 +157,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     <table>
         <tr>
             <td style="border-top: 1px solid #000000; width:15%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>No operación:</b></td>
-            <td style="border-top: 1px solid #000000; width:15%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>60138606</b></td>
+            <td style="border-top: 1px solid #000000; width:15%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>'.$detalles[0]["Pedido"]["numero_contrato"].'</b></td>
             <td style="border-top: 1px solid #000000; width:10%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>Grupo:</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '</b></td>
             <td style="border-top: 1px solid #000000; width:20%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>Fecha de entrega:</b></td>

@@ -171,12 +171,12 @@ class MasivosController extends AppController
         $user_asociado = $this->User->find('first', ["conditions" => ["User.id" => $this->Session->read('Auth.User.id')],"fields" => "asociado_id"]);
 
         $consecutivos_empresa = $this->Consecutivo->find('all',array(
-            "fields" =>["Consecutivo.id","Asociado.nombre_asociado"], 
+            "fields" =>["Consecutivo.id","Asociado.nombre_asociado","Consecutivo.numero_contrato"], 
             "conditions" => array("Consecutivo.asociado_id" => $user_asociado["User"]["asociado_id"])
         ));
         $consecutivos = array();
         foreach ($consecutivos_empresa as $consecutivo){
-            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"];
+            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"].' - '.$consecutivo["Consecutivo"]["numero_contrato"];
         }
 
         $this->set(compact('tipo_pedido', 'empresa', 'consecutivos'));
@@ -208,7 +208,7 @@ class MasivosController extends AppController
                             // Vaciar la tabla de pedidos masivos
                             $sql_truncate = "TRUNCATE TABLE pedidos_masivos;";
                             $this->Pedido->query($sql_truncate);
-                            $consecutivo_empresa = $this->Consecutivo->find("first", ["fields" => ["id", "numero_seq","asociado_id"], "conditions" => ["Consecutivo.id" => $this->data["Masivo"]["consecutivo_id"]]]);
+                            $consecutivo_empresa = $this->Consecutivo->find("first", ["fields" => ["id", "numero_seq","numero_contrato"], "conditions" => ["Consecutivo.id" => $this->data["Masivo"]["consecutivo_id"]]]);
 
                             
                             $row = 0;
@@ -350,7 +350,7 @@ class MasivosController extends AppController
                                                 "Pedido" => [
                                                     "id" => intval($pedido_creado[0]["pedido_id"]),
                                                     "consecutivo" => $consecutivo,
-                                                    "asociado_id" => $consecutivo_empresa["Consecutivo"]["asociado_id"]
+                                                    "numero_contrato" => $consecutivo_empresa["Consecutivo"]["numero_contrato"]
                                                 ]
                                                 ]);
                                         }
