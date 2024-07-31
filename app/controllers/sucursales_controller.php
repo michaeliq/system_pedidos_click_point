@@ -486,22 +486,39 @@ class SucursalesController extends AppController
                                     array_push($sucursales_validas, $sql_query_instert_array);
                                     $this->Sucursale->create();
                                     $this->Sucursale->save($sql_query_instert_array);
-                                    $sucursale_id = $this->Sucursale->getInsertID();
+                                    $sucursale_id = null;
+                                    if($this->Sucursale->getInsertID()){
+                                        $sucursale_id = $this->Sucursale->getInsertID();
+                                    }else{
+                                        $sucursale_id = $data_sucursale["ID"];
+                                    }
                                     $presupuestos = array();
 
                                     foreach ($tipo_pedidos as $tipo_pedido) :
                                         if (!empty($data_sucursale[$tipo_pedido["TipoPedido"]["nombre_tipo_pedido"]])) {
-                                            array_push($presupuestos, array(
+                                            $presupuesto = $this->SucursalesPresupuestosPedido->find("first",array(
+                                                "conditions" => array(
+                                                    "sucursal_id" => $sucursale_id,
+                                                    "tipo_pedido_id" => $tipo_pedido["TipoPedido"]["id"]
+                                                ),
+                                                "fields" => ["id"]
+                                            ));
+                                            
+                                            $data_presupuesto = array(
                                                 "SucursalesPresupuestosPedido" => array(
+                                                    'id' => $presupuesto["SucursalesPresupuestosPedido"]["id"],
                                                     'sucursal_id' => $sucursale_id,
                                                     'tipo_pedido_id' => $tipo_pedido["TipoPedido"]["id"],
                                                     'presupuesto_asignado' => $data_sucursale[$tipo_pedido["TipoPedido"]["nombre_tipo_pedido"]],
                                                     'fecha_presupuesto_pedido' => 'now()'
                                                 )
-                                            ));
+                                            );
+                                            //debug($data_presupuesto);
+                                            array_push($presupuestos,$data_presupuesto);
                                         };
                                     endforeach;
                                     if(count($presupuestos) > 0){
+                                        
                                         $this->SucursalesPresupuestosPedido->saveAll($presupuestos);
                                     }
                                 }

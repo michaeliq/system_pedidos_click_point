@@ -153,7 +153,7 @@ foreach ($pedidos as $pedido) :
             <td style="border-top: 1px solid #000000; width:30%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>NIT:</b></td>
             <td style="border-top: 1px solid #000000; width:40%; border-right: 1px solid #000000;" align="center"><b>900.664.206-4</b></td>
             <td style="border-top: 1px solid #000000; width:30%; border-right: 1px solid #000000;"><b>Semana: ' . $semana_numero . '</b></td>
-        </tr>
+        </tr> 
     </table>
     <table>
         <tr>
@@ -198,7 +198,7 @@ foreach ($pedidos as $pedido) :
             $codigo = $detalle['Producto']['codigo_producto'];
             $nombre = $detalle['Producto']['nombre_producto'];
             $marca = $detalle['Producto']['marca_producto'];
-            $unidad = utf8_decode($detalle['Producto']['medida_producto']);
+            $unidad = $detalle['Producto']['capacidad_producto'] . " " . utf8_decode($detalle['Producto']['medida_producto']);
             $cantidad = $detalle['PedidosDetalle']['cantidad_pedido'];
             $lote = $detalle['PedidosDetalle']['lote'];
             $timestamp_expiracion = strtotime($detalle['PedidosDetalle']['fecha_expiracion']);

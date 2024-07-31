@@ -92,4 +92,13 @@ class DATABASE_CONFIG {
         'port' => DB_PORT,
      //'encoding' => 'utf8'
     );
+
+    var $test = array(
+        'driver' => DB_DRIVER,
+        'persistent' => false,
+        'host' => DB_HOST,
+        'login' => DB_USER,
+        'password' => DB_PASSWORD,
+        'database' => DB_NAME
+    );
 }

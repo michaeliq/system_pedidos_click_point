@@ -159,7 +159,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
             <td style="border-top: 1px solid #000000; width:30%; border-right: 1px solid #000000;"><b>Semana: ' . $semana_numero . '</b></td>
         </tr>
     </table>
-    <table>
+    <table> 
         <tr>
             <td style="border-top: 1px solid #000000; width:15%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>No operación:</b></td>
             <td style="border-top: 1px solid #000000; width:15%; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center"><b>'.$detalles[0]["Pedido"]["numero_contrato"].'</b></td>
@@ -201,7 +201,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
         $codigo = $detalle['Producto']['codigo_producto'];
         $nombre = $detalle['Producto']['nombre_producto'];
         $marca = $detalle['Producto']['marca_producto'];
-        $unidad = utf8_decode($detalle['Producto']['medida_producto']);
+        $unidad = $detalle['Producto']['capacidad_producto'] . " " . utf8_decode($detalle['Producto']['medida_producto']);
         $cantidad = $detalle['PedidosDetalle']['cantidad_pedido'];
         $lote = $detalle['PedidosDetalle']['lote'];
         $timestamp_expiracion = strtotime($detalle['PedidosDetalle']['fecha_expiracion']);

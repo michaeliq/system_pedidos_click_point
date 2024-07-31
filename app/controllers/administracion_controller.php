@@ -5,7 +5,8 @@
 class AdministracionController extends AppController {
 
     var $name = "Administracion";
-    var $components = array('RequestHandler', 'Auth', 'Permisos');
+    var $components = array('RequestHandler', 'Auth', 'Permisos','Tools');
+    var $uses = array('Ajuste');
 
     function isAuthorized() {
         $this->Auth->authorize = 'controller';
@@ -24,7 +25,7 @@ class AdministracionController extends AppController {
     }
 
     function index() {
-        
+
     }
 
 }

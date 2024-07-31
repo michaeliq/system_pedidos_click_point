@@ -39,7 +39,7 @@ class EmpresasController extends AppController {
         }
 
         // Consultar las empresas sin aprobadores
-        $sql = "SELECT id FROM empresas WHERE id NOT IN (SELECT DISTINCT empresa_id FROM empresas_aprobadores) ORDER BY nombre_empresa LIMIT 45;";
+        $sql = "SELECT id FROM empresas WHERE id NOT IN (SELECT DISTINCT empresa_id FROM empresas_aprobadores) ORDER BY nombre_empresa ;";
         $empresas_sin_aprobadores = $this->Empresa->query($sql);
 
         $this->paginate = array('limit' => 30, 'order' => array(
@@ -126,7 +126,6 @@ class EmpresasController extends AppController {
                     $this->EmpresasAprobadore->create();
                     $data_sucursales = array('empresa_id' => $sucursal['Sucursale']['id_empresa'], //$this->data['EmpresasAprobadore']['empresa_id'],
                         'user_id' => $this->data['EmpresasAprobadore']['user_id'],
-                        //   'tipo_pedido_id' => $this->data['EmpresasAprobadore']['tipo_pedido_id'],
                         'sucursal_id' => $sucursal['Sucursale']['id'],
                         'regional_id' => $this->data['EmpresasAprobadore']['regional_id']);
                     $this->EmpresasAprobadore->save($data_sucursales, FALSE);
@@ -134,7 +133,6 @@ class EmpresasController extends AppController {
                     $this->EmpresasAprobadore->create();
                     $permisos_admin = array('empresa_id' => $sucursal['Sucursale']['id_empresa'],
                         'user_id' => '1',
-                        //     'tipo_pedido_id' => $this->data['EmpresasAprobadore']['tipo_pedido_id'],
                         'sucursal_id' => $sucursal['Sucursale']['id'],
                         'regional_id' => $this->data['EmpresasAprobadore']['regional_id']);
                     $this->EmpresasAprobadore->save($permisos_admin, FALSE);
@@ -154,55 +152,28 @@ class EmpresasController extends AppController {
                 $this->EmpresasAprobadore->query($permisos_admin);
             }
 
-            /* $sql = "UPDATE empresas_aprobadores SET regional_id = sucursales.regional_id
-              FROM sucursales WHERE empresas_aprobadores.sucursal_id = sucursales.id
-              AND sucursales.estado_sucursal = true";
-              $this->EmpresasAprobadore->query($sql); //31052018 */
-
             $this->Session->setFlash(__('Se han asignado los permisos a los pedidos para el usuario seleccionado. ', true));
             if (!empty($this->data['EmpresasAprobadore']['url'])) {
                 $this->redirect(array('controller' => 'users', 'action' => $this->data['EmpresasAprobadore']['url']));
                 exit;
             }
             $this->redirect(array('controller' => 'empresas', 'action' => 'aprobadores/' . $this->data['EmpresasAprobadore']['empresa_id']));
-            /*
-              if ($this->EmpresasAprobadore->save($this->data)) {
 
-              // Insertar los aprobadores para que ADMIN pueda listar
-              $this->EmpresasAprobadore->create();
-              $empresas_aprobadores = array('empresa_id' => $this->data['EmpresasAprobadore']['empresa_id'],
-              'user_id' => '1',
-              'tipo_pedido_id' => $this->data['EmpresasAprobadore']['tipo_pedido_id'],
-              'sucursal_id' => $this->data['EmpresasAprobadore']['sucursal_id'],
-              'regional_id' => $this->data['EmpresasAprobadore']['regional_id']
-              );
-              $this->EmpresasAprobadore->save($empresas_aprobadores, FALSE);
-
-
-
-              $this->Session->setFlash(__('Se ha asignado un aprobador. ', true));
-              // $this->redirect(array('action' => 'index'));
-              header("Location: ../aprobadores/" . $this->data['EmpresasAprobadore']['empresa_id']);
-              } else {
-              $this->Session->setFlash(__('El aprobador ya esta asignado para un tipo de pedido. ', true));
-              } */
         }
         $empresa = $this->Empresa->find('all', array('fields' => 'Empresa.nombre_empresa', 'conditions' => array('Empresa.id' => $id)));
         $aprobadores = $this->EmpresasAprobadore->find('all', array(
             'fields' => 'Empresa.nombre_empresa, Sucursale.nombre_sucursal, Sucursale.regional_sucursal, User.username, User.nombres_persona, EmpresasAprobadore.id',
-            'conditions' => array('EmpresasAprobadore.empresa_id' => $id/*, 'EmpresasAprobadore.user_id >' => $this->Session->read('Auth.User.id')*/),
+            'conditions' => array('EmpresasAprobadore.empresa_id' => $id),
             'order' => "EmpresasAprobadore.empresa_id, EmpresasAprobadore.sucursal_id, EmpresasAprobadore.user_id",
             'limit' => '100')
         );
         $this->set('empresa', $empresa);
         $this->set('aprobadores', $aprobadores);
 
-        //  $aprobadores = array($id, '1');
         $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', array('conditions' => array('Regionale.estado' => true))));
-        $users = $this->User->find('list', array('fields' => 'User.username', 'order' => 'User.nombres_persona', 'order' => 'User.username', 'conditions' => array(/* 'User.empresa_id' => $aprobadores, */'User.estado' => true /* , 'User.rol_id' => $this->Permisos->RolesInternos() */)));
-        // $users = $this->User->find('list', array('fields' => 'User.nombres_persona', 'order' => 'User.nombres_persona', 'conditions' => array('User.empresa_id' => $id, 'User.estado' => true, 'User.rol_id' => $this->Permisos->RolesInternos())));
+        $users = $this->User->find('list', array('fields' => 'User.username', 'order' => 'User.nombres_persona', 'order' => 'User.username', 'conditions' => array('User.estado' => true )));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
-        $this->set(compact('users', 'tipoPedido', 'regionales')); //31052018
+        $this->set(compact('users', 'tipoPedido', 'regionales')); 
         $this->set('empresa_id', $id);
     }
 
@@ -225,6 +196,11 @@ class EmpresasController extends AppController {
                                     WHERE empresas.id = sucursales.id_empresa
                                     AND sucursales.id_empresa = " . $empresa_id . ";";
                 $this->Empresa->query($sql_parametro_precio);
+                $this->EmpresasAprobadore->save(array(
+                    "empresa_id" => $this->Empresa->getInsertID(),
+                    "user_id" => $this->Session->read('Auth.User.id'),
+                    "fecha_creacion" => "now()",
+                ));
                 $this->Session->setFlash(__('Se ha creado la empresa ' . $this->data['Empresa']['nombre_empresa'] . '. ', true));
                 /* $this->redirect(array('action' => 'index')); */header("Location: ../regionales/index/" . $empresa_id);
             } else {

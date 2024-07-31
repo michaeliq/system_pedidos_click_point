@@ -79,7 +79,10 @@ echo $this->Html->script(array('productos/productos_add')); ?>
         </tr>
         <tr>
             <td>Unidad de medida: *</td>
-            <td colspan="3"><?php echo $this->Form->input('medida_producto', array('type' => 'select', 'options' => $unidadMedida, 'empty' => 'Seleccione una Opción', 'label' => false)); ?></td>
+            <td colspan="3" class="row">
+                <?php echo $this->Form->input('capacidad_producto', array('type' => 'hidden', 'label' => false)); ?>
+                <?php echo $this->Form->input('medida_producto', array('type' => 'select', 'options' => $unidadMedida, 'empty' => 'Seleccione una Opción', 'label' => false, "class" => "col-md-2")); ?>
+            </td>
         </tr>
         <tr>
             <td>Imagen del Producto: </td>

@@ -14,7 +14,7 @@ class MasivosController extends AppController
 {
 
     var $name = "Masivos";
-    var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore');
+    var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'TipoCategoria', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore');
     var $components = array('RequestHandler', 'Auth', 'Permisos');
 
     function isAuthorized()
@@ -213,7 +213,10 @@ class MasivosController extends AppController
                             
                             $row = 0;
                             if (($handle = fopen($dir_file . $this->data['Masivo']['archivo_csv'], "r")) !== FALSE) {
-                               
+                                $nombre_tipo_categoria = $this->TipoCategoria->find("first",array(
+                                    "conditions" => array("TipoCategoria.tipo_categoria_orden" => $this->data['Masivo']['tipo_pedido_id']),
+                                    "fields" => array("sigla_categoria"),
+                                ));
                                 $sql_cargas = array();
                                 while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 
@@ -229,11 +232,16 @@ class MasivosController extends AppController
                                     $array_datos = explode(';', $data_bd);
                                     if (count($array_datos) > 1 && $row > 1) {
                                         
+                                        if(intval(substr($array_datos[4],0,3)) == 0){
+                                            $codigo_producto = $array_datos[4];
+                                        }else{
+                                            $codigo_producto = $nombre_tipo_categoria["TipoCategoria"]["sigla_categoria"]. "-" .$array_datos[4];
+                                        }
+                                        
                                         $nombre_empresa = $array_datos[0];
                                         $nombre_sucursal = null; 
                                         $oi_sucursal = $array_datos[1];
                                         $ceco_sucursal = $array_datos[2];
-                                        $codigo_producto = $array_datos[4];
                                         $nombre_producto = null; 
                                         $cantidad_pedido = is_int($array_datos[6]) ? '0' : $array_datos[6];
                                         $fecha_pedido_masivo = date('Y-m-d H:i:s');

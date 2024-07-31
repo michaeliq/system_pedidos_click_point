@@ -1,6 +1,6 @@
 <?php
     //debug($rel_localidad_rutas);
-    $file_name = "plantillas/PlantillaSucursalesMasiva.csv";
+    $file_name = "plantilla/PlantillaSucursalesMasiva.csv";
     $file = fopen($file_name, 'w');
     $data_csv = utf8_decode("ID;CECO;OI;SUCURSAL;DEPARTAMENTO;MUNICIPIO;DIRECCION_SUCURSAL;TELEFONO_SUCURSAL;CORREO_SUCURSAL;NOMBRE_CONTACTO;TELEFONO_CONTACTO;CORREO_CONTACTO;Aseo;Cafeteria;Higienicos;EPP;Dotación;Maquinaria;ResPescado;Pollo\n");
     fwrite($file, $data_csv);

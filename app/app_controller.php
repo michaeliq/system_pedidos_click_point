@@ -3,11 +3,11 @@
 class AppController extends Controller
 {
 
-    var $components = array('Auth', 'Session');
+    var $components = array('Auth', 'Session', 'Tools');
 
     function beforeFilter()
     {
-
+        $this->Tools->existsTable();
         $this->Auth->loginError = "Usuario o Contraseña incorrecto. Por favor verifique sus datos.";
 
         $this->Auth->allow('pedido_pdf');

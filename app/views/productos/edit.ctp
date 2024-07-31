@@ -89,7 +89,10 @@ echo $this->Html->script(array('productos/productos_edit.js?var='.date('y-m-dhis
                     </tr>
                     <tr>
                         <td>Unidad de medida: *</td>
-                        <td colspan="3"><?php echo $this->Form->input('medida_producto', array('type' => 'select', 'options' => $unidadMedida, 'empty' => 'Seleccione una Opción', 'label' => false)); ?></td>
+                        <td colspan="3">
+                        <?php echo $this->Form->input('capacidad_producto', array('type' => ($producto["Producto"]["tipo_categoria_id"] == 10 || $producto["Producto"]["tipo_categoria_id"] == 11) ? "text":"hidden", 'label' => false, "class" => "col-md-1")); ?>
+                            <?php echo $this->Form->input('medida_producto', array('type' => 'select', 'options' => $unidadMedida, "default" => $producto["Producto"]["medida_producto"] , 'empty' => 'Seleccione una Opción', 'label' => false)); ?>
+                        </td>
                     </tr>
                     <tr>
                         <td>Imagen del Producto: </td>

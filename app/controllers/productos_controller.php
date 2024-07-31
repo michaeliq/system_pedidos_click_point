@@ -164,6 +164,7 @@ class ProductosController extends AppController
             'MTS' => 'METROS',
             'KG' => 'KILOS',
             'LB' => 'LIBRA',
+            'GR' => 'GRAMOS',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
             'ROLLO' => 'ROLLO'
@@ -375,6 +376,7 @@ class ProductosController extends AppController
             'MTS' => 'METROS',
             'KG' => 'KILOS',
             'LB' => 'LIBRA',
+            'GR' => 'GRAMOS',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
             'ROLLO' => 'ROLLO'
@@ -387,7 +389,6 @@ class ProductosController extends AppController
         // Configure::write('debug', 2);
         if (!$id && empty($this->data)) {
             $this->Session->setFlash(__('No se encontró el producto', true));
-            // $this->redirect(array('action' => 'index'));
             header("Location: ../index");
         }
 
@@ -527,16 +528,16 @@ class ProductosController extends AppController
             'MTS' => 'METROS',
             'KG' => 'KILOS',
             'LB' => 'LIBRA',
+            'GR' => 'GRAMOS',
             'CAJ' => 'CAJAS',
             'PAR' => 'PAR',
             'ROLLO' => 'ROLLO'
         );
+        $this->set("producto",$this->Producto->read("",$id));
         $this->set(compact('tipoCategoria', 'unidadMedida'));
 
         $movimientosEntradas = $this->MovimientosEntradasDetalle->find('all', array(
-            // 'fields' => array('Producto.codigo_producto', 'MovimientosEntradasDetalle.precio_producto', 'MovimientosEntradasDetalle.cantidad_entrada', 'AVG(MovimientosEntradasDetalle.precio_producto)'),
             'conditions' => array('MovimientosEntradasDetalle.estado_entrada' => true, 'MovimientosEntradasDetalle.producto_id' => $id),
-            // 'group' =>'Producto.codigo_producto, MovimientosEntradasDetalle.precio_producto, MovimientosEntradasDetalle.cantidad_entrada, producto_id',
             'order' => 'MovimientosEntradasDetalle.fecha_registro_entrada',
             'limit' => '10'
         ));
@@ -614,7 +615,7 @@ class ProductosController extends AppController
         $productos_ids = explode(",", $this->data["Producto"]["productos_ids"]);
         $productos_temporales = $this->ProductoTemp->find("all", array(
             "conditions" => array("ProductoTemp.id" => $productos_ids),
-            "fields" => ["id", "nombre_producto", "codigo_producto", "precio_producto_bs", "precio_producto", "iva_producto", "medida_producto", "presentacion_producto", "existe"]
+            "fields" => ["id", "nombre_producto", "codigo_producto", "precio_producto_bs", "precio_producto", "iva_producto", "medida_producto", "presentacion_producto", "existe", "capacidad_producto", "proveedor_producto"]
         ));
         $tipo_categorias = $this->TipoCategoria->find("list", array(
             "fields" => ["sigla_categoria", "id"],
@@ -634,7 +635,9 @@ class ProductosController extends AppController
                     "medida_producto" => $producto_temp["ProductoTemp"]["medida_producto"],
                     "presentacion_producto" => $producto_temp["ProductoTemp"]["presentacion_producto"],
                     "estado" => true,
-                    "tipo_categoria_id" => $tipo_categorias[$categoria]
+                    "tipo_categoria_id" => $tipo_categorias[$categoria],
+                    "capacidad_producto" => intval($producto_temp["ProductoTemp"]["capacidad_producto"]),
+                    "marca_producto" => $producto_temp["ProductoTemp"]["proveedor_producto"]
                 )
             ));
 
@@ -708,10 +711,12 @@ class ProductosController extends AppController
                                         array_push($products_query_add, array(
                                             "id" => $producto_from_db["Producto"]["id"],
                                             "nombre_producto" => $data_productos["PRODUCTO"],
+                                            "proveedor_producto" => $data_productos["PROVEEDOR"],
                                             "codigo_producto" => $data_productos["COD"],
                                             "precio_producto_bs" => intval($data_productos["PRECIO_BG"]),
                                             "precio_producto" => intval($data_productos["PRECIO_NC"]),
                                             "iva_producto" => floatval(str_replace(",", ".", $data_productos["IVA"])),
+                                            "capacidad_producto" => $data_productos["CANTIDAD_PRESENTACION"],
                                             "medida_producto" => $data_productos["UMI"],
                                             "presentacion_producto" => $data_productos["DESCRIPCION"],
                                             "existe" => $data_productos["existe"],

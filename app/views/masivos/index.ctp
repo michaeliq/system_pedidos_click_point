@@ -147,7 +147,7 @@ $clasificacion = array('Tarifa integral' => 'Tarifa integral', 'Facturacion sobr
     </tr>
     <tr>
         <td colspan="2">
-            <div class="text-center"><a href="<?php echo "plantillas/PlantillaPedidosMasivo.csv"; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Pedidos</a></div>
+            <div class="text-center"><a href="<?php echo "plantilla/PlantillaPedidosMasivo.csv"; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Pedidos</a></div>
         </td>
     </tr>
 </table>

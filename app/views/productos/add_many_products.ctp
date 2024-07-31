@@ -36,7 +36,7 @@
     </tr>
     <tr>
         <td colspan="2">
-        <div class="text-center"><a href="../<?php echo "plantillas/PlantillaProductosMasivo.csv"; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Productos</a></div>
+        <div class="text-center"><a href="../<?php echo "plantilla/PlantillaProductosMasivo.csv"; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Productos</a></div>
         </td>
     </tr>
 </table>
@@ -61,7 +61,10 @@
                 <td><?php echo $producto_valido["COD"]; ?></td>
                 <td><?php echo $producto_valido["PRODUCTO"]; ?></td>
                 <td><?php echo $producto_valido["DESCRIPCION"]; ?></td>
-                <td><?php echo $producto_valido["UMI"]; ?></td>
+                <td style="display: flex;">
+                    <?php echo $producto_valido["CANTIDAD_PRESENTACION"]; ?>
+                    <?php echo $producto_valido["UMI"]; ?>
+                </td>
                 <td><?php echo $producto_valido["PRECIO_BG"]; ?></td>
                 <td><?php echo $producto_valido["PRECIO_NC"]; ?></td>
                 <td><?php echo $producto_valido["IVA"]; ?></td>
