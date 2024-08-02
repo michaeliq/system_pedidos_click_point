@@ -32,6 +32,12 @@ class ToolsComponent extends Object {
         $db->query($query_alter_table_id);
       }
     }
+
+    function execPythonPDFReader($nombre_archivo, $ruta){
+      $command = escapeshellcmd("python py/read_pdf.py ". $nombre_archivo . " " . $ruta);
+      $output = shell_exec($command);
+      return $output;
+    }
 }
 
 ?>

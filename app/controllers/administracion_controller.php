@@ -1,7 +1,5 @@
 <?php
-/**
- * 
- */
+
 class AdministracionController extends AppController {
 
     var $name = "Administracion";
@@ -25,7 +23,14 @@ class AdministracionController extends AppController {
     }
 
     function index() {
-
+        $text = $this->Tools->execPythonPDFReader("op_000112310.pdf", "despacho/");
+        $list_text = explode("\n",$text);
+        debug($list_text);
+        if(strpos($list_text[8],"1461")){
+            debug("Se encontro");
+        }else{
+            debug("No se encontro");
+        }
     }
 
 }

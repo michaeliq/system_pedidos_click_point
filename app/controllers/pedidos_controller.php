@@ -1311,10 +1311,10 @@ class PedidosController extends AppController
             $facturadas = 0;
             foreach ($this->data['Pedido'] as $key => $value) {
                 if ($value > 0) {
-                    if (!empty($this->data['Pedido']['guia_' . $key]) /* && !empty($this->data['Pedido']['factura_' . $key]) */) {
+                    if (!empty($this->data['Pedido']['guia_' . $key])) {
                         //echo $this->data['Pedido']['guia_' . $key];
                         if ($this->Session->read('Auth.User.rol_id') == '1' || $this->Session->read('Auth.User.rol_id') == '6' || $this->Session->read('Auth.User.rol_id') == '7') {
-                            if ($this->Pedido->updateAll(array("Pedido.pedido_estado" => 'true', "Pedido.pedido_estado_pedido" => '5', "Pedido.fecha_despacho" => "'" . date('Y-m-d H:i:s') . "'", "Pedido.guia_despacho" => "'" . $this->data['Pedido']['guia_' . $key] . "'", "Pedido.numero_factura" => $this->Session->read('Auth.User.id')/* ,"Pedido.fecha_factura" => "'" . date('Y-m-d H:i:s') . "'", "Pedido.numero_factura" => "'" . $this->data['Pedido']['factura_' . $key] . "'" */), array("Pedido.id" => $value, 'Pedido.pedido_estado_pedido' => '4'))) {
+                            if ($this->Pedido->updateAll(array("Pedido.pedido_estado" => 'true', "Pedido.pedido_estado_pedido" => '5', "Pedido.fecha_despacho" => "'" . date('Y-m-d H:i:s') . "'", "Pedido.guia_despacho" => "'" . $this->data['Pedido']['guia_' . $key] . "'", "Pedido.numero_factura" => $this->Session->read('Auth.User.id')), array("Pedido.id" => $value, 'Pedido.pedido_estado_pedido' => '4'))) {
                                 $this->PedidosAuditoria->AuditoriaCambioEstado($value, '5', $this->Session->read('Auth.User.id'));
                                 $ordenes_despachadas = $ordenes_despachadas . ' #000' . $value . ' ';
                                 $despachadas++;
@@ -1341,25 +1341,6 @@ class PedidosController extends AppController
                 }
             }
 
-            //                echo $key;
-            //                echo ";";
-            //                echo $value;
-            //                /*echo $this->data['Pedido'][$key];
-            //                echo ";";
-            //                echo $this->data['Pedido']['guia_' . $key];*/
-            //                echo "<br>";
-
-
-            /* if ($value > 0) {
-              if ($this->Session->read('Auth.User.rol_id') == '1') {
-              if ($this->Pedido->updateAll(array("Pedido.pedido_estado" => 'true', "Pedido.pedido_estado_pedido" => '5', "Pedido.fecha_despacho" => "'" . date('Y-m-d H:i:s') . "'"), array("Pedido.id" => $value, 'Pedido.pedido_estado_pedido' => '4'))) {
-              $ordenes_despachadas = $ordenes_despachadas . ' #000' . $value . ' ';
-              }
-              } else {
-              $this->Session->setFlash(__('Para aprobar ordenes debe ser Administrador del sistema.', true));
-              exit;
-              }
-              } */
             if ($despachadas > 0) {
                 $this->Session->setFlash(__('Las orden de pedido (' . $ordenes_despachadas . ') han sido despachadas. Nuevo estado: Despachado. <br> Las ordenes sin No. de Guia NO fueron despachadas.<br>', true));
             } else {
@@ -1413,7 +1394,7 @@ class PedidosController extends AppController
 
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
-        $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales)); //, 'conditions' => array('Sucursale.estado_sucursal' => true)
+        $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales)); 
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $this->set(compact('estados', 'sucursales', 'tipo_pedido', 'empresas'));
 
@@ -1586,6 +1567,7 @@ class PedidosController extends AppController
         //else {
         //    $conditions = array('Pedido.pedido_estado_pedido' => '5', 'EmpresasAprobadore.user_id' => '1' /* $this->Session->read('Auth.User.id') */);
         // } //31052018
+
         $this->Pedido->recursive = 0;
         $this->helpers['Paginator'] = array('ajax' => 'Ajax');
         $this->paginate = array('limit' => 250, 'order' => array(
@@ -1594,17 +1576,21 @@ class PedidosController extends AppController
         $this->set('pedidos', $this->paginate($conditions));
 
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
+
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales)); //, 'conditions' => array('Sucursale.estado_sucursal' => true)
+
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
-        $this->set(compact('estados', 'sucursales', 'tipo_pedido', 'empresas'));
 
         $regional_data = $this->Sucursale->find('all', array('fields' => array('DISTINCT Sucursale.regional_sucursal', 'Sucursale.regional_sucursal'), 'group' => 'Sucursale.regional_sucursal', 'order' => 'Sucursale.regional_sucursal'));
+
         $regional = array();
         foreach ($regional_data as $value) {
             $regional[$value['Sucursale']['regional_sucursal']] = $value['Sucursale']['regional_sucursal'];
         }
-        $this->set('regional', $regional);
+
+        $this->set(compact('estados', 'sucursales', 'tipo_pedido', 'empresas', 'regional'));
     }
 
     /* FIN ENTREGADO */

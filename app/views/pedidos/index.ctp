@@ -70,6 +70,11 @@
         </div>
         <?php } ?>
         <div class="btn-group mr-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-default btn-lg cambiar_estado" onclick="window.location.href = '../masivos/entregas';">
+                <span class="glyphicon glyphicon-thumbs-up"></span> Entregas Masivas
+            </button>
+        </div>
+        <div class="btn-group mr-2" role="group" aria-label="First group">
             <button type="button" class="btn btn-default btn-lg cambiar_estado" onclick="window.location.href = 'cambiar_estado';">
                 <span class="glyphicon glyphicon-random"></span> Cambiar Estado a Pedido
             </button>

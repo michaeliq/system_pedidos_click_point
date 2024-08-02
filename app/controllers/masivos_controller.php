@@ -1,21 +1,14 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/*
-  ALTER TABLE public.pedidos   ADD COLUMN pedido_masivo integer;
-  ALTER TABLE public.pedidos_masivos  ADD COLUMN pedido_masivo integer;
- */
+$env = parse_ini_file('.env');
+define("FILES_PATH",$env["FILES_PATH"]);
 
 class MasivosController extends AppController
 {
 
     var $name = "Masivos";
     var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'TipoCategoria', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore');
-    var $components = array('RequestHandler', 'Auth', 'Permisos');
+    var $components = array('RequestHandler', 'Auth', 'Permisos', 'Tools');
 
     function isAuthorized()
     {
@@ -127,6 +120,136 @@ class MasivosController extends AppController
         }
     }
 
+    function entregas()
+    {
+        date_default_timezone_set('America/Bogota');
+        $dir_file = 'entrega/masivos/';
+        $errors = array();
+        $infos = array();
+        $max_file = 20145728;
+        $entregas_validas = array();
+        if (!is_dir($dir_file)) {
+            mkdir($dir_file, 0777, true);
+        }
+
+        if ($this->RequestHandler->isPost()) {
+
+            if ($this->data['Masivo']['archivo_csv']['name']) {
+                if (($this->data['Masivo']['archivo_csv']['type'] == 'text/csv')) {
+                    if ($this->data['Masivo']['archivo_csv']['size'] < $max_file) {
+                        move_uploaded_file($this->data['Masivo']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Masivo']['archivo_csv']['name']);
+                        $file = fopen($dir_file . '/' . $this->data['Masivo']['archivo_csv']['name'], 'r');
+                        if ($file) {
+                            $row = 0;
+                            $headers = [];
+                            while (($data = fgetcsv($file, null, ";")) !== FALSE) {
+                                if ($row == 0) {
+                                    $headers = $data;
+                                } else {
+                                    $data_entregas = array();
+                                    for ($i = 0; $i < count($headers); $i++) {
+                                        $data_entregas[$headers[$i]] = !empty($data[$i]) ? utf8_encode($data[$i]) : 0;
+                                    }
+                                    $pedido_from_db = $this->Pedido->find("first", array(
+                                        'conditions' => array(
+                                            "OR" => [
+                                                'Pedido.id' => $data_entregas["NO_ORDEN"],
+                                                'Pedido.consecutivo' => $data_entregas["NO_CONSECUTIVO"]
+                                            ],
+                                        ),
+                                        "fields" => ["Pedido.id","Pedido.consecutivo"]
+                                    ));
+                                    if ($pedido_from_db) {
+                                        $data_entregas["existe"] = true;
+                                    } else {
+                                        $data_entregas["existe"] = false;
+                                    }
+
+                                    $data_entregas['doc_encontrado'] = false;
+
+                                    array_push($entregas_validas, $data_entregas);
+                                }
+                                $row++;
+                            }
+                            fclose($file);
+                        } else {
+                            array_push($errors, "El tamaño del archivo " . $this->data['Masivo']['archivo_csv']['name'] . " supera el maximo establecido (20MB).<br>");
+                        }
+                    } else {
+                        array_push($errors, "El tipo de archivo " . $this->data['Masivo']['archivo_csv']['name'] . " no es el admitido para este proceso.<br>");
+                    }
+                } else {
+                    array_push($errors, "Hubo un error al cargar el archivo " . $this->data['Masivo']['archivo_csv']['name'] . ". Verifique y vuelva a intentar.<br>");
+                }
+            }
+            
+            $lista_validacion_remisiones = array();
+
+            foreach($entregas_validas as $key => $value):
+
+                if($value["NO_ORDEN"] != 0){
+                    $lista_validacion_remisiones['O' . $value["NO_ORDEN"]] = $key;
+                }
+                if($value["NO_CONSECUTIVO"] != 0){
+                    $lista_validacion_remisiones['R' . $value["NO_CONSECUTIVO"]] = $key;
+                }
+            endforeach;
+            
+            if (count($this->data['archivos_pdf']) > 0) {
+                foreach ($this->data['archivos_pdf'] as $archivo) :
+                    if (($archivo['type'] == 'application/pdf')) {
+
+                        move_uploaded_file($archivo['tmp_name'], $dir_file . '/' . $archivo['name']);
+                        $text = $this->Tools->execPythonPDFReader($archivo['name'], $dir_file);
+                        $list_text = explode("\n",$text);
+                        $orden = explode("#",$list_text[0]);
+                        $remision = intval(substr($list_text[8],-4,4));
+
+                        try{
+                            if(count($orden) > 1){
+                                $n_orden = 'O' . intval($orden[1]) ;
+                                if(in_array($n_orden,$lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_orden])){
+                                    $index = $lista_validacion_remisiones[$n_orden];
+                                    $entregas_validas[$index]["doc_encontrado"] = true;
+                                    rename($dir_file . '/' . $archivo['name'], FILES_PATH . '/'. $archivo['name']);
+                                }else{
+                                    array_push($infos, "El archivo " . $archivo['name'] . " no coincide con ningún registro del CSV.<br>");
+                                }
+                            }
+    
+                            else if($remision != 0){
+                                $n_remision = 'R' . $remision;
+                                if(in_array($n_remision, $lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_remision])){
+                                    $index = $lista_validacion_remisiones[$n_remision];
+                                    $entregas_validas[$index]["doc_encontrado"] = true;
+                                    rename($dir_file . '/' . $archivo['name'], FILES_PATH . '/'. $archivo['name']);
+                                }else{
+                                    array_push($infos, "El archivo " . $archivo['name'] . " no coincide con ningún registro del CSV.<br>");
+                                }
+                            }
+
+                        }
+                        catch(Exception $e){
+
+                        }
+
+                    } else {
+                        array_push($errors, "El tipo del archivo " . $archivo['name'] . " no es PDF.<br>");
+                    }
+                endforeach;
+            }
+        }
+        if (count($errors) > 0) {
+            $this->Session->setFlash(implode("", $errors), 'flash_failure');
+        }
+        if (count($infos) > 0) {
+            $this->Session->setFlash(implode("", $infos), 'flash_info');
+        }
+        $this->set("entregas_validas", $entregas_validas);
+
+        debug(FILES_PATH);
+    }
+
     function index()
     {
         //  ini_set('memory_limit', '4096M');
@@ -168,15 +291,15 @@ class MasivosController extends AppController
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.id' => $cronograma, 'TipoPedido.estado' => true)));
         $empresa = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
 
-        $user_asociado = $this->User->find('first', ["conditions" => ["User.id" => $this->Session->read('Auth.User.id')],"fields" => "asociado_id"]);
+        $user_asociado = $this->User->find('first', ["conditions" => ["User.id" => $this->Session->read('Auth.User.id')], "fields" => "asociado_id"]);
 
-        $consecutivos_empresa = $this->Consecutivo->find('all',array(
-            "fields" =>["Consecutivo.id","Asociado.nombre_asociado","Consecutivo.numero_contrato"], 
+        $consecutivos_empresa = $this->Consecutivo->find('all', array(
+            "fields" => ["Consecutivo.id", "Asociado.nombre_asociado", "Consecutivo.numero_contrato"],
             "conditions" => array("Consecutivo.asociado_id" => $user_asociado["User"]["asociado_id"])
         ));
         $consecutivos = array();
-        foreach ($consecutivos_empresa as $consecutivo){
-            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"].' - '.$consecutivo["Consecutivo"]["numero_contrato"];
+        foreach ($consecutivos_empresa as $consecutivo) {
+            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"] . ' - ' . $consecutivo["Consecutivo"]["numero_contrato"];
         }
 
         $this->set(compact('tipo_pedido', 'empresa', 'consecutivos'));
@@ -194,26 +317,26 @@ class MasivosController extends AppController
                 }
                 // Verificar que se haya cargado un archivo
                 if (!empty($this->data['Masivo']['archivo_csv']['name'])) {
-                    
+
                     // Verificar si el archivo tiene formato .csv
                     if ($this->data['Masivo']['archivo_csv']['type'] == 'text/csv' || $this->data['Masivo']['archivo_csv']['type'] == 'application/vnd.ms-excel') {
-                        
+
                         // Verificar el tamaño del archivo
                         if ($this->data['Masivo']['archivo_csv']['size'] < $max_file) {
                             // echo "tamaño<br>";
                             move_uploaded_file($this->data['Masivo']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Masivo']['archivo_csv']['name']);
-                            
+
                             $this->data['Masivo']['archivo_csv'] = $this->data['Masivo']['archivo_csv']['name'];
 
                             // Vaciar la tabla de pedidos masivos
                             $sql_truncate = "TRUNCATE TABLE pedidos_masivos;";
                             $this->Pedido->query($sql_truncate);
-                            $consecutivo_empresa = $this->Consecutivo->find("first", ["fields" => ["id", "numero_seq","numero_contrato"], "conditions" => ["Consecutivo.id" => $this->data["Masivo"]["consecutivo_id"]]]);
+                            $consecutivo_empresa = $this->Consecutivo->find("first", ["fields" => ["id", "numero_seq", "numero_contrato"], "conditions" => ["Consecutivo.id" => $this->data["Masivo"]["consecutivo_id"]]]);
 
-                            
+
                             $row = 0;
                             if (($handle = fopen($dir_file . $this->data['Masivo']['archivo_csv'], "r")) !== FALSE) {
-                                $nombre_tipo_categoria = $this->TipoCategoria->find("first",array(
+                                $nombre_tipo_categoria = $this->TipoCategoria->find("first", array(
                                     "conditions" => array("TipoCategoria.tipo_categoria_orden" => $this->data['Masivo']['tipo_pedido_id']),
                                     "fields" => array("sigla_categoria"),
                                 ));
@@ -221,28 +344,28 @@ class MasivosController extends AppController
                                 while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 
                                     $num = count($data);
-                                    
+
                                     $row++;
                                     $data_bd = null;
                                     for ($c = 0; $c < $num; $c++) {
-                                        
+
                                         $data_bd = $data_bd . $data[$c];
                                     }
-                                    
+
                                     $array_datos = explode(';', $data_bd);
                                     if (count($array_datos) > 1 && $row > 1) {
-                                        
-                                        if(intval(substr($array_datos[4],0,3)) == 0){
+
+                                        if (intval(substr($array_datos[4], 0, 3)) == 0) {
                                             $codigo_producto = $array_datos[4];
-                                        }else{
-                                            $codigo_producto = $nombre_tipo_categoria["TipoCategoria"]["sigla_categoria"]. "-" .$array_datos[4];
+                                        } else {
+                                            $codigo_producto = $nombre_tipo_categoria["TipoCategoria"]["sigla_categoria"] . "-" . $array_datos[4];
                                         }
-                                        
+
                                         $nombre_empresa = $array_datos[0];
-                                        $nombre_sucursal = null; 
+                                        $nombre_sucursal = null;
                                         $oi_sucursal = $array_datos[1];
                                         $ceco_sucursal = $array_datos[2];
-                                        $nombre_producto = null; 
+                                        $nombre_producto = null;
                                         $cantidad_pedido = is_int($array_datos[6]) ? '0' : $array_datos[6];
                                         $fecha_pedido_masivo = date('Y-m-d H:i:s');
                                         $pedido_id = '0';
@@ -252,7 +375,7 @@ class MasivosController extends AppController
                                         $empresa_id = $this->data['Masivo']['empresa_id'];
                                         $mes_pedido = $this->data['Masivo']['mes_pedido'];
                                         $clasificacion_pedido = $this->data['Masivo']['clasificacion_pedido'];
-                                        $cadena_masivo = null; 
+                                        $cadena_masivo = null;
                                         $lote = $array_datos[7];
                                         $fecha_expiracion = $array_datos[8];
                                         array_push($sql_cargas, array(
@@ -290,7 +413,7 @@ class MasivosController extends AppController
                             if (count($cantidad) > 0) {
 
                                 // Actualizar productos
-                                
+
                                 $sql_pedidos_errores = "SELECT masivos_validacion_productos_sucursal();";
                                 $this->Pedido->query($sql_pedidos_errores);
 
@@ -311,13 +434,13 @@ class MasivosController extends AppController
                                 AND producto_id > 0 OR tipo_categoria_id > 0 
                                 GROUP BY sucursal_id, tipo_pedido_id, oi_sucursal";
                                 $presupuesto = $this->Pedido->query($sql_presupuestos);
-                                
+
                                 foreach ($presupuesto as $value) {
                                     if ($value['0']['presupuesto']) {
-                                        
+
                                         // Marcar los registros con errores
                                         $sql_pedidos_errores = "UPDATE pedidos_masivos SET pedido_estado = false, error_generado = concat(error_generado,'La sucursal " . $value['0']['oi_sucursal'] . " tiene un presupuesto de " . $value['0']['presupuesto_asignado'] . " y se esta usando un pedido por valor de " . $value['0']['valor_pedido'] . "<br>') WHERE oi_sucursal = '" . $value['0']['oi_sucursal'] . "';";
-                                        
+
                                         $this->Pedido->query($sql_pedidos_errores);
                                     }
                                 }
@@ -339,12 +462,12 @@ class MasivosController extends AppController
                                     $this->Pedido->query($sql_pedidos);
 
                                     // Actualizar los datos masivos marcandolos con los pedidos creados
-                                    
+
                                     $sql_pedidos_marcar = "UPDATE pedidos_masivos SET pedido_id = pedidos.id FROM pedidos WHERE pedidos.pedido_oi_masivo = pedidos_masivos.oi_sucursal AND pedidos.observaciones = 'Masivo' AND pedidos.pedido_fecha = '" . date('Y-m-d') . "' AND pedido_estado_pedido = 3 AND pedidos.pedido_masivo = " . $pedido_masivo . ";";
                                     $this->Pedido->query($sql_pedidos_marcar);
 
                                     // Insertar detalles del pedido
-                                    
+
                                     $sql_pedidos_detalles = "ALTER TABLE pedidos_detalles DISABLE TRIGGER sucursales_presupuesto; INSERT INTO pedidos_detalles (producto_id, tipo_categoria_id, cantidad_pedido, pedido_id,  precio_producto, iva_producto, medida_producto, fecha_pedido_detalle, observacion_producto, lote, fecha_expiracion) (SELECT producto_id, tipo_categoria_id, cantidad_pedido, pedido_id, precio_producto, iva_producto, medida_producto, '" . date('Y-m-d H:i:s') . "' fecha_pedido_detalle, cadena_masivo, lote, fecha_expiracion FROM pedidos_masivos WHERE pedido_masivo = " . $pedido_masivo . " AND pedido_id > 0 AND producto_id > 0 AND iva_producto is not null); ALTER TABLE pedidos_detalles ENABLE TRIGGER sucursales_presupuesto;";
                                     $this->Pedido->query($sql_pedidos_detalles);
 
@@ -352,10 +475,10 @@ class MasivosController extends AppController
 
                                     $pedidos_creados = $this->Pedido->query($sql_pedidos_creados);
 
-                                    if(count($pedidos_creados) > 0){
+                                    if (count($pedidos_creados) > 0) {
                                         $consecutivo = $consecutivo_empresa["Consecutivo"]["numero_seq"];
 
-                                        foreach ($pedidos_creados as $pedido_creado){
+                                        foreach ($pedidos_creados as $pedido_creado) {
                                             $consecutivo = $consecutivo + 1;
                                             $this->Pedido->save([
                                                 "Pedido" => [
@@ -363,7 +486,7 @@ class MasivosController extends AppController
                                                     "consecutivo" => $consecutivo,
                                                     "numero_contrato" => $consecutivo_empresa["Consecutivo"]["numero_contrato"]
                                                 ]
-                                                ]);
+                                            ]);
                                         }
                                         $this->Consecutivo->save(["Consecutivo" => [
                                             "id" => $consecutivo_empresa["Consecutivo"]["id"],
