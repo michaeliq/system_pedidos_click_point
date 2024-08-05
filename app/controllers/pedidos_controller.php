@@ -1491,7 +1491,7 @@ class PedidosController extends AppController
         if (!empty($this->data['Pedido'])) {
             foreach ($this->data['Pedido'] as $key => $value) {
                 if ($value > 0) {
-                    if (!empty($this->data['Pedido']['fecha_entregado_' . $key])) {
+                    if (!empty($this->data['Pedido']['fecha_entregado_' . $key])) { 
                         //echo $this->data['Pedido']['guia_' . $key];
                         if ($this->Pedido->updateAll(array("Pedido.pedido_estado" => 'true', "Pedido.pedido_estado_pedido" => '6', "Pedido.fecha_entregado" => "'" . $this->data['Pedido']['fecha_entregado_' . $key] . "'"), array("Pedido.id" => $value, 'Pedido.pedido_estado_pedido' => '5'))) {
                             $this->PedidosAuditoria->AuditoriaCambioEstado($value, '6', $this->Session->read('Auth.User.id'));

@@ -1,4 +1,26 @@
 ﻿<?php
+//debug($rel_localidad_rutas);
+$file_name = "plantilla/PlantillaEntregasMasiva.csv";
+$file = fopen($file_name, 'w');
+$data_csv = utf8_decode("ID;NO_ORDEN;NO_CONSECUTIVO;FECHA_ENTREGA\n");
+fwrite($file, $data_csv);
+foreach ($pedidos as $key => $pedido){
+    $data_csv = "";
+
+    $id = "$key";
+    $no_orden = utf8_decode($pedido['Pedido']['id']);
+    $no_consecutivo = utf8_decode($pedido['Pedido']['consecutivo']);
+    $fecha_entrega = " ";
+
+    $data_csv .= "$id;";
+    $data_csv .= "$no_orden;";
+    $data_csv .= "$no_consecutivo;";
+    $data_csv .= "$fecha_entrega;\n";
+   
+    fwrite($file, $data_csv);
+    fwrite($file, chr(13) . chr(10));
+}
+fclose($file);
 
 echo $this->Html->script(array('pedidos/list_ordenes'));
 ?>
@@ -161,7 +183,11 @@ if (count($pedidos) > 0) {
 ?>
     <div class="text-center">
         <?php echo $this->Form->button('MARCAR COMO ENTREGADAS', array('type' => 'submit', 'class' => 'btn btn-info  btn-xs')); ?>
+
         <div class="text-center"><b>Recuerde que debe colocar una fecha para marcar el pedido como entregado.</b></div>
+
+        <div class="text-center"><a href="../<?php echo $file_name ; ?>"> <i class="icon-download"></i> Descargar aquí la plantilla de cargue masivo de Entregas</a></div>
+
     </div>
     <div>&nbsp;</div>
 <?php

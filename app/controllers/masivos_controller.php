@@ -1,14 +1,14 @@
 <?php
 
 $env = parse_ini_file('.env');
-define("FILES_PATH",$env["FILES_PATH"]);
+define("FILES_PATH", $env["FILES_PATH"]);
 
 class MasivosController extends AppController
 {
 
     var $name = "Masivos";
     var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'TipoCategoria', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore');
-    var $components = array('RequestHandler', 'Auth', 'Permisos', 'Tools');
+    var $components = array('RequestHandler', 'Auth', 'Permisos', 'Tools', 'PedidosAuditoria');
 
     function isAuthorized()
     {
@@ -134,6 +134,7 @@ class MasivosController extends AppController
 
         if ($this->RequestHandler->isPost()) {
 
+            #Recuperación de datos desde CSV y BD
             if ($this->data['Masivo']['archivo_csv']['name']) {
                 if (($this->data['Masivo']['archivo_csv']['type'] == 'text/csv')) {
                     if ($this->data['Masivo']['archivo_csv']['size'] < $max_file) {
@@ -156,11 +157,15 @@ class MasivosController extends AppController
                                                 'Pedido.id' => $data_entregas["NO_ORDEN"],
                                                 'Pedido.consecutivo' => $data_entregas["NO_CONSECUTIVO"]
                                             ],
+                                            "Pedido.pedido_estado_pedido" => 5,
+                                            "Pedido.archivo_cumplido" => null
                                         ),
-                                        "fields" => ["Pedido.id","Pedido.consecutivo"]
+                                        "fields" => ["Pedido.id", "Pedido.consecutivo"]
                                     ));
                                     if ($pedido_from_db) {
                                         $data_entregas["existe"] = true;
+                                        $data_entregas["NO_ORDEN"] = $pedido_from_db["Pedido"]["id"];
+                                        $data_entregas["NO_CONSECUTIVO"] = $pedido_from_db["Pedido"]["consecutivo"];
                                     } else {
                                         $data_entregas["existe"] = false;
                                     }
@@ -182,72 +187,95 @@ class MasivosController extends AppController
                     array_push($errors, "Hubo un error al cargar el archivo " . $this->data['Masivo']['archivo_csv']['name'] . ". Verifique y vuelva a intentar.<br>");
                 }
             }
-            
+            #Listado para validar los PDFs subidos
             $lista_validacion_remisiones = array();
 
-            foreach($entregas_validas as $key => $value):
+            foreach ($entregas_validas as $key => $value) :
 
-                if($value["NO_ORDEN"] != 0){
+                if ($value["NO_ORDEN"] != 0) {
                     $lista_validacion_remisiones['O' . $value["NO_ORDEN"]] = $key;
                 }
-                if($value["NO_CONSECUTIVO"] != 0){
+                if ($value["NO_CONSECUTIVO"] != 0) {
                     $lista_validacion_remisiones['R' . $value["NO_CONSECUTIVO"]] = $key;
                 }
             endforeach;
-            
+
+            #Validación de cada PDF
             if (count($this->data['archivos_pdf']) > 0) {
                 foreach ($this->data['archivos_pdf'] as $archivo) :
                     if (($archivo['type'] == 'application/pdf')) {
 
                         move_uploaded_file($archivo['tmp_name'], $dir_file . '/' . $archivo['name']);
                         $text = $this->Tools->execPythonPDFReader($archivo['name'], $dir_file);
-                        $list_text = explode("\n",$text);
-                        $orden = explode("#",$list_text[0]);
-                        $remision = intval(substr($list_text[8],-4,4));
+                        $list_text = explode("\n", $text);
+                        $orden = explode("#", $list_text[0]);
+                        $remision = intval(substr($list_text[8], -4, 4));
 
-                        try{
-                            if(count($orden) > 1){
-                                $n_orden = 'O' . intval($orden[1]) ;
-                                if(in_array($n_orden,$lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_orden])){
+                        try {
+                            if (count($orden) > 1) {
+                                $n_orden = 'O' . intval($orden[1]);
+                                if (in_array($n_orden, $lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_orden])) {
                                     $index = $lista_validacion_remisiones[$n_orden];
                                     $entregas_validas[$index]["doc_encontrado"] = true;
-                                    rename($dir_file . '/' . $archivo['name'], FILES_PATH . '/'. $archivo['name']);
-                                }else{
+                                    $entregas_validas[$index]["archivo_cumplido"] = FILES_PATH . '/' . $archivo['name'];
+                                    rename($dir_file . '/' . $archivo['name'], FILES_PATH . '/' . $archivo['name']);
+                                } else {
                                     array_push($infos, "El archivo " . $archivo['name'] . " no coincide con ningún registro del CSV.<br>");
                                 }
-                            }
-    
-                            else if($remision != 0){
+                            } else if ($remision != 0) {
                                 $n_remision = 'R' . $remision;
-                                if(in_array($n_remision, $lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_remision])){
+                                if (in_array($n_remision, $lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_remision])) {
                                     $index = $lista_validacion_remisiones[$n_remision];
                                     $entregas_validas[$index]["doc_encontrado"] = true;
-                                    rename($dir_file . '/' . $archivo['name'], FILES_PATH . '/'. $archivo['name']);
-                                }else{
+                                    $entregas_validas[$index]["archivo_cumplido"] = FILES_PATH . '/' . $archivo['name'];
+                                    rename($dir_file . '/' . $archivo['name'], FILES_PATH . '/' . $archivo['name']);
+                                    $this->Pedido->save();
+                                } else {
                                     array_push($infos, "El archivo " . $archivo['name'] . " no coincide con ningún registro del CSV.<br>");
                                 }
                             }
-
+                        } catch (Exception $e) {
                         }
-                        catch(Exception $e){
-
-                        }
-
                     } else {
                         array_push($errors, "El tipo del archivo " . $archivo['name'] . " no es PDF.<br>");
                     }
                 endforeach;
             }
+            
+            #Actualizar Pedidos a "Entregados" si cumplen todas las condiciones
+            $consulta_actualizacion_pedidos = array();
+            foreach ($entregas_validas as $entregas) :
+                if ($entregas["doc_encontrado"] && $entregas["existe"]) {
+                    array_push($consulta_actualizacion_pedidos, [
+                        "Pedido" => [
+                            "id" => $entregas["NO_ORDEN"],
+                            "pedido_estado" => true,
+                            "pedido_estado_pedido" => 6,
+                            "fecha_entregado" => $entregas["FECHA_ENTREGA"],
+                            "archivo_cumplido" => $entregas["archivo_cumplido"]
+                        ]
+                    ]);
+                    $this->PedidosAuditoria->AuditoriaCambioEstado($entregas["NO_ORDEN"], '6', $this->Session->read('Auth.User.id'));
+                }
+            endforeach;
+
+            if($this->Pedido->saveAll($consulta_actualizacion_pedidos)){
+                $this->Session->setFlash("Se han procesado todas las Ordenes/Remisiones.", 'flash_success');
+            }
+            //debug($consulta_actualizacion_pedidos);
         }
         if (count($errors) > 0) {
             $this->Session->setFlash(implode("", $errors), 'flash_failure');
         }
-        if (count($infos) > 0) {
+        else if (count($infos) > 0) {
             $this->Session->setFlash(implode("", $infos), 'flash_info');
         }
+        
         $this->set("entregas_validas", $entregas_validas);
+    }
 
-        debug(FILES_PATH);
+    function confirmar_entregas_masivas()
+    {
     }
 
     function index()

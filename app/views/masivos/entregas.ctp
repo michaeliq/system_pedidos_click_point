@@ -1,4 +1,5 @@
 <?php
+    
 ?>
 
 <h2>Cargador Masivo de Entregas</h2>
@@ -55,7 +56,7 @@
                     echo "<td class='text-center'><i title='No hay coincidencias del No. de orden ni el consecutivo' style='color:red;' class='glyphicon glyphicon-exclamation-sign'></i></td>";
                 } ?>
                 <?php if($entrega_valida["doc_encontrado"]){
-                    echo "<td class='text-center' style='color:green; font-weight:bold'>ENCONTRADO</td>";
+                    echo "<td class='text-center' style='color:green; font-weight:bold'>ENCONTRADO EN CSV</td>";
                 }else{
                     echo "<td class='text-center' style='color:red; font-weight:bold'>NO ENCONTRADO</td>";
                 } ?>

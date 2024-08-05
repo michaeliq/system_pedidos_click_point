@@ -22,7 +22,8 @@ class PedidosAuditoriaComponent extends Object {
         // PedidosAudit
         $Auditoria = ClassRegistry::init('PedidosAudit');
 
-        $detalle_auditoria = array('pedido_id' => $Pedido,
+        $detalle_auditoria = array(
+            'pedido_id' => $Pedido,
             'pedido_estado_pedido' => $PedidoEstado,
             'fecha_cambio_estado' => date('Y-m-d H:i:s'),
             'user_id' => $UserId,
