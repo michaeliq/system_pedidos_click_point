@@ -34,7 +34,7 @@ class ToolsComponent extends Object {
     }
 
     function execPythonPDFReader($nombre_archivo, $ruta){
-      $command = escapeshellcmd("python py/read_pdf.py ". $nombre_archivo . " " . $ruta);
+      $command = escapeshellcmd("python3 py/read_pdf.py ". $nombre_archivo . " " . $ruta);
       $output = shell_exec($command);
       return $output;
     }
