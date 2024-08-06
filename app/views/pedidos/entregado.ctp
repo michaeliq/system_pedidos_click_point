@@ -15,7 +15,7 @@ foreach ($pedidos as $key => $pedido){
     $data_csv .= "$id;";
     $data_csv .= "$no_orden;";
     $data_csv .= "$no_consecutivo;";
-    $data_csv .= "$fecha_entrega;\n";
+    $data_csv .= "$fecha_entrega;";
    
     fwrite($file, $data_csv);
     fwrite($file, chr(13) . chr(10));
