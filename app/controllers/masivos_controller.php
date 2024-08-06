@@ -48,7 +48,7 @@ class MasivosController extends AppController
                     // Verificar el tamaño del archivo
                     if ($this->data['Masivo']['archivo_csv']['size'] < $max_file) {
                         // echo "tamaño<br>";
-                        move_uploaded_file($this->data['Masivo']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Masivo']['archivo_csv']['name']);
+                        move_uploaded_file($this->data['Masivo']['archivo_csv']['tmp_name'], $dir_file . $this->data['Masivo']['archivo_csv']['name']);
                         // $aux = explode('.', $this->data['Masivo']['archivo_csv']['name']);
                         // rename($dir_file . $this->data['Masivo']['archivo_csv']['name'], $dir_file . $this->data['Producto']['codigo_producto'] . '.' . $aux[1]);
                         $this->data['Masivo']['archivo_csv'] = $this->data['Masivo']['archivo_csv']['name'];
