@@ -67,8 +67,7 @@ class CronogramasController extends AppController {
 
     function add() {
         if (!empty($this->data)) {
-//           var_dump(implode(",", $this->data['Cronograma']['tipo_pedido_id_2'])); // string(20) "lastname,email,phone"
-//           exit;
+
             $this->data['Cronograma']['tipo_pedido_id'] = 1;
             $this->data['Cronograma']['tipo_pedido_id_2'] = implode(",", $this->data['Cronograma']['tipo_pedido_id_2']);
             $this->Cronograma->create();

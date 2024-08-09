@@ -37,6 +37,9 @@ class MasivosController extends AppController
 
             // Configuración de la carga
             $dir_file = 'pedidos/masivos_despachos/';
+            if (!is_dir($dir_file)) {
+                mkdir($dir_file, 0777, true);
+            }
             $max_file = 20145728; // 20,14 MB = 20145728 byte
             // Verificar que se haya cargado un archivo
             if (!empty($this->data['Masivo']['archivo_csv']['name'])) {
@@ -124,6 +127,9 @@ class MasivosController extends AppController
     {
         date_default_timezone_set('America/Bogota');
         $dir_file = 'entrega/masivos/';
+        if (!is_dir($dir_file)) {
+            mkdir($dir_file, 0777, true);
+        }
         $errors = array();
         $infos = array();
         $max_file = 20145728;

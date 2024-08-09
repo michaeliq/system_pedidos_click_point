@@ -400,4 +400,86 @@ class PlantillasController extends AppController {
         $this->redirect(array('controller' => 'plantillas', 'action' => 'index'));
     }
 
+    function update_file($id=null){
+        date_default_timezone_set('America/Bogota');
+        $dir_file = 'plantilla_producto/masivos/';
+        $max_file = 20145728;
+        $productos_validos = array();
+        if (!is_dir($dir_file)) {
+            mkdir($dir_file, 0777, true);
+        }
+
+        if ($this->RequestHandler->isPost()) {
+            if ($this->data['Plantilla']['archivo_csv']['name']) {
+                if (($this->data['Plantilla']['archivo_csv']['type'] == 'text/csv') || ($this->data['Plantilla']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
+                    if ($this->data['Plantilla']['archivo_csv']['size'] < $max_file) {
+                        move_uploaded_file($this->data['Plantilla']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Plantilla']['archivo_csv']['name']);
+                        $file = fopen($dir_file . '/' . $this->data['Plantilla']['archivo_csv']['name'], 'r');
+                        if ($file) {
+                            $row = 0;
+                            $headers = [];
+                            while (($data = fgetcsv($file, null, ";")) !== FALSE) {
+
+                                if ($row == 0) {
+                                    $headers = $data;
+                                } else {
+                                    $data_producto = array();
+                                    for ($i = 0; $i < count($headers); $i++) {
+                                        $data_producto[$headers[$i]] = utf8_encode($data[$i]);
+                                    }
+                                    $producto_from_db = $this->Producto->find("first", array(
+                                        'conditions' => array(
+                                            'Producto.codigo_producto' => $data_producto["COD_PRODUCTO"],
+                                        ),
+                                        'fields' => ["id","codigo_producto"]
+                                    ));
+                                    $detalle_plantilla_from_db = $this->PlantillasDetalle->find("first", array(
+                                        'conditions' => array(
+                                            'PlantillasDetalle.producto_id' => $detalle_plantilla_from_db["Producto"]["id"],
+                                            'PlantillasDetalle.plantilla_id'
+                                        )
+                                    ));
+
+                                    
+
+                                    /* $this->TempLocalidad->create();
+                                    $this->TempLocalidad->save(array(
+                                        "TempLocalidad" => array(
+                                            "nombre_localidad" => $data_producto["LOCALIDAD"],
+                                            "localidad_id" => $data_producto["ID"],
+                                            "to_create" => $localidad_from_db ? false : true,
+                                        )
+                                    )); */
+
+                                    if ($detalle_plantilla_from_db) {
+                                        $data_producto["existe"] = true;
+                                    } else {
+                                        $data_producto["existe"] = false;
+                                    }
+                                    array_push($productos_validos, $data_producto);
+                                }
+                                $row++;
+                            }
+                        }
+
+                        $this->set("productos_validos", $productos_validos);
+                        fclose($file);
+                        unlink($dir_file . '/' . $this->data['Localidades']['archivo_csv']['name']);
+                    } else {
+                        $this->set("productos_validos", $productos_validos);
+                        $this->Session->setFlash('El tamaño del archivo supera el maximo establecido (20MB).', 'flash_failure');
+                    }
+                } else {
+                    $this->set("productos_validos", $productos_validos);
+                    $this->Session->setFlash('El tipo de archivo no es el admitido para este proceso.', 'flash_failure');
+                }
+            } else {
+                $this->set("productos_validos", $productos_validos);
+                $this->Session->setFlash('Hubo un error al cargar el archivo. Verifique y vuelva a intentar.', 'flash_failure');
+            }
+        } else {
+            $this->set("productos_validos", $productos_validos);
+        }
+    }
+
 }

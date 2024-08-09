@@ -414,6 +414,9 @@ class SucursalesController extends AppController
     {
         date_default_timezone_set('America/Bogota');
         $dir_file = 'sucursales/masivos/';
+        if (!is_dir($dir_file)) {
+            mkdir($dir_file, 0777, true);
+        }
         $max_file = 20145728;
         $sucursales_validas = array();
 
@@ -444,7 +447,6 @@ class SucursalesController extends AppController
                             $headers = [];
                             while (($data = fgetcsv($file, null, ";")) !== FALSE) {
                                 $sql_query_instert_array = array();
-                                #echo '<pre>'; print_r($data); echo '</pre>';
                                 if ($row == 0) {
                                     $headers = $data;
                                 } else {
