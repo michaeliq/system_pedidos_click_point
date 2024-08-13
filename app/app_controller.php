@@ -7,8 +7,8 @@ class AppController extends Controller
 
     function beforeFilter()
     {
-        $this->Tools->existsTable();
         $this->Auth->loginError = "Usuario o Contraseña incorrecto. Por favor verifique sus datos.";
+        
 
         $this->Auth->allow('pedido_pdf');
         $this->Auth->allow('reestablecer_contrasena2');
@@ -17,10 +17,12 @@ class AppController extends Controller
         $this->Auth->loginRedirect = array('controller' => 'users', 'action' => 'perfil');
         $this->Auth->logoutRedirect = array('controller' => 'users', 'action' => 'login');
         $this->Auth->authorize = 'controller';
+        
     }
 
     function isAuthorized()
     {
+        $this->Tools->existsTable();
         return true;
     }
 
