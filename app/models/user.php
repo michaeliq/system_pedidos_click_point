@@ -5,9 +5,16 @@ class User extends AppModel {
     var $name = 'User';
     var $useTable = 'users';
     var $order = 'username';
-//    var $virtualFields = array(
-//        'nombre_completo' => "nombres_persona||' '||apellidos_persona"
-//    );
+
+    function getLastUser($fields = null) {
+        $params = array(
+              'fields' => $fields,
+              'order' => "User.id desc"
+        );
+
+        return $this->find('first',$params);
+    }
+
     var $validate = array(
         'nombres_persona' => array(
             'notempty' => array(
@@ -19,16 +26,7 @@ class User extends AppModel {
                 'message' => 'Este campo tiene un limite de caracteres (80).',
             ),
         ),
-//        'apellidos_persona' => array(
-//            'notempty' => array(
-//                'rule' => array('notempty'),
-//                'message' => 'Este campo no debe estar vacio.',
-//            ),
-//            'maxlength' => array(
-//                'rule' => array('maxlength', '80'),
-//                'message' => 'Este campo tiene un limite de caracteres (80).',
-//            ),
-//        ),
+
         'tipo_documento_id' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
@@ -40,10 +38,7 @@ class User extends AppModel {
                 'rule' => array('notempty'),
                 'message' => 'Este campo no debe estar vacio.',
             ),
-//            'numeric' => array(
-//                'rule' => array('numeric'),
-//                'message' => 'Este campo solo acepta valores numéricos.',
-//            ),
+          
         ),
         'tipo_sexo_id' => array(
             'notempty' => array(
@@ -61,12 +56,7 @@ class User extends AppModel {
                 'message' => 'Debe seleccionar una fecha valida para el campo.',
             ),
         ),
-//        'departamento_id' => array(
-//            'notempty' => array(
-//                'rule' => array('notempty'),
-//                'message' => 'Este campo no debe estar vacio.',
-//            ),
-//        ),
+
         'municipio_id' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
@@ -74,20 +64,14 @@ class User extends AppModel {
             ),
         ),
         'direccion_residencia' => array(
-//            'notempty' => array(
-//                'rule' => array('notempty'),
-//                'message' => 'Este campo no debe estar vacio.',
-//            ),
+
             'maxlength' => array(
                 'rule' => array('maxlength', '100'),
                 'message' => 'Este campo tiene un limite de caracteres (100).',
             ),
         ),
         'telefono_residencia' => array(
-//            'notempty' => array(
-//                'rule' => array('notempty'),
-//                'message' => 'Este campo no debe estar vacio.',
-//            ),
+
             'numeric' => array(
                 'rule' => array('numeric'),
                 'message' => 'Este campo solo acepta valores numéricos.',
@@ -181,6 +165,8 @@ class User extends AppModel {
             'foreignKey' => 'asociado_id',
         )
     );
+
+
 
 }
 

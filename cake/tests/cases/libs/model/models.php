@@ -207,7 +207,7 @@ class User extends CakeTestModel {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
-class Article extends CakeTestModel {
+class ArticleTest extends CakeTestModel {
 
 /**
  * name property

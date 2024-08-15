@@ -36,7 +36,7 @@ class TestManagerTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->TestManager =& new TestManager();
-		$this->Reporter =& new CakeHtmlReporter();
+		$this->Reporter =&  new CakeHtmlReporter();
 	}
 
 /**

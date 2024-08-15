@@ -113,7 +113,7 @@ class TestManager {
 		}
 
 		foreach ($testCases as $testCase) {
-			$test->addTestFile($testCase);
+			$test->addFile($testCase);
 		}
 
 		return $test->run($reporter);
@@ -130,7 +130,6 @@ class TestManager {
  */
 	function runTestCase($testCaseFile, &$reporter, $testing = false) {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
-
 		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
 			trigger_error(
 				sprintf(__("Test case %s cannot be found", true), htmlentities($testCaseFile)),
@@ -144,7 +143,7 @@ class TestManager {
 		}
 
 		$test =& new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
-		$test->addTestFile($testCaseFileWithPath);
+		$test->addFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
 
@@ -173,7 +172,7 @@ class TestManager {
 		$test =& new TestSuite(sprintf(__('%s group test', true), $groupTestName));
 		foreach ($this->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
-			$test->addTestCase($testCase);
+			$test->add($testCase);
 			if (isset($testCase->label)) {
 				$test->_label = $testCase->label;
 			}
@@ -215,7 +214,7 @@ class TestManager {
 		} elseif (file_exists($file . $manager->_groupExtension)) {
 			$file .= $manager->_groupExtension;
 		}
-		$groupTest->addTestFile($file);
+		$groupTest->addFile($file);
 	}
 
 /**

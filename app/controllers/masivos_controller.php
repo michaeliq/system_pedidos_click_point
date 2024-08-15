@@ -197,29 +197,41 @@ class MasivosController extends AppController
             $lista_validacion_remisiones = array();
 
             foreach ($entregas_validas as $key => $value) :
-
                 if ($value["NO_ORDEN"] != 0) {
-                    $lista_validacion_remisiones['O' . $value["NO_ORDEN"]] = $key;
+                    $lista_validacion_remisiones[$value["NO_ORDEN"]] = $key;
                 }
                 if ($value["NO_CONSECUTIVO"] != 0) {
-                    $lista_validacion_remisiones['R' . $value["NO_CONSECUTIVO"]] = $key;
+                    $lista_validacion_remisiones[$value["NO_CONSECUTIVO"]] = $key;
                 }
             endforeach;
 
             #Validación de cada PDF
             if (count($this->data['archivos_pdf']) > 0) {
                 foreach ($this->data['archivos_pdf'] as $archivo) :
-                    if (($archivo['type'] == 'application/pdf')) {
+                    if (($archivo['type'] == 'application/pdf') || ($archivo['type'] == 'image/png') || ($archivo['type'] == 'image/jpg') || ($archivo['type'] == 'image/jpeg') ) {
 
                         move_uploaded_file($archivo['tmp_name'], $dir_file . '/' . $archivo['name']);
                         $text = $this->Tools->execPythonPDFReader($archivo['name'], $dir_file);
+            
                         $list_text = explode("\n", $text);
-                        $orden = explode("#", $list_text[0]);
-                        $remision = intval(substr($list_text[8], -4, 4));
+                        $orden = "";
+                        $remision = 0;
 
+                        if(count($text) > 0){
+                            $orden = explode("#", $list_text[0]);
+                            $remision = intval(substr($list_text[8], -4, 4));
+                        }
+                        
+                        $name_file = explode(".",$archivo['name'])[0];
+                        
                         try {
-                            if (count($orden) > 1) {
-                                $n_orden = 'O' . intval($orden[1]);
+                            if (isset($lista_validacion_remisiones[$name_file])) {
+                                $index = $lista_validacion_remisiones[$name_file];
+                                $entregas_validas[$index]["doc_encontrado"] = true;
+                                $entregas_validas[$index]["archivo_cumplido"] = FILES_PATH . '/' . $archivo['name'];
+                                rename($dir_file . '/' . $archivo['name'], FILES_PATH . '/' . $archivo['name']);
+                            } else if (count($orden) > 1) {
+                                $n_orden = intval($orden[1]);
                                 if (in_array($n_orden, $lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_orden])) {
                                     $index = $lista_validacion_remisiones[$n_orden];
                                     $entregas_validas[$index]["doc_encontrado"] = true;
@@ -229,7 +241,7 @@ class MasivosController extends AppController
                                     array_push($infos, "El archivo " . $archivo['name'] . " no coincide con ningún registro del CSV.<br>");
                                 }
                             } else if ($remision != 0) {
-                                $n_remision = 'R' . $remision;
+                                $n_remision =  $remision;
                                 if (in_array($n_remision, $lista_validacion_remisiones) === true && isset($lista_validacion_remisiones[$n_remision])) {
                                     $index = $lista_validacion_remisiones[$n_remision];
                                     $entregas_validas[$index]["doc_encontrado"] = true;

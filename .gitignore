@@ -10,4 +10,7 @@
 /app/webroot/pqr
 /app/webroot/sucursales
 /app/tests
+/app/vendors
 /files
+composer.phar
+/vendor

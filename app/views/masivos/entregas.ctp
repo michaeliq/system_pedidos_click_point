@@ -27,7 +27,7 @@
     </tr>
     <tr>
         <td colspan="2" align='center'>
-            <?php echo $this->Form->input('archivos_pdf. ', array('type' => 'file', 'class' => 'btn btn-file','label'=>false,'div'=>false, 'required' => true, "multiple" => "multiple", "accept" => "application/pdf")); ?>
+            <?php echo $this->Form->input('archivos_pdf. ', array('type' => 'file', 'class' => 'btn btn-file','label'=>false,'div'=>false, 'required' => true, "multiple" => "multiple")); ?>
         </td>
     </tr>
     <tr>

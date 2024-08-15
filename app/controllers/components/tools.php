@@ -1,4 +1,6 @@
 <?php
+$env = parse_ini_file('.env');
+define("ENV", $env["ENV"]);
 
 class ToolsComponent extends Object {
     
@@ -35,9 +37,15 @@ class ToolsComponent extends Object {
     }
 
     function execPythonPDFReader($nombre_archivo, $ruta){
-      $command = escapeshellcmd("python3 py/read_pdf.py ". $nombre_archivo . " " . $ruta);
-      $output = shell_exec($command);
-      return $output;
+      if(ENV == "DEV"){
+        $command = escapeshellcmd("python py/read_pdf.py ". $nombre_archivo . " " . $ruta);
+        $output = shell_exec($command);
+        return $output;
+      }else if(ENV == "PROD"){
+        $command = escapeshellcmd("python3 py/read_pdf.py ". $nombre_archivo . " " . $ruta);
+        $output = shell_exec($command);
+        return $output;
+      }
     }
 }
 

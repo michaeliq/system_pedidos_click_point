@@ -1,6 +1,7 @@
 <?php
     $env = parse_ini_file('.env');
     define("DB_NAME",$env["DB_NAME"]);
+    define("DB_NAME_TEST",$env["DB_NAME_TEST"]);
     define("DB_HOST",$env["DB_HOST"]);
     define("DB_PASSWORD",$env["DB_PASSWORD"]);
     define("DB_USER",$env["DB_USER"]);
@@ -99,6 +100,7 @@ class DATABASE_CONFIG {
         'host' => DB_HOST,
         'login' => DB_USER,
         'password' => DB_PASSWORD,
-        'database' => DB_NAME
+        'database' => DB_NAME_TEST,
+        'port' => DB_PORT
     );
 }

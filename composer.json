@@ -1,0 +1,10 @@
+{
+    "require": {
+        "simpletest/simpletest": "1.1.7"
+    },
+    "config": {
+        "disable-tls": true,
+        "secure-http": false,
+        "vendor-dir": "app/vendors"
+    }
+}

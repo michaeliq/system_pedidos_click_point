@@ -52,7 +52,7 @@ class Plantilla extends AppModel {
             'fields' => '',
             'order' => ''
         ),
-	'Regionale' => array(
+	    'Regionale' => array(
             'className' => 'Regionale',
             'foreignKey' => 'sucursal_id',
             'conditions' => '',
