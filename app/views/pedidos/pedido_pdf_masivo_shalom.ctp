@@ -318,6 +318,7 @@ foreach ($pedidos as $pedido) :
     $html = '
         <table>
             <tr><td align="left"><h4>' . $pedido['Sucursale']['direccion_sucursal'] . ' | <b>DEPARTAMENTO:</b> ' . $pedido['Departamento']['nombre_departamento'] . '</h4></td></tr>
+            <tr><td align="left"><h4>Ruta: ' . explode("-", $pedido['LocalidadRelRuta'])[1] . '</h4></td></tr>
         </table>
     ';
 

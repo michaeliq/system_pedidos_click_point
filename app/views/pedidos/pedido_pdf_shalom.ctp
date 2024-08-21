@@ -130,7 +130,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
                             Página 1 / 1
                         </td>
                      </tr>
-            </table>
+            </table> 
         </td>
         </tr>
     </table>';
@@ -322,6 +322,8 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     $html = '
         <table>
             <tr><td align="left"><h4>'. $detalles['0']['Sucursale']['direccion_sucursal'] . ' | <b>DEPARTAMENTO:</b> ' . $detalles['0']['Departamento']['nombre_departamento'] .'</h4></td></tr>
+            <tr><td><h4>Ruta: '. explode("-",$localidad["LocalidadRelRuta"]["nombre_rel"])[1] .'
+            </h4></td></tr>
         </table>
     ';
 

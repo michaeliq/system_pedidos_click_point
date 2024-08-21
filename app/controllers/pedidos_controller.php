@@ -26,7 +26,8 @@ class PedidosController extends AppController
         'PedidosAudit',
         'Encuesta',
         'EncuestasDiligenciada',
-        'Consecutivo'
+        'Consecutivo',
+        'Ruta'
     );
 
     function isAuthorized()
@@ -1138,8 +1139,9 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $localidad = $this->LocalidadRelRuta->find('first', array("conditions" => ["LocalidadRelRuta.id" => $detalles[0]["Sucursale"]["localidad_ruta_id"]]));
-
+        
+        $localidad = $this->LocalidadRelRuta->find('first', array("conditions" => ["LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]]));
+        
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
     }
@@ -1190,7 +1192,7 @@ class PedidosController extends AppController
 
             foreach ($pedidos_data as $detalle) {
                 $localidad_nombre = $this->LocalidadRelRuta->find('first', array(
-                    "conditions" => ["LocalidadRelRuta.id" => $detalle["Sucursale"]["localidad_ruta_id"]],
+                    "conditions" => ["LocalidadRelRuta.codigo_sirbe" => $detalle["Sucursale"]["id"]],
                     "fields" => "LocalidadRelRuta.nombre_rel"
                 ));
                 if ($localidad_nombre) {
