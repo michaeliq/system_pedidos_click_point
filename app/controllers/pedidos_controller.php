@@ -1139,9 +1139,17 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        
-        $localidad = $this->LocalidadRelRuta->find('first', array("conditions" => ["LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]]));
-        
+
+        $localidad = $this->LocalidadRelRuta->find('first', 
+        array(
+            "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $detalles[0]["Sucursale"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
+                        ]
+                    ]
+           ));
+
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
     }
@@ -1192,7 +1200,12 @@ class PedidosController extends AppController
 
             foreach ($pedidos_data as $detalle) {
                 $localidad_nombre = $this->LocalidadRelRuta->find('first', array(
-                    "conditions" => ["LocalidadRelRuta.codigo_sirbe" => $detalle["Sucursale"]["id"]],
+                    "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $detalle["Sucursale"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalle["Sucursale"]["id"]
+                        ]
+                    ],
                     "fields" => "LocalidadRelRuta.nombre_rel"
                 ));
                 if ($localidad_nombre) {
@@ -1341,7 +1354,7 @@ class PedidosController extends AppController
                                 $ordenes_despachadas = $ordenes_despachadas . ' #000' . $value . ' ';
                                 $despachadas++;
                             }
-                        } 
+                        }
                     }
 
                     // Facturadas 

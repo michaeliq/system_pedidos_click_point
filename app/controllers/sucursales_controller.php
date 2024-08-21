@@ -220,6 +220,7 @@ class SucursalesController extends AppController
         if (!empty($this->data)) {
             $this->data['Sucursale']['plantilla_id'] = implode(",", $this->data['Sucursale']['plantilla_id2']);
             $this->data['Sucursale']['regional_sucursal'] = strtoupper($this->data['Sucursale']['regional_sucursal']);
+            $this->data['Sucursale']['localidad_rel_rutas_id'] = $this->data["Sucursale"]["localidad_ruta_id"];
             if ($this->Sucursale->save($this->data)) {
                 $empresa_id = $this->data['Sucursale']['id_empresa'];
                 $sql_parametro_precio = "UPDATE sucursales SET parametro_precio = empresas.parametro_precio 
@@ -315,9 +316,15 @@ class SucursalesController extends AppController
         $localidades = $this->LocalidadRelRuta->find('list', array('fields' => 'LocalidadRelRuta.nombre_rel', "order" => 'LocalidadRelRuta.nombre_rel' ,"conditions" => array(
             "LocalidadRelRuta.codigo_sirbe" => $id
         )));
-        $localidad = $this->LocalidadRelRuta->find('list', array('fields' => 'LocalidadRelRuta.nombre_rel', "order" => 'LocalidadRelRuta.nombre_rel' ,"conditions" => array(
-            "LocalidadRelRuta.codigo_sirbe" => $id
-        )));
+        $sucursal_localidad = $this->Sucursale->find("first",array("conditions" => ["Sucursale.id" => $id], "fields" => ["localidad_rel_rutas_id"]));
+        $localidad = $this->LocalidadRelRuta->find('list', 
+        array(
+            'fields' => 'LocalidadRelRuta.nombre_rel', 
+            "order" => 'LocalidadRelRuta.nombre_rel' ,
+            "conditions" => array(
+                "LocalidadRelRuta.id" => $sucursal_localidad["Sucursale"]["localidad_rel_rutas_id"],
+            )));
+            
         $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.empresa_id' => $this->data['Sucursale']['id_empresa'])));
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
         $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));

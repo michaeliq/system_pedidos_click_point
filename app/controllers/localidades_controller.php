@@ -5,7 +5,7 @@ class LocalidadesController extends AppController
 
     var $name = "Localidades";
     var $helpers = array('Ajax', 'Html', 'Javascript');
-    var $uses = array("Localidad", "Sucursale", "Ruta", "TempLocalidad", "LocalidadRelRuta");
+    var $uses = array("Localidad", "Sucursale", "Ruta", "TempLocalidad", "LocalidadRelRuta", "Empresa");
     var $components = array("RequestHandler", "Auth", "Permisos");
 
     function isAuthorized()
@@ -284,8 +284,47 @@ class LocalidadesController extends AppController
                 $this->set("localidades_validas", $localidades_validas);
                 $this->Session->setFlash('Hubo un error al cargar el archivo. Verifique y vuelva a intentar.', 'flash_failure');
             }
-        } else {
-            $this->set("localidades_validas", $localidades_validas);
         }
+        $empresas = $this->Empresa->find("list", array("fields" => "nombre_empresa", "order" => "nombre_empresa"));
+        $localidades = $this->Localidad->find("list", array("fields" => "nombre_localidad"));
+        $rutas = $this->Ruta->find("list", array("fields" => "nombre"));
+
+        $this->set(compact("rutas", "localidades", "localidades_validas", "empresas"));
+    }
+
+    function add_location_route_relation()
+    {
+        $ruta = $this->Ruta->find("first", ["conditions" => [
+            "ruta_id" => $this->data["Localidades"]["ruta_id"]
+        ]]);
+
+        $localidad = $this->Localidad->find("first", ["conditions" => [
+            "localidad_id" => $this->data["Localidades"]["localidad_id"]
+        ]]);
+
+        $sucursal = $this->Sucursale->find("first", [
+            "conditions" => [
+                "Sucursale.id" => $this->data["Localidades"]["sucursal_id"]
+            ],
+            "fields" => ["Sucursale.oi_sucursal","Sucursale.nombre_sucursal","Sucursale.id"]
+        ]);
+
+        $datos = array(
+            "LocalidadRelRuta" => array(
+                "localidad_id" => $this->data["Localidades"]["localidad_id"],
+                "ruta_id" => $this->data["Localidades"]["ruta_id"],
+                "codigo_sirbe" => $sucursal["Sucursale"]["id"],
+                "nombre_rel" => $localidad["Localidad"]["nombre_localidad"] . " - " . $ruta["Ruta"]["nombre"],
+            )
+        );
+
+        $this->LocalidadRelRuta->create();
+        if ($this->LocalidadRelRuta->save($datos)) {
+            $this->Session->setFlash('Se ha añadido la Relación a la Sucursal ' . $sucursal["Sucursale"]["nombre_sucursal"] , 'flash_success');
+        } else {
+            $this->Session->setFlash('Hubo un error al crear la Relación, intente nuevamente.', 'flash_failure');
+        }
+
+        $this->redirect(array('controller' => 'localidades', 'action' => 'add_location_routes_relations'));
     }
 }

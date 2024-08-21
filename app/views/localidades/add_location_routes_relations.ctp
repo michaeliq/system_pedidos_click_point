@@ -1,8 +1,10 @@
 <?php
 //debug($rel_localidad_rutas);
+echo $this->Html->script(array('localidades/add_location_routes_relations')); 
+
 ?>
 
-<h2>Crear Vinculos entre Localidades y Rutas</h2>
+<h2>Crear Vinculos entre Localidades y Rutas por archivo</h2>
 <?php echo $this->Form->create('Localidades', array('action' => 'add_location_routes_relations', 'type' => 'file')); ?>
 <table class="table table-striped table-bordered table-hover table-condensed" align='center' style="width: 50%;">
     <tr>
@@ -17,11 +19,11 @@
         </td>
     </tr>
     <?php if (count($localidades_validas) == 0) { ?>
-    <tr>
-        <td colspan="2" align='center'>
-            <?php echo $this->Form->input('archivo_csv', array('type' => 'file', 'class' => 'btn btn-file', 'label' => false, 'div' => false)); ?>
-        </td>
-    </tr>
+        <tr>
+            <td colspan="2" align='center'>
+                <?php echo $this->Form->input('archivo_csv', array('type' => 'file', 'class' => 'btn btn-file', 'label' => false, 'div' => false)); ?>
+            </td>
+        </tr>
     <?php } ?>
     <tr>
         <td colspan="2" class="row text-center">
@@ -31,14 +33,13 @@
             } else {
                 echo $this->Form->button('Cargar Archivo', array('type' => 'submit', 'class' => 'btn btn-info'));
                 echo $this->Form->button('Regresar', array('type' => 'button', 'id' => 'regresar', 'onclick' => 'history.back()', 'class' => 'btn btn-warning col-md-3 col-md-offset-2'));
-
             } ?>
         </td>
     </tr>
 </table>
 <br>
 <?php if (count($localidades_validas) > 0) { ?>
-    
+
     <table class="table table-striped table-bordered table-hover table-condensed" align='center' style="width: 80%;">
         <tr>
             <th>RUTA</th>
@@ -49,13 +50,44 @@
             <tr>
                 <td><?php echo $localidad_valida["RUTA_N"]; ?></td>
                 <td><?php echo $localidad_valida["LOCALIDAD_N"]; ?></td>
-                <?php if($localidad_valida["existe"]){
+                <?php if ($localidad_valida["existe"]) {
                     echo "<td class='text-center'><i title='Está en base de datos, fué actualizado' style='color:blue;' class='glyphicon glyphicon-arrow-up'></i></td>";
-                }else{
+                } else {
                     echo "<td class='text-center'><i title='Se ha creado' style='color:green;' class='glyphicon glyphicon-plus-sign'></i></td>";
                 } ?>
             </tr>
         <?php endforeach; ?>
     </table>
 <?php }; ?>
+<?php echo $this->Form->end(); ?>
+<br/>
+<h2>Crear Vinculos entre Localidades y Rutas manual</h2>
+<?php echo $this->Form->create('Localidades', array('action' => 'add_location_route_relation')); ?>
+<table class="table table-striped table-bordered table-hover table-condensed" align="center">
+    <tr>
+        <td>Empresa: </td>
+        <td><?php echo $this->Form->input('empresa_id', array('type' => 'select', 'options' => $empresas, 'label' => false)); ?></td>
+    </tr>
+    <tr>
+        <td>Regional: </td>
+        <td><?php echo $this->Form->input('regional_id', array('type' => 'select', 'label' => false)); ?></td>
+    </tr>
+    <tr>
+        <td>Sucursal: </td>
+        <td><?php echo $this->Form->input('sucursal_id', array('type' => 'select', 'label' => false)); ?></td>
+    </tr>
+    <tr>
+        <td>Localidad: </td>
+        <td><?php echo $this->Form->input('localidad_id', array('type' => 'select', 'options' => $localidades, 'label' => false)); ?></td>
+    </tr>
+    <tr>
+        <td>Ruta: </td>
+        <td><?php echo $this->Form->input('ruta_id', array('type' => 'select', 'options' => $rutas, 'label' => false)); ?></td>
+    </tr>
+    <tr>
+        <td colspan="2" class="row text-center">
+            <?php echo $this->Form->button('Guardar Nueva Ruta', array('type' => 'submit', 'class' => 'btn btn-success col-md-6 col-md-offset-3')); ?>
+        </td>
+    </tr>
+</table>
 <?php echo $this->Form->end(); ?>

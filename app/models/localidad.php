@@ -78,10 +78,6 @@ class LocalidadRelRuta extends AppModel
                 'rule' => array('notempty'),
                 'message' => 'Este campo no debe estar vacio.',
             ),
-            'isUnique' => array(
-                'rule' => array('isUnique'),
-                'message' => 'El CODIGO_SIRBE debe ser unico',
-            )
         ),
         'nombre_rel' => array(
             'notempty' => array(
