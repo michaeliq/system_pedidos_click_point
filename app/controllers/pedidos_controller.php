@@ -27,7 +27,8 @@ class PedidosController extends AppController
         'Encuesta',
         'EncuestasDiligenciada',
         'Consecutivo',
-        'Ruta'
+        'Ruta',
+        'LocalidadRelRuta'
     );
 
     function isAuthorized()
@@ -140,7 +141,16 @@ class PedidosController extends AppController
         ini_set('memory_limit', '1024M');
         date_default_timezone_set('America/Bogota');
         if (!empty($this->data)) {
-
+            $localidad_rel_rutas_id = null;
+            
+            $sucursal = $this->Sucursale->find('first',["conditions" => ["Sucursale.id" => $this->data["Pedido"]["sucursal_id"]], "fields" => ["Sucursale.localidad_rel_rutas_id"]]);
+            if($sucursal){
+                $localidad_rel_rutas_id = $sucursal["Sucursale"]["localidad_rel_rutas_id"];
+            }else{
+                $localidad_rel_ruta = $this->LocalidadRelRuta->find('first',["conditions" => ["LocalidadRelRuta.codigo_sirbe" => $this->data["Pedido"]["sucursal_id"]], "fields" => ["LocalidadRelRuta.id"]]);
+                $localidad_rel_rutas_id = $localidad_rel_ruta["LocalidadRelRuta"]["id"];
+            }
+            
             $consecutivo_data = $this->Consecutivo->find("first", array("conditions" => array("Consecutivo.id" => $this->data["Pedido"]["consecutivo_id"]), "fields" => ["numero_seq", "id", "numero_contrato"]));
             $consecutivo_pedido = $consecutivo_data["Consecutivo"]["numero_seq"] + 1;
 
@@ -159,6 +169,7 @@ class PedidosController extends AppController
             $this->data['Pedido']['tipo_categoria_id'] = implode(",", $this->data['Pedido']['tipo_categoria_id']);
             $this->data['Pedido']['consecutivo'] = $consecutivo_pedido;
             $this->data['Pedido']['numero_contrato'] =  $consecutivo_data["Consecutivo"]["numero_contrato"];
+            $this->data['Pedido']['localidad_rel_rutas_id'] =  $localidad_rel_rutas_id;
 
             $this->Pedido->create();
 
@@ -168,10 +179,6 @@ class PedidosController extends AppController
                 $tipo_pedido = $this->Pedido->find('all', array('fields' => 'empresa_id, sucursal_id, tipo_pedido_id, tipo_categoria_id,fecha_entrega_1,fecha_entrega_2,clasificacion_pedido', 'conditions' => array('Pedido.id' => $this->Pedido->getInsertID())));
 
                 $this->Session->write('Pedido.pedido_id', $this->Pedido->getInsertID());
-                //$this->Session->write('Pedido.tipo_pedido_id', $this->data['Pedido']['tipo_pedido_id']);
-                // $this->Session->write('Pedido.empresa_id', $this->data['Pedido']['empresa_id']); // BBVA
-                // $this->Session->write('Pedido.sucursal_id', $this->data['Pedido']['sucursal_id']); // nueva
-                // $this->Session->write('Pedido.tipo_categoria_id', $this->data['Pedido']['tipo_categoria_id']);
 
                 $this->Session->write('Pedido.tipo_pedido_id', $tipo_pedido['0']['Pedido']['tipo_pedido_id']);
                 $this->Session->write('Pedido.empresa_id', $tipo_pedido['0']['Pedido']['empresa_id']); // BBVA
@@ -1139,12 +1146,12 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id"]]);
         $localidad = $this->LocalidadRelRuta->find('first', 
         array(
             "conditions" => [
                         "or" => [
-                            "LocalidadRelRuta.id" => $detalles[0]["Sucursale"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
                             "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
                         ]
                     ]
@@ -1202,7 +1209,7 @@ class PedidosController extends AppController
                 $localidad_nombre = $this->LocalidadRelRuta->find('first', array(
                     "conditions" => [
                         "or" => [
-                            "LocalidadRelRuta.id" => $detalle["Sucursale"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.id" => $detalle["Pedido"]["localidad_rel_rutas_id"],
                             "LocalidadRelRuta.codigo_sirbe" => $detalle["Sucursale"]["id"]
                         ]
                     ],
