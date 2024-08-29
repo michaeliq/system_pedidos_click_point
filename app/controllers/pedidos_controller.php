@@ -506,132 +506,6 @@ class PedidosController extends AppController
         $this->set('tipo_categorias', $tipo_categorias);
     }
 
-    /* INACTIVAR FUNCION ORIGINAL DE PEDIDOS
-      2022-12-21 */
-
-    function detalle_pedido_1($id = null)
-    {
-        ini_set('memory_limit', '1024M');
-        date_default_timezone_set('America/Bogota');
-
-
-        if (!empty($this->data)) {
-
-            $this->PedidosDetalle->create();
-            $aux = explode('|', $this->data['PedidosDetalle']['producto_id2']);
-            $aux = $this->Producto->find('all', array('conditions' => array('Producto.estado' => true, 'Producto.codigo_producto' => trim($aux[0]))));
-            if (count($aux) > 0) {
-                // Verificar que el producto este en la plantilla de la sucursal
-                // Consultar la plantilla que tiene el usuario
-                // $plantilla = $this->Sucursale->find('all', array('fields' => 'Sucursale.plantilla_id', 'conditions' => array('Sucursale.id' => $this->Session->read('Auth.User.sucursal_id'))));
-                $plantilla = $this->SucursalesPlantilla->find('all', array('fields' => 'SucursalesPlantilla.plantilla_id', 'conditions' => array('SucursalesPlantilla.sucursale_id' => $this->Session->read('Pedido.sucursal_id'), 'TipoPedido.id' => $this->Session->read('Pedido.tipo_pedido_id'))));
-                $parametro_precio = $this->Sucursale->find('all', array('fields' => 'Sucursale.parametro_precio', 'conditions' => array('Sucursale.id' => $this->Session->read('Pedido.sucursal_id'))));
-                $parametro_precio = $parametro_precio['0']['Sucursale']['parametro_precio'];
-                $tmp_plantillas = array();
-                foreach ($plantilla as $value) {
-                    array_push($tmp_plantillas, $value['SucursalesPlantilla']['plantilla_id']);
-                }
-                // Consultar los productos relacionados a la plantilla
-                $productos_sucursal = $this->PlantillasDetalle->find('all', array('fields' => 'plantilla_id, producto_id, precio_producto, precio_producto_2, iva_producto, medida_producto', 'conditions' => array('PlantillasDetalle.producto_id' => $aux[0]['Producto']['id'], 'PlantillasDetalle.plantilla_id' => $plantilla['0']['SucursalesPlantilla']['plantilla_id']))); //  $tmp_plantillas
-                // Si el producto seleccionado esta en la plantilla se procede a guardar el pedido
-                if (count($productos_sucursal) > '0') {
-                    $this->data['PedidosDetalle']['producto_id'] = $aux[0]['Producto']['id'];
-                    $this->data['PedidosDetalle']['tipo_categoria_id'] = $aux[0]['Producto']['tipo_categoria_id'];
-                    $this->data['PedidosDetalle']['precio_producto'] = ($parametro_precio) == '1' ? $productos_sucursal[0]['PlantillasDetalle']['precio_producto'] : $productos_sucursal[0]['PlantillasDetalle']['precio_producto_2'];
-                    $this->data['PedidosDetalle']['iva_producto'] = $productos_sucursal[0]['PlantillasDetalle']['iva_producto'];
-                    $this->data['PedidosDetalle']['medida_producto'] = $productos_sucursal[0]['PlantillasDetalle']['medida_producto'];
-                    $this->data['PedidosDetalle']['pedido_id'] = $this->Session->read('Pedido.pedido_id');
-                    $this->data['PedidosDetalle']['fecha_pedido_detalle'] = date('Y-m-d H:i:s');
-                    $this->data['PedidosDetalle']['observacion_producto'] = $this->data['PedidosDetalle']['observaciones'];
-
-                    if ($this->PedidosDetalle->save($this->data)) {
-
-                        // Actualizar observaciones pedido
-                        if (!empty($this->data['PedidosDetalle']['observaciones'])) {
-                            $update_observacion = "UPDATE pedidos SET observaciones = concat(observaciones,'" . $aux[0]['Producto']['codigo_producto'] . " - " . $this->data['PedidosDetalle']['observaciones'] . "<br>') WHERE id=" . $this->Session->read('Pedido.pedido_id') . "";
-                            $this->Pedido->query($update_observacion);
-                        }
-                        $this->redirect(array('action' => 'detalle_pedido'));
-                    } else {
-                        $this->Session->setFlash(__('Por favor verifique los datos ingresados para el producto.', true));
-                    }
-                } else {
-                    $this->Session->setFlash(__('El producto ingresado (' . $this->data['PedidosDetalle']['producto_id2'] . ') no esta registrado en la plantilla de la sucursal.', true));
-                    //                    $this->redirect(array('action' => 'detalle_pedido'));
-                }
-            }
-        }
-
-        if (!empty($id)) {
-            $tipo_pedido = $this->Pedido->find('all', array('fields' => 'empresa_id, sucursal_id, tipo_pedido_id, tipo_categoria_id,fecha_entrega_1,fecha_entrega_2', 'conditions' => array('Pedido.id' => $id)));
-
-            $parametroEncuesta = $this->Empresa->find('first', array('fields' => 'parametro_encuesta', 'conditions' => array('Empresa.id' => $tipo_pedido['0']['Pedido']['empresa_id'])));
-
-            if ($parametroEncuesta['Empresa']['parametro_encuesta'] == '1') {
-
-                $encuestaDiligenciada = $this->EncuestasDiligenciada->find('first', array('fields' => 'estado_diligenciado', 'conditions' => array('EncuestasDiligenciada.pedido_id' => $id)));
-                if ($encuestaDiligenciada['EncuestasDiligenciada']['estado_diligenciado'] == '0') {
-                    $this->redirect(array('action' => '../encuestas/diligenciar/' . $id));
-                }
-            }
-
-            $this->Session->write('Pedido.pedido_id', $id);
-            $this->Session->write('Pedido.tipo_pedido_id', $tipo_pedido['0']['Pedido']['tipo_pedido_id']);
-            $this->Session->write('Pedido.empresa_id', $tipo_pedido['0']['Pedido']['empresa_id']); // BBVA
-            $this->Session->write('Pedido.sucursal_id', $tipo_pedido['0']['Pedido']['sucursal_id']);
-            $this->Session->write('Pedido.tipo_categoria_id', $tipo_pedido['0']['Pedido']['tipo_categoria_id']);
-            $this->Session->write('Pedido.fecha_entrega_1', $tipo_pedido['0']['Pedido']['fecha_entrega_1']);
-            $this->Session->write('Pedido.fecha_entrega_2', $tipo_pedido['0']['Pedido']['fecha_entrega_2']);
-            $this->redirect(array('action' => 'detalle_pedido'));
-        }
-
-        $this->set('detalles', $this->PedidosDetalle->find('all', array('order' => 'PedidosDetalle.producto_id', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pedido_id')))));
-
-        // Consultar la plantilla que tiene el usuario
-        // $plantilla = $this->Sucursale->find('all', array('fields' => 'Sucursale.plantilla_id', 'conditions' => array('Sucursale.id' => $this->Session->read('Auth.User.sucursal_id'))));
-        $plantilla = $this->SucursalesPlantilla->find('all', array('fields' => 'SucursalesPlantilla.plantilla_id, Plantilla.nombre_plantilla, Plantilla.id, TipoPedido.nombre_tipo_pedido', 'conditions' => array('SucursalesPlantilla.sucursale_id' => $this->Session->read('Pedido.sucursal_id'), 'SucursalesPlantilla.tipo_pedido_id' => $this->Session->read('Pedido.tipo_pedido_id'))));
-        $this->set('plantilla', $plantilla);
-        // print_r($plantilla);
-        $tmp_plantillas = array();
-        foreach ($plantilla as $value) {
-            array_push($tmp_plantillas, $value['SucursalesPlantilla']['plantilla_id']);
-        }
-        // Consultar los productos relacionados a la plantilla
-        $productos_sucursal = $this->PlantillasDetalle->find('list', array('fields' => 'producto_id', 'conditions' => array('PlantillasDetalle.plantilla_id' => $plantilla['0']['SucursalesPlantilla']['plantilla_id']))); // $tmp_plantillas
-        // Si la sucursal no tiene plantilla, se cargan todos los productos activos.
-        if (count($productos_sucursal) > '0') {
-            $this->set('productos', $this->Producto->find('all', array('fields' => 'id,codigo_producto,nombre_producto,marca_producto,mensaje_advertencia,multiplo,producto_completo', 'conditions' => array('Producto.id' => $productos_sucursal, 'Producto.estado' => true))));
-        } else {
-            $this->set('productos', $this->Producto->find('all', array('fields' => 'id,codigo_producto,nombre_producto,marca_producto,mensaje_advertencia,multiplo,producto_completo', 'conditions' => array('Producto.estado' => true))));
-        }
-
-        // Verificar presupuestos por sucursal - Informativo
-        $empresa = $this->Empresa->find('first', array('fields' => 'id, parametro_presupuesto_iva', 'conditions' => array('Empresa.id' => $this->Session->read('Pedido.empresa_id'))));
-        $this->set('parametro_presupuesto_iva', $empresa['Empresa']['parametro_presupuesto_iva']);
-        if ($empresa['Empresa']['parametro_presupuesto_iva'] == 1) { // Si es verdadero, se suma el valor del IVA. BBVA
-            $presupuestos = $this->SucursalesPresupuestosPedido->find('all', array('conditions' => array('sucursal_id' => $this->Session->read('Pedido.sucursal_id'), 'tipo_pedido_id' => $this->Session->read('Pedido.tipo_pedido_id'), 'SucursalesPresupuestosPedido.presupuesto_asignado > (SucursalesPresupuestosPedido.presupuesto_utilizado + SucursalesPresupuestosPedido.presupuesto_iva)')));
-        } else {
-            $presupuestos = $this->SucursalesPresupuestosPedido->find('all', array('conditions' => array('sucursal_id' => $this->Session->read('Pedido.sucursal_id'), 'tipo_pedido_id' => $this->Session->read('Pedido.tipo_pedido_id'), 'SucursalesPresupuestosPedido.presupuesto_asignado > SucursalesPresupuestosPedido.presupuesto_utilizado')));
-        }
-
-        $this->set('presupuestos', $presupuestos);
-        $this->set('presupuesto_disponible', '');
-        if (count($presupuestos) == 0) {
-            $this->Session->setFlash(__('ATENCIÓN. Verifique el presupuesto asignado para la sucursal. Realice los siguientes pasos:<br>1. Contacte el administrador del sistema para Terminar el pedido.<br>2. Cambiar las cantidades de los productos ajustandose al presupuesto.', true));
-            $this->set('presupuesto_disponible', 'red');
-        }
-
-        // Consultar presupuestos por sucursal - Informativo
-        $presupuestos_info = $this->SucursalesPresupuestosPedido->find('all', array('conditions' => array('sucursal_id' => $this->Session->read('Pedido.sucursal_id'), 'tipo_pedido_id' => $this->Session->read('Pedido.tipo_pedido_id'))));
-        $this->set('presupuestos_info', $presupuestos_info);
-
-        // 05032018
-        $tipo_categorias = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'order' => 'TipoCategoria.id', 'conditions' => array('TipoCategoria.id' => explode(',', $this->Session->read('Pedido.tipo_categoria_id'))))); //05032018
-        $this->set('tipo_categorias', $tipo_categorias);
-    }
-
-    /*  */
-
     function detalle_pedido_aprobacion()
     {
         date_default_timezone_set('America/Bogota');
@@ -1161,16 +1035,6 @@ class PedidosController extends AppController
         $this->set('localidad', $localidad);
     }
 
-    function pedido_pdf_v2($id = null)
-    {
-        Configure::write('debug', 0);
-        $this->layout = 'pdf';
-
-        //$detalles = $this->PedidosDetalle->find('all', array('order' => 'TipoCategoria.tipo_categoria_orden,Producto.codigo_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $this->set('detalles', $detalles);
-    }
-
     function pedido_pdf_masivo()
     {
         Configure::write('debug', 0);
@@ -1503,8 +1367,6 @@ class PedidosController extends AppController
         }
     }
 
-    /* ENTREGADO */
-
     function entregado()
     {
         ini_set('memory_limit', '512M');
@@ -1633,8 +1495,6 @@ class PedidosController extends AppController
 
         $this->set(compact('estados', 'sucursales', 'tipo_pedido', 'empresas', 'regional'));
     }
-
-    /* FIN ENTREGADO */
 
     function copiar_pedido($id = null)
     {

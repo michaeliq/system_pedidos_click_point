@@ -419,6 +419,7 @@ class SucursalesController extends AppController
 
     function upload_sucursales_from_file($id_empresa = null)
     {
+        Configure::write('debug', 2);
         date_default_timezone_set('America/Bogota');
         $dir_file = 'sucursales/masivos/';
         if (!is_dir($dir_file)) {
@@ -439,12 +440,14 @@ class SucursalesController extends AppController
         }
         $this->set(compact("sucursales"));
 
+        
         if ($this->RequestHandler->isPost()) {
             
             $tipo_pedidos = $this->TipoPedido->find('all', array('conditions' => array('TipoPedido.estado' => true)));
             $regional = $this->Regionale->find('first', array('fields' => ['Regionale.nombre_regional','Regionale.id'], 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.id' => $this->data["Sucursale"]["regional"])));
-
+           
             if ($this->data['Sucursale']['archivo_csv']['name']) {
+                debug($this->data['Sucursale']['archivo_csv']);
                 if (($this->data['Sucursale']['archivo_csv']['type'] == 'text/csv') || ($this->data['Sucursale']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
                     if ($this->data['Sucursale']['archivo_csv']['size'] < $max_file) {
                         move_uploaded_file($this->data['Sucursale']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Sucursale']['archivo_csv']['name']);
@@ -557,6 +560,7 @@ class SucursalesController extends AppController
                 $this->set("sucursales_validas", $sucursales_validas);
                 $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa','Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
                 $this->Session->setFlash('Hubo un error al cargar el archivo. Verifique y vuelva a intentar.', 'flash_failure');
+                debug();
                 $this->redirect("/sucursales/upload_sucursales_from_file/".$this->data["Sucursale"]["empresa_id"]);
             }
         } else {
