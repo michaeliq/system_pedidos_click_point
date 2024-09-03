@@ -115,7 +115,7 @@ foreach ($pedidos as $pedido) :
     }else{
         $header = '
             <tr><td></td></tr>
-            <tr><td>FORMATO MODELO DE REMISIÓN</td></tr>
+            <tr><td>REMISIÓN DE ENTREGA</td></tr>
             <tr><td>'. $pedido['Empresa']['membrete_pdf'] .'</td></tr>
             <tr><td></td></tr>
         ';

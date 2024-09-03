@@ -118,7 +118,7 @@ $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false
     }else{
         $header = '
             <tr><td></td></tr>
-            <tr><td>FORMATO MODELO DE REMISIÓN</td></tr>
+            <tr><td>REMISIÓN DE ENTREGA</td></tr>
             <tr><td>'. $pedido['Empresa']['membrete_pdf'] .'</td></tr>
             <tr><td></td></tr>
         ';
