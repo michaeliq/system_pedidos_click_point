@@ -44,6 +44,10 @@ echo $this->Html->script(array('empresas/empresas_edit')); ?>
             <td><?php echo $this->Form->input('vendedor_id', array('type' => 'select', 'options' => $vendedores, 'empty' => 'Seleccione una Opción', 'label' => false)); ?></td>
         </tr>
         <tr>
+            <td colspan="2">Encabezado para PDF:</td>
+            <td colspan="2"><?php echo $this->Form->input('membrete_pdf', array('type' => 'text', 'label' => false, 'size' => '75', 'maxlength' => '200')); ?></td>
+        </tr>
+        <tr>
             <td colspan="2" class="text-center"><b>Parametro de precio a usar en pedidos: * <br>Relacionado a las plantillas</b></td>
             <td colspan="2"><?php echo $this->Form->input('parametro_precio', array('type' => 'select', 'options' => $parametro_precio, 'label' => false)); //31052018 ?></td>
         </tr>

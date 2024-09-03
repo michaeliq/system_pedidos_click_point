@@ -1020,7 +1020,7 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id"]]);
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
         $localidad = $this->LocalidadRelRuta->find('first', 
         array(
             "conditions" => [
@@ -1033,6 +1033,7 @@ class PedidosController extends AppController
 
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
+        $this->set('pedido', $pedido);
     }
 
     function pedido_pdf_masivo()

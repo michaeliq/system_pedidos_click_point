@@ -156,9 +156,10 @@ class ProductosController extends AppController
         $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions' => array('TipoCategoria.estado' => true), 'order' => 'TipoCategoria.id'));
         $unidadMedida = array(
             'UNI' => 'UNIDAD',
-            'GAL' => 'GAL�N',
+            'GAL' => 'GALÓN',
             'LIT' => 'LITRO',
-            'CU�' => 'CUÑETE',
+            'ML' => 'MILILITRO',
+            'CUN' => 'CUÑETE',
             'PAQ X 6' => 'PAQUETE X 6',
             'PAQ' => 'PAQUETE',
             'MTS' => 'METROS',
@@ -368,8 +369,9 @@ class ProductosController extends AppController
         $estadoPedido = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.nombre_estado'));
         $unidadMedida = array(
             'UNI' => 'UNIDAD',
-            'GAL' => 'GAL�N',
+            'GAL' => 'GALÓN',
             'LIT' => 'LITRO',
+            'ML' => 'MILILITRO',
             'CUN' => 'CUÑETE',
             'PAQ X 6' => 'PAQUETE X 6',
             'PAQ' => 'PAQUETE',
@@ -520,9 +522,10 @@ class ProductosController extends AppController
         $tipoCategoria = $this->TipoCategoria->find('list', array('fields' => 'TipoCategoria.tipo_categoria_descripcion', 'conditions' => array('TipoCategoria.estado' => true), 'order' => 'TipoCategoria.id'));
         $unidadMedida = array(
             'UNI' => 'UNIDAD',
-            'GAL' => 'GAL�N',
+            'GAL' => 'GALÓN',
             'LIT' => 'LITRO',
-            'CU�' => 'CUÑETE',
+            'ML' => 'MILILITRO',
+            'CUN' => 'CUÑETE',
             'PAQ X 6' => 'PAQUETE X 6',
             'PAQ' => 'PAQUETE',
             'MTS' => 'METROS',

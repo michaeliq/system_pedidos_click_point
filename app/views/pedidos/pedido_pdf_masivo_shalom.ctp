@@ -104,6 +104,22 @@ foreach ($pedidos as $pedido) :
     // Print a text
     $pdf->Image(K_PATH_IMAGES . 'logo_shalom.jpg', 10, 11, 27, '', '', '', '', false, 300);
     $page_num = "<span style='display=flex;'>Página " . $pdf->GetDate() . "</span>";
+    $header = "";
+    if(empty($pedido['Empresa']['membrete_pdf'])){
+        $header = '
+            <tr><td>FORMATO MODELO DE REMISIÓN</td></tr>
+            <tr><td>SUMINISTRO DE ALIMENTOS PERECEDEROS Y NO PERECEDEROS</td></tr>
+            <tr><td>SECRETARIA DISTRITAL DE INTEGRACIÓN SOCIAL</td></tr>
+            <tr><td>PROYECTO 7745 “COMPROMISO POR UNA ALIMENTACIÓN INTEGRAL EN BOGOTÁ”</td></tr>
+        ';
+    }else{
+        $header = '
+            <tr><td></td></tr>
+            <tr><td>FORMATO MODELO DE REMISIÓN</td></tr>
+            <tr><td>'. $pedido['Empresa']['membrete_pdf'] .'</td></tr>
+            <tr><td></td></tr>
+        ';
+    }
     $html = '<table>
     <tr>
         <td style="border-top: 1px solid #000000;  border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000; width:17%" align="center">
@@ -111,10 +127,7 @@ foreach ($pedidos as $pedido) :
         </td>
         <td style="border-top: 1px solid #000000;border-left: 1px solid #000000; border-bottom: 1px solid #000000; width:63%;" align="center">
             <table>
-                    <tr><td>FORMATO MODELO DE REMISIÓN</td></tr>
-                    <tr><td>SUMINISTRO DE ALIMENTOS PERECEDEROS Y NO PERECEDEROS</td></tr>
-                    <tr><td>SECRETARIA DISTRITAL DE INTEGRACIÓN SOCIAL</td></tr>
-                    <tr><td>PROYECTO 7745 “COMPROMISO POR UNA ALIMENTACIÓN INTEGRAL EN BOGOTÁ”</td></tr>
+                '. $header .'
             </table>
         </td>
         <td style="border-top: 1px solid #000000;  border-right: 1px solid #000000; border-bottom: 1px solid #000000; width:20%" align="center">
