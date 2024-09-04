@@ -64,7 +64,9 @@ echo $this->Form->create('User');
         </tr>
         <tr>
             <td>Asociado: *</td>
-            <td colspan="3"><?php echo $this->Form->input('asociado_id', array('type' => 'select', 'options' => $asociados, 'empty' => 'Seleccione una Opción', 'label' => false, 'required'=>true)); ?></td>
+            <td><?php echo $this->Form->input('asociado_id', array('type' => 'select', 'options' => $asociados, 'empty' => 'Seleccione una Opción', 'label' => false, 'required'=>true)); ?></td>
+            <td>Multiempresa: </td>
+            <td><?php echo $this->Form->checkbox('multiempresa'); ?></td>
         </tr>
         <tr>
             <td colspan="2"><b>Parametro Precio Modificar Plantillas: *</b></td>
