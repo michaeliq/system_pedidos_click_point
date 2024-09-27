@@ -94,15 +94,15 @@ $clasificacion = array('Tarifa integral'=>'Tarifa integral','Facturacion sobre p
         ?>
     <tr>
         <td>Empresa:</td>
-        <td colspan="3"><?php echo $this->Form->input('empresa_id', array('type' => 'select', 'options' => $empresas, 'empty' => 'Seleccione una Opción', 'label' => false));?></td>
+        <td colspan="3"><?php echo $this->Form->input('empresa_id', array('type' => 'select', 'options' => $empresas, 'empty' => 'Seleccione una Opción', 'label' => false, "required"=> true));?></td>
     </tr>
     <tr>
         <td>Regional:</td>
-        <td colspan="3"><?php echo $this->Form->input('regional_sucursal', array('type' => 'select', /*'options' => $regional,*/ 'empty' => 'Seleccione una Opción', 'label' => false));?></td>
+        <td colspan="3"><?php echo $this->Form->input('regional_sucursal', array('type' => 'select', /*'options' => $regional,*/ 'empty' => 'Seleccione una Opción', 'label' => false, "required"=> true));?></td>
     </tr>
     <tr>
         <td>Sucursal:</td>
-        <td colspan="3"><?php echo $this->Form->input('sucursal_id', array('type' => 'select',/* 'options' => $sucursales1,*/ 'empty' => 'Seleccione una Opción', 'label' => false, 'style' => 'max-width:50%;'));?></td>
+        <td colspan="3"><?php echo $this->Form->input('sucursal_id', array('type' => 'select',/* 'options' => $sucursales1,*/ 'empty' => 'Seleccione una Opción', 'label' => false, 'style' => 'max-width:50%;', "required"=> true));?></td>
     </tr>
     <tr>
     <td>Consecutivo:</td>
@@ -135,7 +135,7 @@ $clasificacion = array('Tarifa integral'=>'Tarifa integral','Facturacion sobre p
     </tr>
     <tr>
         <td>Tipo Pedido:</td>
-        <td><?php echo $this->Form->input('tipo_pedido_id', array('type' => 'select', 'options' => $tipo_pedido, 'empty' => 'Seleccione una Opción', 'label' => false)); ?></td>
+        <td><?php echo $this->Form->input('tipo_pedido_id', array('type' => 'select', 'options' => $tipo_pedido, 'empty' => 'Seleccione una Opción', 'label' => false, "required"=> true)); ?></td>
         <?php if($this->Session->read('Auth.User.rol_id') == '1' || $this->Session->read('Auth.User.rol_id') == '8' || $this->Session->read('Auth.User.rol_id') == '12'){?>
         <td>Tipo de Movimiento Salida: </td>
         <td><?php echo $this->Form->input('tipo_movimiento_id', array('type' => 'select', 'options' => $tipoMovimientos, 'empty' => 'Seleccione una Opción','default'=>'7', 'label' => false)); ?></td>

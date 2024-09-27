@@ -341,19 +341,19 @@ class MasivosController extends AppController
         $consecutivos_empresa = null;
         if($this->Session->read('Auth.User.multiempresa')){
             $consecutivos_empresa = $this->Consecutivo->find('all', array(
-                "fields" => ["Consecutivo.id", "Asociado.nombre_asociado", "Consecutivo.numero_contrato"],
+                "fields" => ["Consecutivo.id", "Asociado.nombre_asociado", "Consecutivo.numero_contrato", "Consecutivo.ref"],
             ));
         }else{
             $user_asociado = $this->User->find('first', ["conditions" => ["User.id" => $this->Session->read('Auth.User.id')], "fields" => "asociado_id"]);
             $consecutivos_empresa = $this->Consecutivo->find('all', array(
-                "fields" => ["Consecutivo.id", "Asociado.nombre_asociado", "Consecutivo.numero_contrato"],
+                "fields" => ["Consecutivo.id", "Asociado.nombre_asociado", "Consecutivo.numero_contrato", "Consecutivo.ref"],
                 "conditions" => array("Consecutivo.asociado_id" => $user_asociado["User"]["asociado_id"])
             ));
         }
 
         $consecutivos = array();
         foreach ($consecutivos_empresa as $consecutivo) {
-            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"] . ' - ' . $consecutivo["Consecutivo"]["numero_contrato"];
+            $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"] . " " . $consecutivo["Asociado"]["nombre_asociado"] . ' - ' . $consecutivo["Consecutivo"]["numero_contrato"];
         }
 
         $this->set(compact('tipo_pedido', 'empresa', 'consecutivos'));
