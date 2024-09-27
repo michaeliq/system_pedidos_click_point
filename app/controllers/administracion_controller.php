@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Main Class to display general options to setting administrative rules. Extends from AppController Cake Class
+ * @method Authorized validate user's priviliges
+ * @method index show config options
+ */
+
 class AdministracionController extends AppController {
 
     var $name = "Administracion";

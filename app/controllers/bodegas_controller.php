@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Register Store by Inventary operations. Extends from AppController Cake Class
+ * @method void isAuthorized() isAuthorized() validate user's priviliges
+ * @method void index() index() show Store records
+ * @method void add() add() allow to save new store record
+ * @method void edit() edit(int id) allow to edit store data
+ * @method void delete() delete(int id) change available status on Store record 
+ */
 class BodegasController extends AppController {
 
     var $name = 'Bodegas';
@@ -23,19 +31,19 @@ class BodegasController extends AppController {
         }
     }
 
+    /**
+     * Show Storage records
+     * @return void
+     */
     function index() {
         $this->Bodega->recursive = 0;
         $this->set('bodegas', $this->paginate());
     }
 
-    function view($id = null) {
-        if (!$id) {
-            $this->Session->setFlash(__('Bodega incorrecta', true));
-            $this->redirect(array('action' => 'index'));
-        }
-        $this->set('bodega', $this->Bodega->read(null, $id));
-    }
-
+    /**
+     * Add Storage record
+     * @return void
+     */
     function add() {
         if (!empty($this->data)) {
             $this->Bodega->create();
@@ -51,6 +59,10 @@ class BodegasController extends AppController {
         $this->set(compact('municipios', 'departamentos'));
     }
 
+    /**
+     * Edit Storage record by Id
+     * @return void
+     */
     function edit($id = null) {
         if (!$id && empty($this->data)) {
             $this->Session->setFlash(__('Bodega incorrecta', true));
@@ -72,6 +84,10 @@ class BodegasController extends AppController {
         $this->set(compact('municipios', 'departamentos'));
     }
 
+    /**
+     * Change Storage record status by Id
+     * @return void
+     */
     function delete($id = null) {
         if (!$id) {
             $this->Session->setFlash(__('ID incorrecto para la bodega', true));

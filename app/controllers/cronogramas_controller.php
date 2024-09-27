@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Register Calendar by Request Seller Operations. Extends from AppController Cake Class
+ * @method void isAuthorized() isAuthorized() validate user's priviliges
+ * @method void index() index() show Calendar records
+ * @method void add() add() allow to save new Calendar record
+ * @method void edit() edit(int id) allow to edit Calendar data
+ * @method void delete() delete(int id) change available status on Calendar record 
+ */
+
 class CronogramasController extends AppController {
 
     var $name = 'Cronogramas';
@@ -23,6 +32,10 @@ class CronogramasController extends AppController {
         }
     }
 
+    /**
+     * Show Calendar records
+     * @return void
+     */
     function index() {
         if ($this->Session->read('Auth.User.id') == '97')
             phpinfo();
@@ -65,6 +78,10 @@ class CronogramasController extends AppController {
         $this->set(compact('empresas', 'tipo_pedido', 'estados'));
     }
 
+    /**
+     * Add Calendar record
+     * @return void
+     */
     function add() {
         if (!empty($this->data)) {
 
@@ -84,6 +101,10 @@ class CronogramasController extends AppController {
         $this->set(compact('empresas', 'tipo_pedido'));
     }
 
+    /**
+     * Edit Calendar record by Id
+     * @return void
+     */
     function edit($id = null) {
         if (!$id && empty($this->data)) {
             $this->Session->setFlash(__('No se encontró el cronograma', true));
@@ -109,6 +130,10 @@ class CronogramasController extends AppController {
         $this->set(compact('empresas', 'tipo_pedido'));
     }
 
+    /**
+     * Change Calendar Status records by Id
+     * @return void
+     */
     function delete($id = null) {
         if (!$id) {
             $this->Session->setFlash(__('Cronograma invalida.', true));

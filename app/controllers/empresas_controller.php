@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Register Company records. Extends from AppController Cake Class
+ * @method void aprobadores() aprobadores(int id) add approvers by record company
+ * @method void quitar_aprobadores() quitar_aprobadores(int id) delete approvers by record company
+ * @method void isAuthorized() isAuthorized() validate user's priviliges
+ * @method void index() index() show Store records
+ * @method void add() add() allow to save new store record
+ * @method void edit() edit(int id) allow to edit store data
+ * @method void delete() delete(int id) change available status on Store record 
+ */
+
 class EmpresasController extends AppController {
 
     var $name = 'Empresas';
@@ -23,6 +34,10 @@ class EmpresasController extends AppController {
         }
     }
 
+    /**
+     * Show Company records
+     * @return void
+     */
     function index() {
 
         if ($this->Session->read('Auth.User.rol_id') == '1') {
@@ -111,6 +126,10 @@ class EmpresasController extends AppController {
         $this->set(compact('departamentos', 'municipios', 'empresas_sin_aprobadores', 'estados'));
     }
 
+    /**
+     * Add Approvers by Company record by Id
+     * @return void
+     */
     function aprobadores($id = null) {
         //Configure::write('debug', 2);
         ini_set('memory_limit', '1024M');
@@ -177,6 +196,10 @@ class EmpresasController extends AppController {
         $this->set('empresa_id', $id);
     }
 
+    /**
+     * Delete Approvers by Company record by Id
+     * @return void
+     */
     function quitar_aprobador($id = null) {
         $this->EmpresasAprobadore->id = $id;
         if ($this->EmpresasAprobadore->delete()) {
@@ -185,6 +208,10 @@ class EmpresasController extends AppController {
         }
     }
 
+    /**
+     * Add Company records
+     * @return void
+     */
     function add() {
         if (!empty($this->data)) {
             $this->Empresa->create();
@@ -217,6 +244,10 @@ class EmpresasController extends AppController {
         $this->set(compact('users', 'vendedores', 'departamentos', 'municipios', 'parametro_precio', 'sectores'));
     }
 
+    /**
+     * Edit Company record by Id
+     * @return void
+     */
     function edit($id = null) {
         Configure::write('debug', 2);
         if (!$id && empty($this->data)) {
@@ -252,6 +283,10 @@ class EmpresasController extends AppController {
         $this->set(compact('users', 'vendedores', 'departamentos', 'municipios', 'parametro_precio','sectores'));
     }
 
+    /**
+     * Show Company record by Id
+     * @return void
+     */
     function view($id = null) {
         if (!$id) {
             $this->Session->setFlash(__('No se encontró la empresa', true));
@@ -269,6 +304,10 @@ class EmpresasController extends AppController {
         $this->set('presupuestos', $presupuestos);
     }
 
+    /**
+     * Change Company record status by Id
+     * @return void
+     */
     function delete($id = null) {
         $this->Empresa->set($this->data);
         if (!empty($this->data)) {

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Parse data to make Reports. Extends from AppController Cake Class
+ * @method void isAuthorized() isAuthorized() validate user's priviliges
+ * @method array info_general_pedidos() info_general_pedidos() parse data by pedidos model to generate report
+ * @method array info_detallado_pedidos() info_detallado_pedidos() parse data by pedidos model to generate report with extra info
+ * @method array info_productos() info_productos() parse data by productos model to generate report
+ * @method array info_pedidos_aprobados() info_pedidos_aprobados() parse data by pedidos approved to generate report
+ */
+
 class InformesController extends AppController {
 
     var $name = "Informes";
@@ -83,94 +92,13 @@ class InformesController extends AppController {
             }
         }
 
-//
-//        $pedidos = $this->VInformeGeneral->find('all', array());
-//        $this->set('pedidos', $pedidos);
+      $this->set('pedidos', $pedidos);
 
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array()));
         $this->set(compact('empresas', 'sucursales', 'estados', 'tipo_pedido'));
-    }
-
-    function info_detallado_pedidos_() {
-        ini_set('memory_limit', '256M');
-        if ($this->Session->read('Auth.User.rol_id') == '1') {
-            $conditions_empresa = array(); // Muestra todas las empresas
-        } else {
-            $conditions_empresa = array('Empresa.id' => $this->Session->read('Auth.User.empresa_id')); // Muestra solo la empresa del usuario          
-        }
-
-        $this->set('detalles', array());
-        $this->PedidosDetalle->set($this->data);
-        if (!empty($this->data)) {
-            //  print_r($this->data);
-            $conditions = array();
-            if (($this->data['PedidosDetalle']['empresa_id']) > 0) {
-                $where = "+Pedido+.+empresa_id+ = '" . $this->data['PedidosDetalle']['empresa_id'] . "'";
-                $where = str_replace('+', '"', $where);
-                array_push($conditions, $where);
-            } else {
-                if (count($conditions_empresa) == 0) {
-                    
-                } else {
-                    $where = "+Pedido+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
-                    $where = str_replace('+', '"', $where);
-                    array_push($conditions, $where);
-                }
-            }
-            if (($this->data['PedidosDetalle']['sucursal_id']) > 0) {
-                $where = "+Pedido+.+sucursal_id+ = '" . $this->data['PedidosDetalle']['sucursal_id'] . "'";
-                $where = str_replace('+', '"', $where);
-                array_push($conditions, $where);
-            }
-            if (!empty($this->data['PedidosDetalle']['pedido_fecha_inicio']) && !empty($this->data['PedidosDetalle']['pedido_fecha_corte'])) {
-                $where = "+Pedido+.+pedido_fecha+ BETWEEN +'" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "'+  AND +'" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'+";
-                $where = str_replace('+', '"', $where);
-                array_push($conditions, $where);
-
-                if (!empty($this->data['PedidosDetalle']['empresa_id'])) {
-                    $sql = "SELECT count(tb.cantidad) as cantidad, tb.nombre_estado, tb.estado_pedidos
-                            FROM (SELECT pedidos.id AS cantidad, estado_pedidos.id as estado_pedidos, estado_pedidos.nombre_estado
-                                    FROM pedidos_detalles, pedidos, estado_pedidos 
-                                    WHERE pedido_fecha BETWEEN '" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "' AND '" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'
-                                    AND empresa_id = " . $this->data['PedidosDetalle']['empresa_id'] . "
-                                    AND pedidos.id = pedidos_detalles.pedido_id
-                                    AND pedidos.pedido_estado_pedido = estado_pedidos.id
-                                    
-                                    AND pedidos.tipo_pedido_id = " . $this->data['PedidosDetalle']['tipo_pedido_id'] . "
-                                    GROUP BY pedidos.id, estado_pedidos.nombre_estado, estado_pedidos.id) tb
-                            GROUP BY tb.nombre_estado, tb.estado_pedidos
-                            ORDER BY tb.estado_pedidos;
-                            "; // AND pedidos.pedido_estado_pedido = " . $this->data['PedidosDetalle']['pedido_estado_pedido'] . "
-                    $data_estados = $this->PedidosDetalle->query($sql);
-                    $this->set('data_estados', $data_estados);
-                } else {
-                    $this->set('data_estados', array());
-                }
-            }
-            if (($this->data['PedidosDetalle']['pedido_estado_pedido']) > 0) {
-                $where = "+Pedido+.+pedido_estado_pedido+ = '" . $this->data['PedidosDetalle']['pedido_estado_pedido'] . "'";
-                $where = str_replace('+', '"', $where);
-                array_push($conditions, $where);
-            }
-
-            if (!empty($this->data['PedidosDetalle']['tipo_pedido_id'])) {
-                $where = "+Pedido+.+tipo_pedido_id+ = '" . $this->data['PedidosDetalle']['tipo_pedido_id'] . "'";
-                $where = str_replace('+', '"', $where);
-                array_push($conditions, $where);
-            }
-
-            $detalles = $this->PedidosDetalle->find('all', array('order' => 'PedidosDetalle.producto_id', 'conditions' => $conditions));
-            $this->set('detalles', $detalles);
-        }
-
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
-        $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
-        $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
-        $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.id'));
-        $this->set(compact('empresas', 'sucursales', 'estados', 'tipoPedido'));
     }
 
     function info_detallado_pedidos() {

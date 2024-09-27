@@ -463,7 +463,6 @@ class MasivosController extends AppController
                             // Consultar si hay registros en la carga masiva
                             $sql_masivos = "SELECT * FROM pedidos_masivos WHERE pedido_estado = true AND pedido_masivo = " . $pedido_masivo . ";";
                             $cantidad = $this->Pedido->query($sql_masivos);
-
                             if (count($cantidad) > 0) {
 
                                 // Actualizar productos

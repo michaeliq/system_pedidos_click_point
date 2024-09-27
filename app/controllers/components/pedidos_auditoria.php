@@ -14,12 +14,12 @@ class PedidosAuditoriaComponent extends Object {
     }
 
     function redirectSomewhere($value) {
-        // ulizando un método de controlador
+        
         $this->controller->redirect($value);
     }
 
     function AuditoriaCambioEstado($Pedido, $PedidoEstado, $UserId, $Observaciones = null) {
-        // PedidosAudit
+        
         $Auditoria = ClassRegistry::init('PedidosAudit');
 
         $detalle_auditoria = array(

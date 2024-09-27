@@ -106,7 +106,7 @@ $clasificacion = array('Tarifa integral'=>'Tarifa integral','Facturacion sobre p
     </tr>
     <tr>
     <td>Consecutivo:</td>
-    <td colspan="3"><?php echo $this->Form->input("consecutivo_id",array("type" => "select", "options" => $consecutivos, "empty" => "Selecciona una opción", "label" => false)) ?></td>
+    <td colspan="3"><?php echo $this->Form->input("consecutivo_id",array("type" => "select", "options" => $consecutivos, "empty" => "Selecciona una opción", "label" => false, "required"=> true)) ?></td>
     </tr>
 <?php }else{ ?>
     <tr>
