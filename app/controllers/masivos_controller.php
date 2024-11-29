@@ -7,7 +7,7 @@ class MasivosController extends AppController
 {
 
     var $name = "Masivos";
-    var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'TipoCategoria', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore');
+    var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'TipoCategoria', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore','Sucursale');
     var $components = array('RequestHandler', 'Auth', 'Permisos', 'Tools', 'PedidosAuditoria');
 
     function isAuthorized()
@@ -394,6 +394,7 @@ class MasivosController extends AppController
                                     "conditions" => array("TipoCategoria.tipo_categoria_orden" => $this->data['Masivo']['tipo_pedido_id']),
                                     "fields" => array("sigla_categoria"),
                                 ));
+                                
                                 $sql_cargas = array();
                                 while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 
@@ -415,6 +416,11 @@ class MasivosController extends AppController
                                             $codigo_producto = $nombre_tipo_categoria["TipoCategoria"]["sigla_categoria"] . "-" . $array_datos[4];
                                         }
 
+                                        $id_empresa_pedido = $this->Sucursale->find("first", array(
+                                            "conditions" => array("Sucursale.ceco_sucursal" => $array_datos[2]),
+                                            "fields" => array("id_empresa"),
+                                        ));
+
                                         $nombre_empresa = $array_datos[0];
                                         $nombre_sucursal = null;
                                         $oi_sucursal = $array_datos[1];
@@ -426,7 +432,7 @@ class MasivosController extends AppController
                                         $tipo_pedido_id = $this->data['Masivo']['tipo_pedido_id'];
                                         $fecha_entrega_1 = $this->data['Masivo']['fecha_entrega_1'];
                                         $fecha_entrega_2 = $this->data['Masivo']['fecha_entrega_2'];
-                                        $empresa_id = $this->data['Masivo']['empresa_id'];
+                                        $empresa_id = $id_empresa_pedido["Sucursale"]["id_empresa"];
                                         $mes_pedido = $this->data['Masivo']['mes_pedido'];
                                         $clasificacion_pedido = $this->data['Masivo']['clasificacion_pedido'];
                                         $cadena_masivo = null;
@@ -488,7 +494,7 @@ class MasivosController extends AppController
                                 GROUP BY sucursal_id, tipo_pedido_id, oi_sucursal";
                                 $presupuesto = $this->Pedido->query($sql_presupuestos);
 
-                                foreach ($presupuesto as $value) {
+                                /* foreach ($presupuesto as $value) {
                                     if ($value['0']['presupuesto']) {
 
                                         // Marcar los registros con errores
@@ -496,7 +502,7 @@ class MasivosController extends AppController
 
                                         $this->Pedido->query($sql_pedidos_errores);
                                     }
-                                }
+                                } */
 
                                 // Consultar si todos los registros estan correctos para realizar la carga masiva
                                 $sql_pedidos_correctos = "SELECT DISTINCT error_generado FROM pedidos_masivos WHERE pedido_estado = false AND pedido_masivo =" . $pedido_masivo . ";";

@@ -24,11 +24,13 @@ foreach ($menus as $menu) :
                 $j(".<?php echo strtolower($menu['Menu']['menu_controller']); ?>").css("display","block");
     <?php
 endforeach;
-foreach ($authorize as $authorize) :
-    ?>
-                $j(".<?php echo $authorize; ?>").css("display","block");
-    <?php
-endforeach;
+if($authorize){
+    foreach ($authorize as $authorize) :
+        ?>
+                    $j(".<?php echo $authorize; ?>").css("display","block");
+        <?php
+    endforeach;
+}
 ?>
     });
     var $ = jQuery.noConflict();

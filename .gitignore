@@ -14,3 +14,7 @@
 /files
 composer.phar
 /vendor
+node_modules/
+package-lock.json
+cypress/
+cypress.config.js
