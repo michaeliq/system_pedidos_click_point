@@ -100,7 +100,12 @@ class PlantillasController extends AppController {
 
         $estados = array('false' => 'Inactivo', 'true' => 'Activo');
         $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', array('conditions' => $conditions_regionales)));
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         // print_r($empresas);
         $this->set(compact('empresas', 'regionales', 'estados'));
     }

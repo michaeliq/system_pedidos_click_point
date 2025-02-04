@@ -1,16 +1,52 @@
 <?php
 
-class InformesController extends AppController {
+class InformesController extends AppController
+{
 
     var $name = "Informes";
     var $components = array('RequestHandler', 'Auth', 'Permisos');
-    var $uses = array('Pedido', 'Empresa', 'EmpresasAprobadore', 'Sucursale', 'PedidosDetalle', 'Producto', 'EstadoPedido', 'VInformeGeneral', 'VInformeDetallado',
-        'TipoPedido', 'Plantilla', 'PlantillasDetalle', 'VCantidadProducto', 'VConsolidadoFacturado', 'VAcumuladoProducto',
-        'MovimientosProducto', 'MovimientosEntrada', 'MovimientosEntradasDetalle', 'MovimientosSalidasDetalle', 'VFacturaCompra', 'VInformePlantillaPrecio',
-        'ListadoLlamadasDetalle', 'User', 'TipoCategoria', 'VInformeCantidadesEp', 'OrdenComprasDetalle', 'VPedidoCabeceraSap', 'VPedidoDetallesSap',
-        'Solicitud', 'SolicitudesDetalle', 'TipoSolicitude', 'TipoEstadoSolicitud', 'TipoMotivosSolicitud', 'Encuesta', 'EncuestasDiligenciada', 'EncuestasPregunta', 'EncuestasRespuesta');
+    var $uses = array(
+        'Pedido',
+        'Empresa',
+        'EmpresasAprobadore',
+        'Sucursale',
+        'PedidosDetalle',
+        'Producto',
+        'EstadoPedido',
+        'VInformeGeneral',
+        'VInformeDetallado',
+        'TipoPedido',
+        'Plantilla',
+        'PlantillasDetalle',
+        'VCantidadProducto',
+        'VConsolidadoFacturado',
+        'VAcumuladoProducto',
+        'MovimientosProducto',
+        'MovimientosEntrada',
+        'MovimientosEntradasDetalle',
+        'MovimientosSalidasDetalle',
+        'VFacturaCompra',
+        'VInformePlantillaPrecio',
+        'ListadoLlamadasDetalle',
+        'User',
+        'TipoCategoria',
+        'VInformeCantidadesEp',
+        'OrdenComprasDetalle',
+        'VPedidoCabeceraSap',
+        'VPedidoDetallesSap',
+        'Solicitud',
+        'SolicitudesDetalle',
+        'TipoSolicitude',
+        'TipoEstadoSolicitud',
+        'TipoMotivosSolicitud',
+        'Encuesta',
+        'EncuestasDiligenciada',
+        'EncuestasPregunta',
+        'EncuestasRespuesta'
+    );
 
-    function isAuthorized() {
+    function isAuthorized()
+    {
         $this->Auth->authorize = 'controller';
 
         $authorize = $this->Permisos->Allow('Informes', $this->Session->read('Auth.User.rol_id'));
@@ -27,7 +63,8 @@ class InformesController extends AppController {
         return true;
     }
 
-    function info_plantilla_precio() {
+    function info_plantilla_precio()
+    {
         $detalles = array();
         $conditions = array();
         $this->Plantilla->set($this->data);
@@ -48,7 +85,8 @@ class InformesController extends AppController {
         $this->set(compact('plantillas'));
     }
 
-    function info_avance_pedidos() {
+    function info_avance_pedidos()
+    {
         $conditions = array('estado_empresa' => true);
         $data = array();
         $this->Empresa->set($this->data);
@@ -99,37 +137,37 @@ class InformesController extends AppController {
                         GROUP BY d1.empresa_id, d1.sucursales_activas, d1.sucursales_inactivas, d1.tipo_pedido_id");
 
 
-//                echo "SELECT 
-//                        '" . $anio . "' AS anio,
-//                        '" . $mes . "' AS mes,
-//                        (SELECT empresas.nombre_empresa FROM empresas WHERE empresas.id =  d1.empresa_id),
-//                        count(d1.sucursal_id) as total_pedidos,
-//                        (SELECT nombre_tipo_pedido FROM tipo_pedidos WHERE tipo_pedidos.id = d1.tipo_pedido_id),
-//                        d1.sucursales_activas,
-//                        d1.sucursales_inactivas,
-//                        ((count(d1.sucursal_id)*100)/d1.sucursales_activas) as porcentaje,
-//                        ( SELECT array_to_string(ARRAY(SELECT sucursales.nombre_sucursal FROM sucursales WHERE sucursales.id_empresa = " . $empresa_id . " AND sucursales.id NOT IN (SELECT pedidos.sucursal_id FROM pedidos 
-//                                WHERE DATE_PART('month', pedidos.fecha_aprobado_pedido)='" . $mes . "' 
-//                                AND DATE_PART('year', pedidos.fecha_aprobado_pedido)='" . $anio . "'
-//                                AND pedidos.empresa_id= " . $empresa_id . "
-//                                AND pedidos.tipo_pedido_id = d1.tipo_pedido_id
-//                                AND pedidos.pedido_estado_pedido > 3)), ', '::text) AS array_to_string) AS sucursales_sin_pedidos
-//                        FROM (
-//                                SELECT pedidos.empresa_id as empresa_id, 
-//                                pedidos.tipo_pedido_id as tipo_pedido_id,
-//                                pedidos.sucursal_id as sucursal_id, 
-//                                count(pedidos.id) as pedidos_aprobados,
-//                                (SELECT count(sucursales.id) FROM sucursales WHERE sucursales.id_empresa = pedidos.empresa_id AND sucursales.estado_sucursal = true) as sucursales_activas, 
-//                                (SELECT count(sucursales.id) FROM sucursales WHERE sucursales.id_empresa = pedidos.empresa_id AND sucursales.estado_sucursal = false)  as sucursales_inactivas	 	
-//                                FROM pedidos 
-//                                WHERE DATE_PART('month', pedidos.fecha_aprobado_pedido)='" . $mes . "' 
-//                                AND DATE_PART('year', pedidos.fecha_aprobado_pedido)='" . $anio . "'
-//                                AND pedidos.empresa_id= " . $empresa_id . "
-//                                AND pedidos.pedido_estado_pedido > 3 
-//                                GROUP BY pedidos.empresa_id, pedidos.sucursal_id, pedidos.tipo_pedido_id
-//                                ORDER BY pedidos.empresa_id, pedidos.sucursal_id, pedidos.tipo_pedido_id
-//                                ) AS d1
-//                        GROUP BY d1.empresa_id, d1.sucursales_activas, d1.sucursales_inactivas, d1.tipo_pedido_id";
+                //                echo "SELECT 
+                //                        '" . $anio . "' AS anio,
+                //                        '" . $mes . "' AS mes,
+                //                        (SELECT empresas.nombre_empresa FROM empresas WHERE empresas.id =  d1.empresa_id),
+                //                        count(d1.sucursal_id) as total_pedidos,
+                //                        (SELECT nombre_tipo_pedido FROM tipo_pedidos WHERE tipo_pedidos.id = d1.tipo_pedido_id),
+                //                        d1.sucursales_activas,
+                //                        d1.sucursales_inactivas,
+                //                        ((count(d1.sucursal_id)*100)/d1.sucursales_activas) as porcentaje,
+                //                        ( SELECT array_to_string(ARRAY(SELECT sucursales.nombre_sucursal FROM sucursales WHERE sucursales.id_empresa = " . $empresa_id . " AND sucursales.id NOT IN (SELECT pedidos.sucursal_id FROM pedidos 
+                //                                WHERE DATE_PART('month', pedidos.fecha_aprobado_pedido)='" . $mes . "' 
+                //                                AND DATE_PART('year', pedidos.fecha_aprobado_pedido)='" . $anio . "'
+                //                                AND pedidos.empresa_id= " . $empresa_id . "
+                //                                AND pedidos.tipo_pedido_id = d1.tipo_pedido_id
+                //                                AND pedidos.pedido_estado_pedido > 3)), ', '::text) AS array_to_string) AS sucursales_sin_pedidos
+                //                        FROM (
+                //                                SELECT pedidos.empresa_id as empresa_id, 
+                //                                pedidos.tipo_pedido_id as tipo_pedido_id,
+                //                                pedidos.sucursal_id as sucursal_id, 
+                //                                count(pedidos.id) as pedidos_aprobados,
+                //                                (SELECT count(sucursales.id) FROM sucursales WHERE sucursales.id_empresa = pedidos.empresa_id AND sucursales.estado_sucursal = true) as sucursales_activas, 
+                //                                (SELECT count(sucursales.id) FROM sucursales WHERE sucursales.id_empresa = pedidos.empresa_id AND sucursales.estado_sucursal = false)  as sucursales_inactivas	 	
+                //                                FROM pedidos 
+                //                                WHERE DATE_PART('month', pedidos.fecha_aprobado_pedido)='" . $mes . "' 
+                //                                AND DATE_PART('year', pedidos.fecha_aprobado_pedido)='" . $anio . "'
+                //                                AND pedidos.empresa_id= " . $empresa_id . "
+                //                                AND pedidos.pedido_estado_pedido > 3 
+                //                                GROUP BY pedidos.empresa_id, pedidos.sucursal_id, pedidos.tipo_pedido_id
+                //                                ORDER BY pedidos.empresa_id, pedidos.sucursal_id, pedidos.tipo_pedido_id
+                //                                ) AS d1
+                //                        GROUP BY d1.empresa_id, d1.sucursales_activas, d1.sucursales_inactivas, d1.tipo_pedido_id";
             }
         }
 
@@ -137,7 +175,8 @@ class InformesController extends AppController {
 
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions));
         $anio = array('2022' => '2022');
-        $mes = array('01' => 'Ene',
+        $mes = array(
+            '01' => 'Ene',
             '02' => 'Feb',
             '03' => 'Mar',
             '04' => 'Abr',
@@ -148,11 +187,13 @@ class InformesController extends AppController {
             '09' => 'Sep',
             '10' => 'Oct',
             '11' => 'Nov',
-            '12' => 'Dic');
+            '12' => 'Dic'
+        );
         $this->set(compact('empresas', 'anio', 'mes'));
     }
 
-    function info_transportadora() {
+    function info_transportadora()
+    {
         // Configure::write('debug', 2);
         // Crear Archivo Plano
         $file_name = 'informes/InformeTransportadora_' . date('his') . '.csv';
@@ -178,10 +219,10 @@ class InformesController extends AppController {
             // print_r($data);
             foreach ($data as $value) {
                 $data_csv = utf8_decode($value['0']['nombre_sucursal']) . ';' .
-                        utf8_decode($value['0']['regional_sucursal']) . ';' .
-                        utf8_decode($value['0']['direccion_sucursal']) . ';' .
-                        utf8_decode($value['0']['municipio_sucursal']) . ';' .
-                        utf8_decode($value['0']['depto_sucursal']);
+                    utf8_decode($value['0']['regional_sucursal']) . ';' .
+                    utf8_decode($value['0']['direccion_sucursal']) . ';' .
+                    utf8_decode($value['0']['municipio_sucursal']) . ';' .
+                    utf8_decode($value['0']['depto_sucursal']);
                 fwrite($file, $data_csv);
                 fwrite($file, chr(13) . chr(10));
             }
@@ -193,7 +234,8 @@ class InformesController extends AppController {
         $this->set(compact('empresas'));
     }
 
-    function info_encuesta() {
+    function info_encuesta()
+    {
         // Configure::write('debug', 2);
         // Crear archivo plano csv
 
@@ -253,12 +295,12 @@ class InformesController extends AppController {
                 // print_r($data);
                 foreach ($data as $value) {
                     $data_csv = utf8_decode($value['0']['empresa']) . ';' .
-                            utf8_decode($value['0']['regional']) . ';' .
-                            utf8_decode($value['0']['sucursal']) . ';' .
-                            utf8_decode($value['0']['pedido']) . ';' .
-                            utf8_decode($value['0']['fecha_encuesta']) . ';' .
-                            utf8_decode($value['0']['pregunta_encuesta']) . ';' .
-                            utf8_decode($value['0']['puntaje']);
+                        utf8_decode($value['0']['regional']) . ';' .
+                        utf8_decode($value['0']['sucursal']) . ';' .
+                        utf8_decode($value['0']['pedido']) . ';' .
+                        utf8_decode($value['0']['fecha_encuesta']) . ';' .
+                        utf8_decode($value['0']['pregunta_encuesta']) . ';' .
+                        utf8_decode($value['0']['puntaje']);
                     fwrite($file, $data_csv);
                     fwrite($file, chr(13) . chr(10));
                 }
@@ -323,7 +365,8 @@ class InformesController extends AppController {
 
     /* INVENTARIOS */
 
-    function inv_general() {
+    function inv_general()
+    {
         $conditions = array('MovimientosProducto.estado' => true);
         $this->MovimientosProducto->set($this->data);
         if (!empty($this->data)) {
@@ -348,7 +391,8 @@ class InformesController extends AppController {
         $this->set(compact('productos'));
     }
 
-    function inv_detalle_producto($id = null) {
+    function inv_detalle_producto($id = null)
+    {
         $producto_id = base64_decode($id);
 
         // Movimientos de Entrada
@@ -391,14 +435,15 @@ class InformesController extends AppController {
 
         $movimientos = array_merge($dataMovimientosEntrada, $dataMovimientosSalida);
 
-        usort($movimientos, function($a, $b) {
+        usort($movimientos, function ($a, $b) {
             return $a['fecha_entero'] - $b['fecha_entero'];
         });
 
         $this->set('movimientos', $movimientos);
     }
 
-    function inv_observaciones_producto($id = null) {
+    function inv_observaciones_producto($id = null)
+    {
         $producto_id = base64_decode($id);
         $this->set('detalles', $this->PedidosDetalle->find('all', array('order' => 'PedidosDetalle.producto_id', 'conditions' => array('Pedido.pedido_estado_pedido' => '4', 'PedidosDetalle.producto_id' => $producto_id))));
     }
@@ -407,7 +452,8 @@ class InformesController extends AppController {
 
     /*  ORDENES DE COMPRA */
 
-    function info_sugeridos_compra() {
+    function info_sugeridos_compra()
+    {
         // SUGERIDO DE COMPRA  
         $conditions = array();
         $inventarios = $this->MovimientosProducto->find('all', array('conditions' => $conditions, 'order' => 'Producto.codigo_producto'));
@@ -440,11 +486,10 @@ class InformesController extends AppController {
 
     /*  FIN ORDENES DE COMPRA */
 
-    function index() {
-        
-    }
+    function index() {}
 
-    function info_general_pedidos() {
+    function info_general_pedidos()
+    {
 
         ini_set('memory_limit', '1024M');
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
@@ -474,7 +519,6 @@ class InformesController extends AppController {
                     array_push($conditions, $where);
                 } else {
                     if (count($conditions_empresa) == 0) {
-                        
                     } else {
                         $where = "+VInformeGeneral+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                         $where = str_replace('+', '"', $where);
@@ -512,15 +556,22 @@ class InformesController extends AppController {
             }
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
         $this->set(compact('empresas', 'sucursales', 'estados', 'tipoPedido'));
     }
 
-    function info_detallado_pedidos_() {
+    function info_detallado_pedidos_()
+    {
         ini_set('memory_limit', '1024M');
+
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
         $sucursales_permisos = array();
@@ -543,7 +594,6 @@ class InformesController extends AppController {
                 array_push($conditions, $where);
             } else {
                 if (count($conditions_empresa) == 0) {
-                    
                 } else {
                     $where = "+Pedido+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                     $where = str_replace('+', '"', $where);
@@ -596,18 +646,26 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
         $this->set(compact('empresas', 'sucursales', 'estados', 'tipoPedido'));
     }
 
-    function info_detallado_pedidos() {
+    function info_detallado_pedidos()
+    {
         ini_set('memory_limit', '1024M');
         // Configure::write('debug', 2);
-//31052018
+        //31052018
+
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
+
         $empresas_permisos = array();
         $sucursales_permisos = array();
         foreach ($permisos as $permiso) {
@@ -618,7 +676,7 @@ class InformesController extends AppController {
         $conditions = array('VInformeDetallado.empresa_id' => array_unique($empresas_permisos), 'VInformeDetallado.sucursal_id' => array_unique($sucursales_permisos));
         $conditions_empresa = array('id' => array_unique($empresas_permisos));
         $conditions_sucursales = array('Sucursale.id' => array_unique($sucursales_permisos), 'Sucursale.estado_sucursal' => true);
-//31052018 
+        //31052018 
         /* if ($this->Session->read('Auth.User.rol_id') == '1') {
           $conditions_empresa = array(); // Muestra todas las empresas
           $conditions_sucursales = array('Sucursale.estado_sucursal' => true);
@@ -631,9 +689,9 @@ class InformesController extends AppController {
         $this->set('data_estados', array());
 
         $this->PedidosDetalle->set($this->data);
-// print_r($this->data);
+        // print_r($this->data);
         if (!empty($this->data)) {
-//  print_r($this->data);
+            //  print_r($this->data);
             //$conditions = array();
             if (($this->data['PedidosDetalle']['empresa_id']) > 0) {
                 $where = "+VInformeDetallado+.+empresa_id+ = '" . $this->data['PedidosDetalle']['empresa_id'] . "'";
@@ -646,7 +704,6 @@ class InformesController extends AppController {
                     $where = str_replace('+', '"', $where);
                     array_push($conditions, $where);
                 } else {
-                    
                 }
             }
             if (($this->data['PedidosDetalle']['sucursal_id']) > 0) {
@@ -701,7 +758,14 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
+
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
@@ -716,7 +780,8 @@ class InformesController extends AppController {
         $this->set('empresa_logistica', $this->data['PedidosDetalle']['empresa_logistica']);
     }
 
-    function info_detallado_despachos() {
+    function info_detallado_despachos()
+    {
         ini_set('memory_limit', '256M');
         //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
@@ -743,9 +808,9 @@ class InformesController extends AppController {
         $this->set('data_estados', array());
 
         $this->PedidosDetalle->set($this->data);
-//print_r($this->data);
+        //print_r($this->data);
         if (!empty($this->data)) {
-//  print_r($this->data);
+            //  print_r($this->data);
             //$conditions = array();
             if (($this->data['PedidosDetalle']['empresa_id']) > 0) {
                 $where = "+VInformeDetallado+.+empresa_id+ = '" . $this->data['PedidosDetalle']['empresa_id'] . "'";
@@ -753,7 +818,6 @@ class InformesController extends AppController {
                 array_push($conditions, $where);
             } else {
                 if (count($conditions_empresa) == 0) {
-                    
                 } else {
                     $where = "+VInformeDetallado+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                     $where = str_replace('+', '"', $where);
@@ -780,12 +844,17 @@ class InformesController extends AppController {
                 $where = str_replace('+', '"', $where);
                 array_push($conditions, $where);
             }
-// print_r($conditions);
+            // print_r($conditions);
             $detalles = $this->VInformeDetallado->find('all', array('conditions' => $conditions));
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
         $this->set(compact('empresas', 'sucursales', 'tipoPedido'));
@@ -798,14 +867,17 @@ class InformesController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function info_productos() {
+    function info_productos()
+    {
         $this->layout = 'none';
         $this->set('productos', $this->Producto->find('all', array(
-                    'conditions' => array('Producto.estado' => true),
-                    'order' => 'Producto.codigo_producto')));
+            'conditions' => array('Producto.estado' => true),
+            'order' => 'Producto.codigo_producto'
+        )));
     }
 
-    function info_pedidos_aprobados() {
+    function info_pedidos_aprobados()
+    {
         ini_set('memory_limit', '1024M'); // 2021/07/28
         //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
@@ -841,7 +913,6 @@ class InformesController extends AppController {
                     array_push($conditions, $where);
                 } else {
                     if (count($conditions_empresa) == 0) {
-                        
                     } else {
                         $where = "+Pedido+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                         $where = str_replace('+', '"', $where);
@@ -902,13 +973,19 @@ class InformesController extends AppController {
             }
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $this->set(compact('empresas', 'sucursales', 'estados'));
     }
 
-    function info_estados_pedido() {
+    function info_estados_pedido()
+    {
 
 
         /* SELECT count(*) AS cantidad, estado_pedidos.nombre_estado
@@ -917,7 +994,8 @@ class InformesController extends AppController {
           GROUP BY estado_pedidos.nombre_estado, pedidos.pedido_estado_pedido */
     }
 
-    function info_plantillas($id = null) {
+    function info_plantillas($id = null)
+    {
         ini_set('memory_limit', '1024M');
         ini_set('max_execution_time', '300');
         // Configure::write('debug', 2);
@@ -980,12 +1058,18 @@ class InformesController extends AppController {
         }
         $this->set('plantilla_detalles', $plantilla_detalles);
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
         $this->set(compact('empresas', 'tipoPedido'));
     }
 
-    function info_cantidad_productos() {
+    function info_cantidad_productos()
+    {
         //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
@@ -1018,7 +1102,6 @@ class InformesController extends AppController {
                 array_push($conditions, $where);
             } else {
                 if (count($conditions_empresa) == 0) {
-                    
                 } else {
                     $where = "+VCantidadProducto+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                     $where = str_replace('+', '"', $where);
@@ -1032,7 +1115,7 @@ class InformesController extends AppController {
             }
             if (!empty($this->data['PedidosDetalle']['pedido_fecha_inicio']) && !empty($this->data['PedidosDetalle']['pedido_fecha_corte'])) {
                 $where = "+VCantidadProducto+.+fecha_aprobado_pedido::date+ BETWEEN +'" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "'+  AND +'" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'+";
-//$where = "+VCantidadProducto+.+pedido_fecha+ BETWEEN +'" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "'+  AND +'" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'+";
+                //$where = "+VCantidadProducto+.+pedido_fecha+ BETWEEN +'" . $this->data['PedidosDetalle']['pedido_fecha_inicio'] . "'+  AND +'" . $this->data['PedidosDetalle']['pedido_fecha_corte'] . "'+";
                 $where = str_replace('+', '"', $where);
                 array_push($conditions, $where);
             }
@@ -1062,16 +1145,22 @@ class InformesController extends AppController {
         $regional = array();
         foreach ($regional_data as $value) {
             $regional[$value['Sucursale']['regional_sucursal']] = $value['Sucursale']['regional_sucursal'];
-// $regional = $regional . '"' . $value['Sucursale']['regional_sucursal'] . '",';
+            // $regional = $regional . '"' . $value['Sucursale']['regional_sucursal'] . '",';
         }
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.v_regional_sucursal', 'order' => 'Sucursale.v_regional_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
         $this->set(compact('empresas', 'sucursales', 'estados', 'tipoPedido', 'regional'));
     }
 
-    function info_consolidado_facturado() {
+    function info_consolidado_facturado()
+    {
         //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
@@ -1098,7 +1187,7 @@ class InformesController extends AppController {
         $this->set('detalles', array());
         $this->VConsolidadoFacturado->set($this->data);
         if (!empty($this->data)) {
-//  print_r($this->data);
+            //  print_r($this->data);
             //$conditions = array();
             if (($this->data['PedidosDetalle']['empresa_id']) > 0) {
                 $where = "+VConsolidadoFacturado+.+empresa_id+ = '" . $this->data['PedidosDetalle']['empresa_id'] . "'";
@@ -1106,7 +1195,6 @@ class InformesController extends AppController {
                 array_push($conditions, $where);
             } else {
                 if (count($conditions_empresa) == 0) {
-                    
                 } else {
                     $where = "+VConsolidadoFacturado+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                     $where = str_replace('+', '"', $where);
@@ -1151,7 +1239,8 @@ class InformesController extends AppController {
                 array_push($conditions, $where);
             }
 
-            $detalles = $this->VConsolidadoFacturado->find('all', array('fields' => 'VConsolidadoFacturado.empresa,
+            $detalles = $this->VConsolidadoFacturado->find('all', array(
+                'fields' => 'VConsolidadoFacturado.empresa,
                             VConsolidadoFacturado.tipo_doc,
                             VConsolidadoFacturado.prefijo,
                             VConsolidadoFacturado.no_doc,
@@ -1190,11 +1279,17 @@ class InformesController extends AppController {
                             VConsolidadoFacturado.vencimiento,
                             VConsolidadoFacturado.valor_conver',
                 'order' => 'VConsolidadoFacturado.producto',
-                'conditions' => $conditions));
+                'conditions' => $conditions
+            ));
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
@@ -1208,7 +1303,8 @@ class InformesController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function info_facturas_compra() {
+    function info_facturas_compra()
+    {
         $movimientos_data = $this->MovimientosEntrada->find('all', array('conditions' => array('proveedor_id >' => '0'), 'order' => 'MovimientosEntrada.id desc'));
         $movimientos = array();
         foreach ($movimientos_data as $movimiento_data) {
@@ -1239,7 +1335,8 @@ class InformesController extends AppController {
         }
     }
 
-    function info_acumulado_productos() {
+    function info_acumulado_productos()
+    {
         //31052018
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
@@ -1263,7 +1360,7 @@ class InformesController extends AppController {
         $this->set('detalles', array());
         $this->VAcumuladoProducto->set($this->data);
         if (!empty($this->data)) {
-//  print_r($this->data);
+            //  print_r($this->data);
             // $conditions = array();
 
             if (($this->data['PedidosDetalle']['empresa_id']) > 0) {
@@ -1276,7 +1373,6 @@ class InformesController extends AppController {
                 array_push($conditions_sucursal, $where_sucursal);
             } else {
                 if (count($conditions_empresa) == 0) {
-                    
                 } else {
                     $where = "+VAcumuladoProducto+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                     $where = str_replace('+', '"', $where);
@@ -1316,7 +1412,12 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
@@ -1337,7 +1438,8 @@ class InformesController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function info_general_call() {
+    function info_general_call()
+    {
         $conditions = array();
 
 
@@ -1376,7 +1478,8 @@ class InformesController extends AppController {
         $detalle_general = $this->ListadoLlamadasDetalle->find('all', array(
             'fields' => array('ListadoLlamadasDetalle.user_id', 'User.nombres_persona', 'COUNT(*)', 'AVG(fecha_fin - fecha_inicio)', 'SUM(fecha_fin - fecha_inicio)', 'MIN(fecha_inicio)', 'MAX(fecha_fin)'),
             'conditions' => $conditions,
-            'group' => 'ListadoLlamadasDetalle.user_id, User.nombres_persona'));
+            'group' => 'ListadoLlamadasDetalle.user_id, User.nombres_persona'
+        ));
         $this->set('detalle_general', $detalle_general);
         //print_r($detalle_general);
 
@@ -1387,7 +1490,8 @@ class InformesController extends AppController {
         $this->set(compact('users'));
     }
 
-    function info_pdf_masivo() {
+    function info_pdf_masivo()
+    {
         // Configure::write('debug', 2);
         // ini_set('memory_limit', '1024M');
         ini_set('memory_limit', 536870912);
@@ -1399,16 +1503,16 @@ class InformesController extends AppController {
                 array_push($pedidos, $value);
             }
             $this->Session->write('Pedido.pdf_masivos', $pedidos);
-            
-            if($this->data['Pedido']["optional_report"]){
+
+            if ($this->data['Pedido']["optional_report"]) {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_shalom'));
-            }else{
+            } else {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
             }
         }
 
         if (!empty($this->data['PedidoDespacho'])) {
-            $conditions = array('Pedido.pedido_estado_pedido' => array('4', '5'), 'EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id') );
+            $conditions = array('Pedido.pedido_estado_pedido' => array('4', '5'), 'EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'));
             if (!empty($this->data['PedidoDespacho']['id_inicial']) && empty($this->data['PedidoDespacho']['id_final'])) {
                 $where = "+Pedido+.+id+ = " . $this->data['PedidoDespacho']['id_inicial'] . "";
                 $where = str_replace('+', '"', $where);
@@ -1458,7 +1562,7 @@ class InformesController extends AppController {
         }
 
         $pedidos = $this->Pedido->find('all', array('conditions' => $conditions, 'limit' => 2000, 'order' => array(
-                'Pedido.id' => 'desc'
+            'Pedido.id' => 'desc'
         )));
         $this->set('pedidos', $pedidos);
 
@@ -1476,7 +1580,8 @@ class InformesController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function info_cantidades_ep() {
+    function info_cantidades_ep()
+    {
 
         ini_set('memory_limit', '256M');
         //31052018
@@ -1526,17 +1631,17 @@ class InformesController extends AppController {
                 $where = str_replace('+', '"', $where);
                 array_push($conditions, $where);
             }
-//            if (($this->data['PedidosDetalle']['pedido_estado_pedido']) > 0) {
-//                $where = "+VInformeCantidadesEp+.+pedido_estado_pedido+ = '" . $this->data['PedidosDetalle']['pedido_estado_pedido'] . "'";
-//                $where = str_replace('+', '"', $where);
-//                array_push($conditions, $where);
-//            }
-//
-//            if (!empty($this->data['PedidosDetalle']['tipo_pedido_id'])) {
-//                $where = "+VInformeCantidadesEp+.+tipo_pedido_id+ = '" . $this->data['PedidosDetalle']['tipo_pedido_id'] . "'";
-//                $where = str_replace('+', '"', $where);
-//                array_push($conditions, $where);
-//            }
+            //            if (($this->data['PedidosDetalle']['pedido_estado_pedido']) > 0) {
+            //                $where = "+VInformeCantidadesEp+.+pedido_estado_pedido+ = '" . $this->data['PedidosDetalle']['pedido_estado_pedido'] . "'";
+            //                $where = str_replace('+', '"', $where);
+            //                array_push($conditions, $where);
+            //            }
+            //
+            //            if (!empty($this->data['PedidosDetalle']['tipo_pedido_id'])) {
+            //                $where = "+VInformeCantidadesEp+.+tipo_pedido_id+ = '" . $this->data['PedidosDetalle']['tipo_pedido_id'] . "'";
+            //                $where = str_replace('+', '"', $where);
+            //                array_push($conditions, $where);
+            //            }
             $detalles_ep = $this->VInformeCantidadesEp->find('all', array('conditions' => $conditions));
 
             $this->set('detalles_ep', $detalles_ep);
@@ -1556,7 +1661,8 @@ class InformesController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function info_detallado_parciales() {
+    function info_detallado_parciales()
+    {
         $detalles_ep = $this->VInformeCantidadesEp->find('all', array('conditions' => array()));
         $this->set('detalles_ep', array());
         /*
@@ -1638,7 +1744,6 @@ class InformesController extends AppController {
                 array_push($conditions, $where);
             } else {
                 if (count($conditions_empresa) == 0) {
-                    
                 } else {
                     $where = "+VInformeDetallado+.+empresa_id+ = '" . $this->Session->read('Auth.User.empresa_id') . "'";
                     $where = str_replace('+', '"', $where);
@@ -1687,7 +1792,12 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id', 'conditions' => array('id' => array('4', '5'))));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
@@ -1701,7 +1811,8 @@ class InformesController extends AppController {
         $this->set('regional', $regional);
     }
 
-    function info_pedidos_estados() {
+    function info_pedidos_estados()
+    {
 
         $sql_informe1 = "
           SELECT pedido_estado_pedido, user_id,  ( SELECT array_to_string(ARRAY( SELECT '000'::text || p2.id
@@ -1758,7 +1869,8 @@ class InformesController extends AppController {
       Quitar filtro de fecha en conditions
      */
 
-    function info_estado_pedido() {
+    function info_estado_pedido()
+    {
         ini_set('memory_limit', '2048M');
         // Configure::write('debug', 2);
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
@@ -1781,16 +1893,16 @@ class InformesController extends AppController {
                 $where = str_replace('+', '"', $where);
                 array_push($conditions, $where);
             }
-//            if (($this->data['PedidosDetalle']['pedido_id']) > 0) {
-//                $where = "+Pedido+.+pedido_entrega_parcial+ = '" . $this->data['PedidosDetalle']['pedido_id'] . "'";
-//                $where = str_replace('+', '"', $where);
-//                array_push($conditions, $where);
-//            }
-//            if (($this->data['PedidosDetalle']['id']) > 0) {
-//                $where = "+Pedido+.+id+ = '" . $this->data['PedidosDetalle']['id'] . "'";
-//                $where = str_replace('+', '"', $where);
-//                array_push($conditions, $where);
-//            }
+            //            if (($this->data['PedidosDetalle']['pedido_id']) > 0) {
+            //                $where = "+Pedido+.+pedido_entrega_parcial+ = '" . $this->data['PedidosDetalle']['pedido_id'] . "'";
+            //                $where = str_replace('+', '"', $where);
+            //                array_push($conditions, $where);
+            //            }
+            //            if (($this->data['PedidosDetalle']['id']) > 0) {
+            //                $where = "+Pedido+.+id+ = '" . $this->data['PedidosDetalle']['id'] . "'";
+            //                $where = str_replace('+', '"', $where);
+            //                array_push($conditions, $where);
+            //            }
             if (($this->data['PedidosDetalle']['sucursal_id']) > 0) {
                 $where = "+Pedido+.+sucursal_id+ = '" . $this->data['PedidosDetalle']['sucursal_id'] . "'";
                 $where = str_replace('+', '"', $where);
@@ -1822,16 +1934,22 @@ class InformesController extends AppController {
             $this->set('pedidos', $pedidos);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursales));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id', 'conditions' => array('id' => array('1', '3', '4', '5', '6'))));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
         $this->set(compact('empresas', 'sucursales', 'estados', 'tipoPedido'));
     }
 
-    function info_sap() {
+    function info_sap()
+    {
         ini_set('memory_limit', '2048M');
-//         Configure::write('debug', 2);
+        //         Configure::write('debug', 2);
         $cabeceras = array();
         $conditions = array();
         $this->PedidosDetalle->set($this->data);
@@ -1878,18 +1996,18 @@ class InformesController extends AppController {
                   $this->Pedido->query($sql_actualizar_totales);
                  */
 
-//                $disable = "ALTER TABLE pedidos DISABLE TRIGGER movimientos_salida_productos;";
-//                $this->Pedido->query($disable);
+                //                $disable = "ALTER TABLE pedidos DISABLE TRIGGER movimientos_salida_productos;";
+                //                $this->Pedido->query($disable);
 
                 foreach ($cabeceras as $cabecera) :
                     array_push($pedidos, $cabecera['VPedidoCabeceraSap']['pedido_id']);
-//                    // Actualizar los valores del pedido
-//                    $sql_actualizar_totales = "SELECT actualizar_totales_pedidos(" .  $cabecera['VPedidoCabeceraSap']['pedido_id'] . ");";
-//                    $this->Pedido->query($sql_actualizar_totales);
+                //                    // Actualizar los valores del pedido
+                //                    $sql_actualizar_totales = "SELECT actualizar_totales_pedidos(" .  $cabecera['VPedidoCabeceraSap']['pedido_id'] . ");";
+                //                    $this->Pedido->query($sql_actualizar_totales);
                 endforeach;
 
-//                $enable = "ALTER TABLE pedidos ENABLE TRIGGER movimientos_salida_productos;";
-//                $this->Pedido->query($enable);
+                //                $enable = "ALTER TABLE pedidos ENABLE TRIGGER movimientos_salida_productos;";
+                //                $this->Pedido->query($enable);
 
                 $conditions_detalles = array('VPedidoDetallesSap.pedido_id' => $pedidos);
                 $detalles = $this->VPedidoDetallesSap->find('all', array('conditions' => $conditions_detalles));
@@ -1905,7 +2023,8 @@ class InformesController extends AppController {
         $this->set(compact('empresas', 'sucursales', 'estados', 'tipoPedido'));
     }
 
-    function info_solicitudes() {
+    function info_solicitudes()
+    {
         ini_set('memory_limit', '2048M');
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         $empresas_permisos = array();
@@ -1965,7 +2084,4 @@ class InformesController extends AppController {
         $tipoEstadoSolicitud = $this->TipoEstadoSolicitud->find('list', array('fields' => 'TipoEstadoSolicitud.nombre_estado_solicitud', 'order' => 'TipoEstadoSolicitud.orden', 'conditions' => array('estado' => true)));
         $this->set(compact('tipoSolicitud', 'tipoEstadoSolicitud', 'tipoMotivo', 'empresa'));
     }
-
 }
-
-?>

@@ -94,7 +94,12 @@ class InformesController extends AppController {
 
       $this->set('pedidos', $pedidos);
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array()));
@@ -102,6 +107,8 @@ class InformesController extends AppController {
     }
 
     function info_detallado_pedidos() {
+        debug($this->Session->read('Auth.User.rol_id'));
+        exit;
         ini_set('memory_limit', '256M');
         if ($this->Session->read('Auth.User.rol_id') == '1') {
             $conditions_empresa = array(); // Muestra todas las empresas
@@ -179,7 +186,12 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.id'));
@@ -190,6 +202,8 @@ class InformesController extends AppController {
         foreach ($regional_data as $value) {
             $regional[$value['Sucursale']['regional_sucursal']] = $value['Sucursale']['regional_sucursal'];
         }
+
+
         $this->set('regional', $regional);
     }
 
@@ -267,7 +281,12 @@ class InformesController extends AppController {
             }
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $this->set(compact('empresas', 'sucursales', 'estados'));
@@ -360,7 +379,12 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.id'));
@@ -462,7 +486,12 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => array('Sucursale.estado_sucursal' => true)));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.id'));
@@ -538,7 +567,12 @@ class InformesController extends AppController {
             $this->set('detalles', $detalles);
         }
 
-        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        $empresas = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
         $sucursales = $this->Sucursale->find('list', array('fields' => 'Sucursale.nombre_sucursal', 'order' => 'Sucursale.nombre_sucursal', 'conditions' => $conditions_sucursal));
         $estados = $this->EstadoPedido->find('list', array('fields' => 'EstadoPedido.nombre_estado', 'order' => 'EstadoPedido.id'));
         $tipoPedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.id'));
