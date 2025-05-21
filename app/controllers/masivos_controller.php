@@ -421,6 +421,13 @@ class MasivosController extends AppController
                                             "fields" => array("id_empresa"),
                                         ));
 
+                                        $fecha_expiracion_formated = "";
+                                        if($array_datos[8] == 0  || $array_datos[8] == ""){
+                                            $fecha_expiracion_formated = date('Y-m-d H:i:s');
+                                        }else{
+                                            $fecha_expiracion_formated = DateTime::createFromFormat("Y-m-d",$array_datos[8]);
+                                        }
+
                                         $nombre_empresa = $array_datos[0];
                                         $nombre_sucursal = null;
                                         $oi_sucursal = $array_datos[1];
@@ -437,7 +444,7 @@ class MasivosController extends AppController
                                         $clasificacion_pedido = $this->data['Masivo']['clasificacion_pedido'];
                                         $cadena_masivo = null;
                                         $lote = $array_datos[7];
-                                        $fecha_expiracion = $array_datos[8];
+                                        $fecha_expiracion = $fecha_expiracion_formated;
                                         array_push($sql_cargas, array(
                                             "PedidosMasivo" => array(
                                                 "empresa_id" => $empresa_id,
