@@ -304,7 +304,7 @@ class MasivosController extends AppController
         $this->set('pedidos_creados', array());
 
         $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
-        $empresas_permisos = array();
+        $empresas_permisos = array(); 
         foreach ($permisos as $permiso) {
             array_push($empresas_permisos, $permiso['EmpresasAprobadore']['empresa_id']);
         }
@@ -335,8 +335,15 @@ class MasivosController extends AppController
         )));
 
         $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.id' => $cronograma, 'TipoPedido.estado' => true)));
-        $empresa = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
-
+        
+        /* Filtrado aplicable para roles diferentes a Admin*/
+        
+        $empresa = null;
+        if ($this->Session->read('Auth.User.rol_id') == '1') {
+            $empresa = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
+        } else {
+            $empresa = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => $conditions_empresa));
+        }
 
         $consecutivos_empresa = null;
         if($this->Session->read('Auth.User.multiempresa')){

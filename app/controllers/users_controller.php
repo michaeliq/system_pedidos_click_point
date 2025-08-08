@@ -313,11 +313,12 @@ class UsersController extends AppController {
         }
     }
 
-    function cronogramas() {
+    function cronogramas() { 
         ini_set('memory_limit', '1024M');
         if ($this->RequestHandler->isAjax()) {
             if (!empty($_REQUEST['PedidoEmpresaId'])) {
                 $validar_cronograma = $this->Empresa->find('all', array('fields' => 'Empresa.parametro_cronograma', 'conditions' => array('Empresa.id' => $_REQUEST['PedidoEmpresaId'], 'Empresa.parametro_cronograma' => true)));
+                /* debug($validar_cronograma); */
                 if (count($validar_cronograma) > 0) {
                     $cronograma = $this->Cronograma->find('all', array('fields' => 'Cronograma.tipo_pedido_id_2', 'conditions' => array('Cronograma.empresa_id' => $_REQUEST['PedidoEmpresaId'], 'Cronograma.estado_cronograma' => true)));
                     $tipo_pedido = $this->TipoPedido->find('all', array('fields' => 'TipoPedido.id, TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true, 'TipoPedido.id' => explode(',', $cronograma[0]['Cronograma']['tipo_pedido_id_2']))));
