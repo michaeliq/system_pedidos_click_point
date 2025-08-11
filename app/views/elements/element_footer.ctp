@@ -15,7 +15,6 @@
         padding-top: 10px;
         text-align: right;
     }
-
 </style>
 <div>&nbsp;</div>
 <div id="footer">
@@ -26,9 +25,17 @@
             <a href="mailto: servicioalcliente@cleanest.com.co"> servicioalcliente@cleanest.com.co</a>
         </address>-->
     <address>
-        <!-- <strong>CLICK POINT SAS - &copy; 2017</strong><br> -->
+        <?php
+        if (strpos($_SERVER['HTTP_HOST'], "clickpoint") !== false) {
+            echo "<strong>CLICK POINT SAS - &copy; 2017</strong><br>";
+        } else if (strpos($_SERVER['HTTP_HOST'], "centroaseo") !== false) {
+            echo "<strong>CENTRO ASEO MANTENIMIENTO PROFESIONAL SAS - &copy; 2017</strong><br>";
+        } else {
+            echo "";
+        }
+        ?>
         Carrera 28B #77-12 <br> Barrio Santa Sofía, Bogot&aacute; D.C<br>
-        <abbr title="Telefonos">Tel:</abbr> (601) 4849120  / (601) 4849129 / (601) 6068433 <br>
+        <abbr title="Telefonos">Tel:</abbr> (601) 4849120 / (601) 4849129 / (601) 6068433 <br>
         <a href="mailto: servicliente@centroaseo.com"> servicliente@centroaseo.com</a>
     </address>
 </div>
