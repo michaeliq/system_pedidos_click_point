@@ -140,9 +140,18 @@ class PedidosController extends AppController
     {
         ini_set('memory_limit', '1024M');
         date_default_timezone_set('America/Bogota');
+        $error_message = "";
+
+        if(empty($this->data['Pedido']['tipo_pedido_id'])){
+            $error_message = "<br/>ERROR: No se pudo guardar el último pedido, <b>falta Tipo Pedido</b>.";
+        }
+        if(empty($this->data["Pedido"]["consecutivo_id"])){
+            $error_message = "<br/>ERROR: No se pudo guardar el último pedido, <b>falta el Consecutivo de Empresa</b>.";
+        }
+
         if (!empty($this->data)) {
             $localidad_rel_rutas_id = null;
-            
+            //$this->data['Pedido']['tipo_pedido_id']
             $sucursal = $this->Sucursale->find('first',["conditions" => ["Sucursale.id" => $this->data["Pedido"]["sucursal_id"]], "fields" => ["Sucursale.localidad_rel_rutas_id"]]);
             if($sucursal){
                 $localidad_rel_rutas_id = $sucursal["Sucursale"]["localidad_rel_rutas_id"];
@@ -166,7 +175,7 @@ class PedidosController extends AppController
             $this->data['Pedido']['fecha_orden_pedido'] = date('Y-m-d H:i:s');
             $this->data['Pedido']['pedido_fecha_creacion'] = date('Y-m-d H:i:s'); /* 2020-01-31 */
             $this->data['Pedido']['pedido_estado_pedido'] = '1'; // En proceso
-            $this->data['Pedido']['tipo_categoria_id'] = implode(",", $this->data['Pedido']['tipo_categoria_id']);
+            //$this->data['Pedido']['tipo_categoria_id'] = implode(",", $this->data['Pedido']['tipo_categoria_id']);
             $this->data['Pedido']['consecutivo'] = $consecutivo_pedido;
             $this->data['Pedido']['numero_contrato'] =  $consecutivo_data["Consecutivo"]["numero_contrato"];
             $this->data['Pedido']['localidad_rel_rutas_id'] =  $localidad_rel_rutas_id;
@@ -188,7 +197,7 @@ class PedidosController extends AppController
                 $this->Session->write('Pedido.fecha_entrega_2', $tipo_pedido['0']['Pedido']['fecha_entrega_2']);
                 $this->Session->write('Pedido.clasificacion_pedido', $tipo_pedido['0']['Pedido']['clasificacion_pedido']);
 
-                $categoria = "UPDATE pedidos 
+                $categoria = "UPDATE pedidos
                     SET tipo_categoria_id = tipo_pedidos.tipo_categoria_id
                     FROM tipo_pedidos
                     WHERE pedidos.tipo_pedido_id = tipo_pedidos.id
@@ -255,7 +264,7 @@ class PedidosController extends AppController
         // print_r($this->Pedido->find('all', array('conditions' => $conditions)));
         if (count($pedidos)) {
             $this->Session->write('Pedido.tipo_pedido_id', $pedidos[0]['Pedido']['tipo_pedido_id']);
-            $this->Session->setFlash(__('ATENCIÓN: Tiene ordenes de pedido en proceso sin terminar. Haga click en el icono <div class="glyphicon glyphicon-arrow-right"></div> para continuar.', true));
+            $this->Session->setFlash(__('ATENCIÓN: Tiene ordenes de pedido en proceso sin terminar. Haga click en el icono <div class="glyphicon glyphicon-arrow-right"></div> para continuar.' . $error_message, true));
         }
 
         $condition_cronograma = array('TipoPedido.estado' => true);
