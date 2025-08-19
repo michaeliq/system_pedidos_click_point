@@ -36,6 +36,6 @@
         ?>
         Carrera 28B #77-12 <br> Barrio Santa Sofía, Bogot&aacute; D.C<br>
         <abbr title="Telefonos">Tel:</abbr> (601) 4849120 / (601) 4849129 / (601) 6068433 <br>
-        <a href="mailto: servicliente@centroaseo.com"> servicliente@centroaseo.com</a>
+        <a href="mailto: servicolaborador@centroaseo.com">servicolaborador@centroaseo.com</a>
     </address>
 </div>
