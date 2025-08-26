@@ -182,7 +182,7 @@ if (count($pedidos) > 0) {
     <div class="text-center">
         <?php echo $this->Form->button('MARCAR COMO DESPACHADAS', array('type' => 'submit', 'class' => 'btn btn-info  btn-xs')); ?>
         <div class="text-center"><b>Recuerde que debe colocar un No. Guia para despachar el pedido.</b></div>
-        <div class="text-center"><b>El arvhivo de la guia o cumplido debe ir sin simbolos, puntos o comas y en formato PDF.</b></div>
+        <div class="text-center"><b>El archivo de la guia o cumplido debe ir sin simbolos, puntos o comas y en formato PDF.</b></div>
     </div>
     <div>&nbsp;</div>
 <?php
@@ -302,15 +302,15 @@ if (count($pedidos) > 0) {
             </tr>
             <script>
                 $('#<?php echo "show-box-btn" . $pedido['Pedido']['id']; ?>').
-                on("click",function(){
+                on("click", function() {
                     $('#<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>').
-                    css("display","flex")
+                    css("display", "flex")
                 })
 
                 $('#<?php echo "close-box-btn" . $pedido['Pedido']['id']; ?>').
-                on("click",function(e){
+                on("click", function(e) {
                     $('#<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>').
-                    css("display","none")
+                    css("display", "none")
                 })
             </script>
         <?php

@@ -113,12 +113,12 @@ $html = '<table cellspacing="1" cellpadding="1">
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; background-color:#C0C0C0;" align="center"><b>DESTINATARIO</b></td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b> CLICK POINT SAS
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b> MEGAEXPERTOS SAS 
         </td>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>CLIENTE:</b> ' . $detalles['0']['Sucursale']['regional_sucursal'] . '</td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DIRECCION:</b> CR 28 No. 77-12</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DIRECCION:</b> Calle 77 # 28A 48</td>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>SEDE:</b> ' . $detalles['0']['Sucursale']['nombre_sucursal'] . ' | <b>CIUDAD:</b> '.$detalles['0']['Municipio']['nombre_municipio'].'</td>
     </tr>
     <tr>
@@ -131,7 +131,7 @@ $html = '<table cellspacing="1" cellpadding="1">
     </tr>
     <tr>
         <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por MEGAEXPERTOS SAS
-        <br>Nit 900073254-1 | CR 28 No. 77-12 Bogota - Tel: (601) 6068433.</b></td>
+        <br>Nit 901787010-1 | Calle 77 # 28A 48 Bogota - Tel: (601) 6068433.</b></td>
         <td style=" border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><span style="color:red"><b>N°. Pedido: #000' . $detalles['0']['Pedido']['id'] . '</b></span><br><b>ORDEN INTERNA: '.$detalles['0']['Sucursale']['oi_sucursal'].'</b><br><b>TIPO DE PEDIDO:</b> ' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '<br><span style="font-size: 29px;"><b>FECHA ENTREGA:</b> Desde el <b>'.$detalles[0]['Pedido']['fecha_entrega_1'].'</b> hasta el <b>'.$detalles[0]['Pedido']['fecha_entrega_2'].'</b></span><br><span style="font-size: 29px;"><b>MES PEDIDO:</b> '.$meses[$detalles[0]['Pedido']['mes_pedido']].'</span><br><span style="font-size: 29px;"><b>CLASIFICACION:</b> '.$detalles[0]['Pedido']['clasificacion_pedido'].'</span></td>
     </tr>
 </table>';

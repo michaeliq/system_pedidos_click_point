@@ -142,24 +142,24 @@ class PedidosController extends AppController
         date_default_timezone_set('America/Bogota');
         $error_message = "";
 
-        if(empty($this->data['Pedido']['tipo_pedido_id'])){
+        if (empty($this->data['Pedido']['tipo_pedido_id'])) {
             $error_message = "<br/>ERROR: No se pudo guardar el último pedido, <b>falta Tipo Pedido</b>.";
         }
-        if(empty($this->data["Pedido"]["consecutivo_id"])){
+        if (empty($this->data["Pedido"]["consecutivo_id"])) {
             $error_message = "<br/>ERROR: No se pudo guardar el último pedido, <b>falta el Consecutivo de Empresa</b>.";
         }
 
         if (!empty($this->data)) {
             $localidad_rel_rutas_id = null;
             //$this->data['Pedido']['tipo_pedido_id']
-            $sucursal = $this->Sucursale->find('first',["conditions" => ["Sucursale.id" => $this->data["Pedido"]["sucursal_id"]], "fields" => ["Sucursale.localidad_rel_rutas_id"]]);
-            if($sucursal){
+            $sucursal = $this->Sucursale->find('first', ["conditions" => ["Sucursale.id" => $this->data["Pedido"]["sucursal_id"]], "fields" => ["Sucursale.localidad_rel_rutas_id"]]);
+            if ($sucursal) {
                 $localidad_rel_rutas_id = $sucursal["Sucursale"]["localidad_rel_rutas_id"];
-            }else{
-                $localidad_rel_ruta = $this->LocalidadRelRuta->find('first',["conditions" => ["LocalidadRelRuta.codigo_sirbe" => $this->data["Pedido"]["sucursal_id"]], "fields" => ["LocalidadRelRuta.id"]]);
+            } else {
+                $localidad_rel_ruta = $this->LocalidadRelRuta->find('first', ["conditions" => ["LocalidadRelRuta.codigo_sirbe" => $this->data["Pedido"]["sucursal_id"]], "fields" => ["LocalidadRelRuta.id"]]);
                 $localidad_rel_rutas_id = $localidad_rel_ruta["LocalidadRelRuta"]["id"];
             }
-            
+
             $consecutivo_data = $this->Consecutivo->find("first", array("conditions" => array("Consecutivo.id" => $this->data["Pedido"]["consecutivo_id"]), "fields" => ["numero_seq", "id", "numero_contrato"]));
             $consecutivo_pedido = $consecutivo_data["Consecutivo"]["numero_seq"] + 1;
 
@@ -314,11 +314,11 @@ class PedidosController extends AppController
         }
 
         $consecutivos_empresa = null;
-        if($this->Session->read('Auth.User.multiempresa')){
+        if ($this->Session->read('Auth.User.multiempresa')) {
             $consecutivos_empresa = $this->Consecutivo->find('all', array(
                 "fields" => ["Consecutivo.id", "Asociado.nombre_asociado", "Consecutivo.numero_contrato", "Consecutivo.ref"],
             ));
-        }else{
+        } else {
             $user_asociado = $this->User->find('first', ["conditions" => ["User.id" => $this->Session->read('Auth.User.id')], "fields" => "asociado_id"]);
             $consecutivos_empresa = $this->Consecutivo->find('all', array(
                 "fields" => ["Consecutivo.id", "Asociado.nombre_asociado", "Consecutivo.numero_contrato", "Consecutivo.ref"],
@@ -326,7 +326,7 @@ class PedidosController extends AppController
             ));
         }
 
-        
+
         $consecutivos = array();
         foreach ($consecutivos_empresa as $consecutivo) {
             $consecutivos[$consecutivo["Consecutivo"]["id"]] = $consecutivo["Asociado"]["nombre_asociado"] . " - " . $consecutivo["Consecutivo"]["ref"] . ' - ' . $consecutivo["Consecutivo"]["numero_contrato"];
@@ -1054,21 +1054,23 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
-        $localidad = $this->LocalidadRelRuta->find('first', 
-        array(
-            "conditions" => [
-                        "or" => [
-                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
-                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
-                        ]
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id", "Empresa.membrete_pdf"]]);
+        $localidad = $this->LocalidadRelRuta->find(
+            'first',
+            array(
+                "conditions" => [
+                    "or" => [
+                        "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
+                        "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
                     ]
-           ));
+                ]
+            )
+        );
 
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
         $this->set('pedido', $pedido);
-    } 
+    }
 
     function pedido_pdf_megaexpertos($id = null)
     {
@@ -1077,16 +1079,18 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
-        $localidad = $this->LocalidadRelRuta->find('first', 
-        array(
-            "conditions" => [
-                        "or" => [
-                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
-                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
-                        ]
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id", "Empresa.membrete_pdf"]]);
+        $localidad = $this->LocalidadRelRuta->find(
+            'first',
+            array(
+                "conditions" => [
+                    "or" => [
+                        "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
+                        "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
                     ]
-           ));
+                ]
+            )
+        );
 
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
@@ -1100,16 +1104,18 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
-        $localidad = $this->LocalidadRelRuta->find('first', 
-        array(
-            "conditions" => [
-                        "or" => [
-                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
-                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
-                        ]
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id", "Empresa.membrete_pdf"]]);
+        $localidad = $this->LocalidadRelRuta->find(
+            'first',
+            array(
+                "conditions" => [
+                    "or" => [
+                        "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
+                        "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
                     ]
-           ));
+                ]
+            )
+        );
 
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
@@ -1123,16 +1129,18 @@ class PedidosController extends AppController
         $this->layout = 'pdf';
 
         $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
-        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
-        $localidad = $this->LocalidadRelRuta->find('first', 
-        array(
-            "conditions" => [
-                        "or" => [
-                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
-                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
-                        ]
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id", "Empresa.membrete_pdf"]]);
+        $localidad = $this->LocalidadRelRuta->find(
+            'first',
+            array(
+                "conditions" => [
+                    "or" => [
+                        "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
+                        "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
                     ]
-           ));
+                ]
+            )
+        );
 
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
@@ -1141,10 +1149,12 @@ class PedidosController extends AppController
 
     function pedido_pdf_masivo()
     {
+
         Configure::write('debug', 0);
         ini_set('memory_limit', 536870912);
         // ini_set('memory_limit', '3072M');
         $this->layout = 'pdf';
+
         if (count($this->Session->read('Pedido.pdf_masivos')) > 0) {
             $pedidos = $this->Pedido->find('all', array('order' => 'Pedido.id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'Pedido.pedido_estado' => true, 'Pedido.id' => $this->Session->read('Pedido.pdf_masivos'))));
             $this->set('pedidos', $pedidos);

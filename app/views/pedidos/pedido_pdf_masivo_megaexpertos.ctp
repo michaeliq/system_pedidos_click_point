@@ -1,11 +1,10 @@
 <?php
-
+// print_r($pedidos); exit;
 App::import('Vendor', 'xtcpdf');
-// 2021-07-28
-$meses = array('0'=>'INSTALACION','1' => 'ENERO', '2' => 'FEBRERO', '3' => 'MARZO', '4' => 'ABRIL', '5' => 'MAYO', '6' => 'JUNIO', '7' => 'JULIO', '8' => 'AGOSTO', '9' => 'SEPTIEMBRE', '10' => 'OCTUBRE', '11' => 'NOVIEMBRE', '12' => 'DICIEMBRE');
 
 ob_end_clean();
-//$pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+// $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
 class MYPDF extends TCPDF {
     //Page header
     public function Header() {
@@ -22,11 +21,12 @@ class MYPDF extends TCPDF {
         $this->Cell(0, 10, $this->getAliasNumPage().' / '.$this->getAliasNbPages(), 0, false, 'R', 0, '', 0, false, 'T', 'M');
     }
 }
+
 // create new PDF document
 $pdf = new MYPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 // set default header data
-// $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, '#000' . $detalles['0']['Pedido']['id'] . '');
+// $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, '#000' . $pedido['Pedido']['id'] . '');
 
 // set header and footer fonts
 $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -86,26 +86,22 @@ if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
 
 // set font
 $pdf->SetFont('dejavusans', '', 9);
+foreach ($pedidos as $pedido) :
 
 // set header
-$pdf->setHeaderData($ln='', $lw=2, $ht='', $hs='<span align="center">N°. Pedido: #000' . $detalles['0']['Pedido']['id'] . '</span>', $tc=array(0,0,0), $lc=array(0,0,0));
+$pdf->setHeaderData($ln='', $lw=2, $ht='', $hs='<span align="center">N°. Pedido: #000' . $pedido['Pedido']['id'] . '</span>', $tc=array(0,0,0), $lc=array(0,0,0));
 
 // add a page
 $pdf->AddPage();
-
-//$cantidad_final = 0;
-//foreach ($detalles as $detalle) :
-//    $cantidad_final = $cantidad_final + $detalle['PedidosDetalle']['cantidad_pedido'];
-//endforeach;
-
 // Print a text
-$pdf->Image(K_PATH_IMAGES.'logo_click_point.png', 10, 11, 15, '', '', '', '', false, 300);
+$pdf->Image(K_PATH_IMAGES.'logo_megaexpertos.png', 10, 11, 30, '', '', '', '', false, 300);
 $html = '<table cellspacing="1" cellpadding="1">
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000;" align="center"><h3>ORDEN DE ALISTAMIENTO</h3><br>GESTION DE LOGISTICA</td>
+        <td style="border-top: 1px solid #000000;  border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000;" align="center"><h3>ORDEN DE ALISTAMIENTO</h3><br>GESTION DE LOGISTICA</td>
     </tr>
 </table>';
 $pdf->writeHTML($html, true, false, true, false, '');
+
 
 $html = '<table cellspacing="1" cellpadding="1">
     <tr>
@@ -113,26 +109,26 @@ $html = '<table cellspacing="1" cellpadding="1">
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; background-color:#C0C0C0;" align="center"><b>DESTINATARIO</b></td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b> CLICK POINT SAS
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b>  
+            MEGAEXPERTOS S.A.S.
         </td>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>CLIENTE:</b> ' . $detalles['0']['Sucursale']['regional_sucursal'] . '</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>CLIENTE:</b> ' . $pedido['Sucursale']['regional_sucursal'] . '</td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DIRECCION:</b> Calle 77 28 A 48</td>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>SEDE:</b> ' . $detalles['0']['Sucursale']['nombre_sucursal'] . ' | <b>CIUDAD:</b> '.$detalles['0']['Municipio']['nombre_municipio'].'</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DIRECCION:</b> Calle 77 # 28A 48</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>SEDE:</b> ' . $pedido['Sucursale']['nombre_sucursal'] . ' | <b>CIUDAD:</b> '.$pedido['Municipio2']['nombre_municipio'].'</td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>TELEFONO:</b> (601) 6068433 | <b>FECHA:</b> ' . $detalles['0']['Pedido']['fecha_aprobado_pedido']  . '</td>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>DIRECCION:</b> ' . $detalles['0']['Sucursale']['direccion_sucursal'] . ' | <b>DEPARTAMENTO:</b> ' . $detalles['0']['Departamento']['nombre_departamento'] . '</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>TELEFONO:</b> (601) 6068433 | <b>FECHA:</b> ' . $pedido['Pedido']['fecha_aprobado_pedido'] . '</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>DIRECCION:</b> ' . $pedido['Sucursale']['direccion_sucursal'] . ' | <b>DEPARTAMENTO:</b> ' . $pedido['Departamento2']['nombre_departamento'] . '</td>
     </tr>
     <tr>
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>RESPONSABLE DE DESPACHO:</b></td>
-        <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;"><b>TEL:</b> '.$detalles['0']['Sucursale']['telefono_sucursal'].' | <b># GUIA:</b> '.$detalles['0']['Pedido']['guia_despacho'].'</td>
+        <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;"><b>TEL:</b> '.$pedido['Sucursale']['telefono_sucursal'].' | <b># GUIA:</b> '.$pedido['Pedido']['guia_despacho'].'</td>
     </tr>
     <tr>
-        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por CLICK POINT SAS
-        <br>Nit 901534647-5 | Calle 77 28 A 48 Bogota - Tel: (601) 6068433.</b></td>
-        <td style=" border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><span style="color:red"><b>N°. Pedido: #000' . $detalles['0']['Pedido']['id'] . '</b></span><br><b>ORDEN INTERNA: '.$detalles['0']['Sucursale']['oi_sucursal'].'</b><br><b>TIPO DE PEDIDO:</b> ' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '<br><span style="font-size: 29px;"><b>FECHA ENTREGA:</b> Desde el <b>'.$detalles[0]['Pedido']['fecha_entrega_1'].'</b> hasta el <b>'.$detalles[0]['Pedido']['fecha_entrega_2'].'</b></span><br><span style="font-size: 29px;"><b>MES PEDIDO:</b> '.$meses[$detalles[0]['Pedido']['mes_pedido']].'</span><br><span style="font-size: 29px;"><b>CLASIFICACION:</b> '.$detalles[0]['Pedido']['clasificacion_pedido'].'</span></td>
+        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por MEGAEXPERTOS S.A.S.<br>Nit 901787010-1 | Calle 77 # 28A 48 Bogota - Tel: (601) 6068433.</b></td>
+        <td style=" border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><span style="color:red"><b>N°. Pedido: #000' . $pedido['Pedido']['id'] . '</b></span><br><b>ORDEN INTERNA: '.$pedido['Sucursale']['oi_sucursal'].'</b><br><b>TIPO DE PEDIDO:</b> ' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '<br><span style="font-size: 29px;"><b>FECHA ENTREGA:</b> Desde el <b>'.$pedido['Pedido']['fecha_entrega_1'].'</b> hasta el <b>'.$pedido['Pedido']['fecha_entrega_2'].'</b></span><br><span style="font-size: 29px;"><b>MES PEDIDO:</b> '.$meses[$pedido['Pedido']['mes_pedido']].'</span><br><span style="font-size: 29px;"><b>CLASIFICACION:</b> '.$pedido['Pedido']['clasificacion_pedido'].'</span></td>
     </tr>
 </table>';
 
@@ -151,35 +147,37 @@ $html = '<table cellspacing="1" cellpadding="1">
     </tr>';
 $i = 1;
 $total_final = 0;
+$observaciones = null;
 $cantidad_final = 0;
 foreach ($detalles as $detalle) :
-    $total_sin_iva = $total_sin_iva + ($detalle['PedidosDetalle']['precio_producto'] * $detalle['PedidosDetalle']['cantidad_pedido']);
-    $total_final = $total_final + ($detalle['PedidosDetalle']['precio_producto'] + ($detalle['PedidosDetalle']['precio_producto'] * $detalle['PedidosDetalle']['iva_producto'])) * $detalle['PedidosDetalle']['cantidad_pedido'];
-    $cantidad_final = $cantidad_final + $detalle['PedidosDetalle']['cantidad_pedido'];
-            
+    if($pedido['Pedido']['id'] == $detalle['Pedido']['id']){
     $codigo = $detalle['Producto']['codigo_producto'];
     $nombre = $detalle['Producto']['nombre_producto'].' '.$detalle['Producto']['marca_producto'];
-    $unidad = $detalle['Producto']['medida_producto'];
+    $unidad = utf8_decode($detalle['Producto']['medida_producto']);
     $cantidad = $detalle['PedidosDetalle']['cantidad_pedido'];
     $observacion_producto = $detalle['PedidosDetalle']['observacion_producto'];
+    $cantidad_final = $cantidad_final + $detalle['PedidosDetalle']['cantidad_pedido'];
 
     $html.='
     <tr>
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="center">' . $codigo . '</td>
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="left">' . $nombre . '</td>
-        <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $unidad . '</td>     
+        <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . utf8_decode($unidad) . '</td>     
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $cantidad . '</td>
         <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center">' . $observacion_producto . '</td>             
     </tr>';
-    $i++;
-endforeach;
+        if(!empty($detalle['PedidosDetalle']['observacion_producto'])){
+            $observaciones.= $detalle['Producto']['codigo_producto'].' - '.$detalle['PedidosDetalle']['observacion_producto'].'<br>';
+        }
+        $i++;
+    } 
 
+endforeach;
 $html.='<tr>
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" align="right" colspan="3"><b>Cantidad de Productos:</b></td>
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center" colspan="1" align="center"><b>'.$cantidad_final.'</b></td>
             <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;" align="center" colspan="1" align="center"><b>Items:</b> '.($i-1).'</td>
         </tr>';
-
 if($i > 30){
     $html.='
         <tr>
@@ -199,13 +197,6 @@ if($i > 30){
         </tr>';
 }
 
-    foreach ($detalles as $detalle) :
-        if(!empty($detalle['PedidosDetalle']['observacion_producto'])){
-            $observaciones.= $detalle['Producto']['codigo_producto'].' - '.$detalle['PedidosDetalle']['observacion_producto'].'<br>';
-        }
-    endforeach;
-
-
 $html.='
         <tr>
             <td colspan="5"></td>
@@ -214,7 +205,7 @@ $html.='
             <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000; background-color:#C0C0C0;" colspan="5"  align="center"><b>OBSERVACIONES</b></td>
         </tr>
         <tr>
-            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" colspan="5">'.$detalles['0']['Pedido']['observaciones'].' '.$observaciones.'</td>
+            <td style="border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;" colspan="5">'.$pedido['Pedido']['observaciones'].' '.$observaciones.'</td>
         </tr>
         <tr>
             <td colspan="5"></td>
@@ -269,11 +260,7 @@ $html.='
     </table>';
 // output the HTML content
 $pdf->writeHTML($html, true, false, true, false, '');
-// ---------------------------------------------------------
+endforeach;
 
-//Close and output PDF document
-$pdf->Output("pedidos/op_000".$detalles['0']['Pedido']['id'].".pdf", 'FI');
-
-//============================================================+
-// END OF FILE
-//============================================================+
+$pdf->Output("pedidos/op_masivos.pdf", 'FI');
+?>

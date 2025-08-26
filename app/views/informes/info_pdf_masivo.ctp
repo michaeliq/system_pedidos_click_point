@@ -338,7 +338,17 @@ if (count($pedidos) > 0) {
 ?>
     <div style="display: flex; justify-content:center; align-items:center; gap: 2rem;">
         <div>
-            <?php echo $this->Form->input('optional_report', array('type' => 'checkbox', 'label' => "Reporte Shalom")); ?>
+            <!-- <?php /* echo $this->Form->input('optional_report', array('type' => 'select','label' => 'Generar reporte a nombre de .' , 'options' => [
+                "centro_aseo" => "Centro Aseo",
+                "shalom" => "Shalom",
+                "click_point" => "CLick Point",
+                "megaexpertos" => "Megaexpertos",
+                "ut_cce_amp_iv" => "UT CCE AMP IV",
+            ])); */ ?> -->
+            <?php echo $this->Form->input('optional_report_shalom', array('type' => 'checkbox', 'label' => "Reporte Shalom")); ?>
+            <?php echo $this->Form->input('optional_report_megaexpertos', array('type' => 'checkbox', 'label' => "Reporte Megaexpertos")); ?>
+            <?php echo $this->Form->input('optional_report_click_point', array('type' => 'checkbox', 'label' => "Reporte Click Point")); ?>
+            <?php echo $this->Form->input('optional_report_ut_cce_amp', array('type' => 'checkbox', 'label' => "Reporte UT CCE AMP IV")); ?>
         </div>
         <div>
             <?php echo $this->Form->button('GENERAR PDF MASIVO', array('type' => 'submit', 'class' => 'btn btn-info  btn-xs')); ?>
@@ -448,6 +458,56 @@ if (count($pedidos) > 0) {
             }
 
     ?>
+            <div
+                id='<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>'
+                style="
+                position:fixed; 
+                top:0; 
+                left:0; 
+                width:100%; 
+                height:100vh; 
+                background-color:#0003;
+                justify-content:center;
+                align-items:center;
+                display:none;">
+                <div class="print-dialog-box" style="padding:2rem; width: 600px; height: auto; display:flex;flex-direction:column;row-gap:1rem; justify-content:center; align-items:center; background-color: #ddd; border-radius:25px;">
+                    <div class="header-dialog-box">
+                        <h3 class=""><?php echo "Generar reporte de Orden #" . $pedido['Pedido']['id']; ?></h3>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte CENTRO ASEO <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte GRUPO EMPRESARIAL SHALOM <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_shalom', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte MEGAEXPERTOS <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_megaexpertos', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte CLICK POINT <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_click_point', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte UNION TEMPORAL CCE AMP IV 2022 <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_ut_cce_amp', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <div class="footer-container-btn">
+                        <button type="button" id='<?php echo "close-box-btn" . $pedido['Pedido']['id']; ?>' class="btn btn-secondary btn-lg m-2 p-3">CERRAR</button>
+                    </div>
+                </div>
+            </div>
             <tr>
                 <td><?php echo  $this->Form->input($pedido['Pedido']['id'], array('type' => 'checkbox', 'label' => false, 'value' => $pedido['Pedido']['id'], 'class' => $class_ck)); ?></td>
                 <td><span style='color:red;'><b>#000<?php echo $pedido['Pedido']['id']; ?></b></span></td>
@@ -459,10 +519,27 @@ if (count($pedidos) > 0) {
                 <td>
 
                     <div title="Ver"><?php echo $this->Html->link(__('', true), array('controller' => 'pedidos', 'action' => 'ver_pedido', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-search', 'target' => '_blank', 'escape' => false)); ?></div>
-                    <div title="Imprimir Reporte Shalom"><?php echo $this->Html->link(__('', true), array('controller' => 'pedidos', 'action' => 'pedido_pdf_shalom', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-print', 'target' => '_blank', 'escape' => false)); ?></div>
 
+                    <!-- <div title="Imprimir Reporte Shalom"><?php /* echo $this->Html->link(__('', true), array('controller' => 'pedidos', 'action' => 'pedido_pdf_shalom', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-print', 'target' => '_blank', 'escape' => false)); */ ?></div> -->
+
+                    <div id='<?php echo "show-box-btn" . $pedido['Pedido']['id']; ?>' title="Imprimir Reporte Shalom">
+                        <p class="glyphicon glyphicon-print text-primary" style="cursor:pointer"></p>
+                    </div>
                 </td>
             </tr>
+            <script>
+                $('#<?php echo "show-box-btn" . $pedido['Pedido']['id']; ?>').
+                on("click", function() {
+                    $('#<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>').
+                    css("display", "flex")
+                })
+
+                $('#<?php echo "close-box-btn" . $pedido['Pedido']['id']; ?>').
+                on("click", function(e) {
+                    $('#<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>').
+                    css("display", "none")
+                })
+            </script>
         <?php
             $i++;
         endforeach;

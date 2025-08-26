@@ -113,7 +113,8 @@ $html = '<table cellspacing="1" cellpadding="1">
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; background-color:#C0C0C0;" align="center"><b>DESTINATARIO</b></td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b> CLICK POINT SAS
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b>
+         CENTRO ASEO MANTENIMIENTO PROFESIONAL S.A.S.
         </td>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>CLIENTE:</b> ' . $detalles['0']['Sucursale']['regional_sucursal'] . '</td>
     </tr>

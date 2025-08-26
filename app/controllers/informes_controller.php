@@ -1504,11 +1504,35 @@ class InformesController extends AppController
             }
             $this->Session->write('Pedido.pdf_masivos', $pedidos);
 
-            if ($this->data['Pedido']["optional_report"]) {
+            if ($this->data['Pedido']["optional_report_shalom"]) {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_shalom'));
-            } else {
+            } 
+            if ($this->data['Pedido']["optional_report_megaexpertos"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_megaexpertos'));
+            } 
+            if ($this->data['Pedido']["optional_report_click_point"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_click_point'));
+            } 
+            if ($this->data['Pedido']["optional_report_ut_cce_amp"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_ut_cce_amp'));
+            } 
+            
+            return $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
+
+
+            /* if ($this->data['Pedido']["optional_report"] == "shalom") {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_shalom'));
+            } else if($this->data['Pedido']["optional_report"] == "centro_aseo") {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
-            }
+            } else if($this->data['Pedido']["optional_report"] == "click_point") {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_click_point'));
+            } else if($this->data['Pedido']["optional_report"] == "megaexpertos") {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_megaexpertos'));
+            } else if($this->data['Pedido']["optional_report"] == "ut_cce_amp_iv") {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_ut_cce_amp'));
+            }else{
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
+            } */
         }
 
         if (!empty($this->data['PedidoDespacho'])) {
