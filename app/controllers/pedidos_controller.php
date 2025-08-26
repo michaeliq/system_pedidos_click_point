@@ -1068,6 +1068,75 @@ class PedidosController extends AppController
         $this->set('detalles', $detalles);
         $this->set('localidad', $localidad);
         $this->set('pedido', $pedido);
+    } 
+
+    function pedido_pdf_megaexpertos($id = null)
+    {
+
+        Configure::write('debug', 0);
+        $this->layout = 'pdf';
+
+        $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
+        $localidad = $this->LocalidadRelRuta->find('first', 
+        array(
+            "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
+                        ]
+                    ]
+           ));
+
+        $this->set('detalles', $detalles);
+        $this->set('localidad', $localidad);
+        $this->set('pedido', $pedido);
+    }
+
+    function pedido_pdf_click_point($id = null)
+    {
+
+        Configure::write('debug', 0);
+        $this->layout = 'pdf';
+
+        $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
+        $localidad = $this->LocalidadRelRuta->find('first', 
+        array(
+            "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
+                        ]
+                    ]
+           ));
+
+        $this->set('detalles', $detalles);
+        $this->set('localidad', $localidad);
+        $this->set('pedido', $pedido);
+    }
+
+    function pedido_pdf_ut_cce_amp($id = null)
+    {
+
+        Configure::write('debug', 0);
+        $this->layout = 'pdf';
+
+        $detalles = $this->PedidosDetalle->find('all', array('order' => 'Producto.nombre_producto', 'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $id)));
+        $pedido = $this->Pedido->find("first", ["conditions" => ["Pedido.id" => $id], "fields" => ["Pedido.localidad_rel_rutas_id","Empresa.membrete_pdf"]]);
+        $localidad = $this->LocalidadRelRuta->find('first', 
+        array(
+            "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $pedido["Pedido"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalles[0]["Sucursale"]["id"]
+                        ]
+                    ]
+           ));
+
+        $this->set('detalles', $detalles);
+        $this->set('localidad', $localidad);
+        $this->set('pedido', $pedido);
     }
 
     function pedido_pdf_masivo()
@@ -1095,6 +1164,129 @@ class PedidosController extends AppController
     }
 
     function pedido_pdf_masivo_shalom()
+    {
+        Configure::write('debug', 0);
+        ini_set('memory_limit', 536870912);
+        // ini_set('memory_limit', '3072M');
+        $this->layout = 'pdf';
+        if (count($this->Session->read('Pedido.pdf_masivos')) > 0) {
+            $pedidos = array();
+            $pedidos_data = $this->Pedido->find('all', array('order' => 'Pedido.id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'Pedido.pedido_estado' => true, 'Pedido.id' => $this->Session->read('Pedido.pdf_masivos'))));
+
+            foreach ($pedidos_data as $detalle) {
+                $localidad_nombre = $this->LocalidadRelRuta->find('first', array(
+                    "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $detalle["Pedido"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalle["Sucursale"]["id"]
+                        ]
+                    ],
+                    "fields" => "LocalidadRelRuta.nombre_rel"
+                ));
+                if ($localidad_nombre) {
+                    $detalle["LocalidadRelRuta"] = $localidad_nombre["LocalidadRelRuta"]["nombre_rel"];
+                }
+                array_push($pedidos, $detalle);
+            };
+
+            $this->set('pedidos', $pedidos);
+
+            $detalles = $this->PedidosDetalle->find('all', array(
+                'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto,PedidosDetalle.lote,PedidosDetalle.fecha_expiracion',
+                'order' => 'Producto.nombre_producto',
+                'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))
+            ));
+
+            $this->set('detalles', $detalles);
+        } else {
+            $this->set('pedidos', array());
+            $this->set('detalles', array());
+        }
+    }
+
+    function pedido_pdf_masivo_megaexpertos()
+    {
+        Configure::write('debug', 0);
+        ini_set('memory_limit', 536870912);
+        // ini_set('memory_limit', '3072M');
+        $this->layout = 'pdf';
+        if (count($this->Session->read('Pedido.pdf_masivos')) > 0) {
+            $pedidos = array();
+            $pedidos_data = $this->Pedido->find('all', array('order' => 'Pedido.id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'Pedido.pedido_estado' => true, 'Pedido.id' => $this->Session->read('Pedido.pdf_masivos'))));
+
+            foreach ($pedidos_data as $detalle) {
+                $localidad_nombre = $this->LocalidadRelRuta->find('first', array(
+                    "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $detalle["Pedido"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalle["Sucursale"]["id"]
+                        ]
+                    ],
+                    "fields" => "LocalidadRelRuta.nombre_rel"
+                ));
+                if ($localidad_nombre) {
+                    $detalle["LocalidadRelRuta"] = $localidad_nombre["LocalidadRelRuta"]["nombre_rel"];
+                }
+                array_push($pedidos, $detalle);
+            };
+
+            $this->set('pedidos', $pedidos);
+
+            $detalles = $this->PedidosDetalle->find('all', array(
+                'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto,PedidosDetalle.lote,PedidosDetalle.fecha_expiracion',
+                'order' => 'Producto.nombre_producto',
+                'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))
+            ));
+
+            $this->set('detalles', $detalles);
+        } else {
+            $this->set('pedidos', array());
+            $this->set('detalles', array());
+        }
+    }
+
+    function pedido_pdf_masivo_click_point()
+    {
+        Configure::write('debug', 0);
+        ini_set('memory_limit', 536870912);
+        // ini_set('memory_limit', '3072M');
+        $this->layout = 'pdf';
+        if (count($this->Session->read('Pedido.pdf_masivos')) > 0) {
+            $pedidos = array();
+            $pedidos_data = $this->Pedido->find('all', array('order' => 'Pedido.id', 'conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'), 'Pedido.pedido_estado' => true, 'Pedido.id' => $this->Session->read('Pedido.pdf_masivos'))));
+
+            foreach ($pedidos_data as $detalle) {
+                $localidad_nombre = $this->LocalidadRelRuta->find('first', array(
+                    "conditions" => [
+                        "or" => [
+                            "LocalidadRelRuta.id" => $detalle["Pedido"]["localidad_rel_rutas_id"],
+                            "LocalidadRelRuta.codigo_sirbe" => $detalle["Sucursale"]["id"]
+                        ]
+                    ],
+                    "fields" => "LocalidadRelRuta.nombre_rel"
+                ));
+                if ($localidad_nombre) {
+                    $detalle["LocalidadRelRuta"] = $localidad_nombre["LocalidadRelRuta"]["nombre_rel"];
+                }
+                array_push($pedidos, $detalle);
+            };
+
+            $this->set('pedidos', $pedidos);
+
+            $detalles = $this->PedidosDetalle->find('all', array(
+                'fields' => 'Pedido.id, Pedido.pedido_estado, PedidosDetalle.pedido_id, PedidosDetalle.pedido_id, PedidosDetalle.cantidad_pedido, PedidosDetalle.observacion_producto, Producto.codigo_producto, Producto.nombre_producto, Producto.medida_producto, Producto.marca_producto,PedidosDetalle.lote,PedidosDetalle.fecha_expiracion',
+                'order' => 'Producto.nombre_producto',
+                'conditions' => array('Pedido.pedido_estado' => true, 'PedidosDetalle.pedido_id' => $this->Session->read('Pedido.pdf_masivos'))
+            ));
+
+            $this->set('detalles', $detalles);
+        } else {
+            $this->set('pedidos', array());
+            $this->set('detalles', array());
+        }
+    }
+
+    function pedido_pdf_masivo_ut_cce_amp()
     {
         Configure::write('debug', 0);
         ini_set('memory_limit', 536870912);

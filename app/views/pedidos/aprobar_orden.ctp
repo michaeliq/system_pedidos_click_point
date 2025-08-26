@@ -59,6 +59,57 @@ if (count($pedidos) > 0) {
     if (count($pedidos) > 0) {
         foreach ($pedidos as $pedido) :
     ?>
+            <div 
+                id='<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>'
+                style="
+                position:fixed; 
+                top:0; 
+                left:0; 
+                width:100%; 
+                height:100vh; 
+                background-color:#0003;
+                justify-content:center;
+                align-items:center;
+                display:none;"
+                >
+                <div class="print-dialog-box" style="padding:2rem; width: 600px; height: auto; display:flex;flex-direction:column;row-gap:1rem; justify-content:center; align-items:center; background-color: #ddd; border-radius:25px;">
+                    <div class="header-dialog-box">
+                        <h3 class=""><?php echo "Generar reporte de Orden #" . $pedido['Pedido']['id'];?></h3>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            
+                            <?php echo " " . $this->Html->link("Reporte CENTRO ASEO <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                    <h6>
+                            
+                            <?php echo " " . $this->Html->link("Reporte GRUPO EMPRESARIAL SHALOM <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_shalom', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            
+                            <?php echo " " . $this->Html->link("Reporte MEGAEXPERTOS <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_megaexpertos', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            
+                            <?php echo " " . $this->Html->link("Reporte CLICK POINT <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_click_point', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte UNION TEMPORAL CCE AMP IV 2022 <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_ut_cce_amp', $pedido['Pedido']['id']), array('class' => '',"target" => "_blank" ,'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <div class="footer-container-btn">
+                        <button type="button" id='<?php echo "close-box-btn" . $pedido['Pedido']['id']; ?>' class="btn btn-secondary btn-lg m-2 p-3">CERRAR</button>
+                    </div>
+                </div>
+            </div>
             <tr>
                 <td><?php echo $this->Form->input($pedido['Pedido']['id'], array('type' => 'checkbox', 'label' => false, 'value' => $pedido['Pedido']['id'], 'class' => 'ck')); ?></td>
                 <td><span style='color:red;'>#000<?php echo $pedido['Pedido']['id']; ?></span></td>
@@ -70,7 +121,11 @@ if (count($pedidos) > 0) {
                 <td><?php echo $pedido['EstadoPedido']['nombre_estado']; ?> </td>
                 <td>
                     <div class="ver_pedido" title="Ver"><?php echo $this->Html->link(__('', true), array('action' => 'ver_pedido', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-search', 'escape' => false)); ?></div>
-                    <div title="Imprimir Reporte Shalom"><?php echo $this->Html->link(__('', true), array('controller' => 'pedidos', 'action' => 'pedido_pdf_shalom', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-print', 'target' => '_blank', 'escape' => false)); ?></div>
+
+                    <div id='<?php echo "show-box-btn" . $pedido['Pedido']['id']; ?>' title="Imprimir Reporte Shalom">
+                         <p class="glyphicon glyphicon-print text-primary" style="cursor:pointer"></p>
+                    </div>
+
                     <?php
                     if ($pedido['Pedido']['pedido_estado_pedido'] != '4') {
                     ?>
@@ -81,6 +136,19 @@ if (count($pedidos) > 0) {
                     <div class="observaciones" title="Cambiar Observaciones"><?php echo $this->Html->link(__('', true), array('action' => 'observaciones', $pedido['Pedido']['id']), array('class' => 'glyphicon glyphicon-list-alt', 'escape' => false)); ?></div>
                 </td>
             </tr>
+            <script>
+                $('#<?php echo "show-box-btn" . $pedido['Pedido']['id']; ?>').
+                on("click",function(){
+                    $('#<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>').
+                    css("display","flex")
+                })
+
+                $('#<?php echo "close-box-btn" . $pedido['Pedido']['id']; ?>').
+                on("click",function(e){
+                    $('#<?php echo "print-dialog-box-container-" . $pedido['Pedido']['id']; ?>').
+                    css("display","none")
+                })
+            </script>
         <?php
         endforeach;
     } else {

@@ -26,7 +26,7 @@ class MYPDF extends TCPDF {
 $pdf = new MYPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 // set default header data
-$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, '#000' . $detalles['0']['Pedido']['id'] . '');
+// $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, '#000' . $detalles['0']['Pedido']['id'] . '');
 
 // set header and footer fonts
 $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -99,7 +99,7 @@ $pdf->AddPage();
 //endforeach;
 
 // Print a text
-$pdf->Image(K_PATH_IMAGES.'logo_centroaseo.png', 10, 11, 15, '', '', '', '', false, 300);
+// $pdf->Image(K_PATH_IMAGES.'cise_logo.png', 10, 11, 27, '', '', '', '', false, 300);
 $html = '<table cellspacing="1" cellpadding="1">
     <tr>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000;" align="center"><h3>ORDEN DE ALISTAMIENTO</h3><br>GESTION DE LOGISTICA</td>
@@ -130,7 +130,7 @@ $html = '<table cellspacing="1" cellpadding="1">
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;"><b>TEL:</b> '.$detalles['0']['Sucursale']['telefono_sucursal'].' | <b># GUIA:</b> '.$detalles['0']['Pedido']['guia_despacho'].'</td>
     </tr>
     <tr>
-        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por CENTRO ASEO MANTENIMIENTO PROFESIONAL S.A.S.
+        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por CLICK POINT SAS
         <br>Nit 900073254-1 | CR 28 No. 77-12 Bogota - Tel: (601) 6068433.</b></td>
         <td style=" border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><span style="color:red"><b>N°. Pedido: #000' . $detalles['0']['Pedido']['id'] . '</b></span><br><b>ORDEN INTERNA: '.$detalles['0']['Sucursale']['oi_sucursal'].'</b><br><b>TIPO DE PEDIDO:</b> ' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '<br><span style="font-size: 29px;"><b>FECHA ENTREGA:</b> Desde el <b>'.$detalles[0]['Pedido']['fecha_entrega_1'].'</b> hasta el <b>'.$detalles[0]['Pedido']['fecha_entrega_2'].'</b></span><br><span style="font-size: 29px;"><b>MES PEDIDO:</b> '.$meses[$detalles[0]['Pedido']['mes_pedido']].'</span><br><span style="font-size: 29px;"><b>CLASIFICACION:</b> '.$detalles[0]['Pedido']['clasificacion_pedido'].'</span></td>
     </tr>
