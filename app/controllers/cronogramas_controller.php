@@ -100,6 +100,56 @@ class CronogramasController extends AppController {
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => array('Empresa.estado_empresa' => true, 'Empresa.parametro_cronograma' => true)));
         $this->set(compact('empresas', 'tipo_pedido'));
     }
+    function add_masive_schedule() {
+        if (!empty($this->data)) {
+
+            /* debug($this->data);
+            return; */
+
+            $valid_insertion = 0;
+            $error_insertion = 0;
+            $empresas_validas = "Se agrego un cronograma de pedidos a las Empresas con IDs: ";
+            $empresas_error = "No se agrego cronograma de pedidos a las Empresas con IDs: ";
+
+            foreach ($this->data['Cronograma']['empresa_id'] as $empresa):
+                $this->Cronograma->create();
+                $new_schedule = array(
+                    "Cronograma" => array(
+                        "nombre_cronograma" => $this->data["Cronograma"]["nombre_cronograma"],
+                        "empresa_id" => $empresa,
+                        "tipo_pedido_id" => 1,
+                        "tipo_pedido_id_2" => implode(",", $this->data['Cronograma']['tipo_pedido_id_2']),
+                        "fecha_inicio" => $this->data["Cronograma"]["fecha_inicio"],
+                        "fecha_fin" => $this->data["Cronograma"]["fecha_fin"],
+                        "estado_cronograma" => true,
+                    )
+                    );
+                if($this->Cronograma->save($new_schedule)){
+                    $empresas_validas .= $empresa . ", ";
+                    $valid_insertion += 1; 
+                }else{
+                    $empresas_error .= $empresa . ", ";
+                    $error_insertion += 1; 
+                }
+
+            endforeach;
+
+            
+            if($error_insertion <= 0 && $valid_insertion > 0) {
+                $this->Session->setFlash(__($empresas_validas, true));
+                $this->redirect(array('action' => 'index')); 
+            } else if($error_insertion > 0 && $valid_insertion > 0){
+                $this->Session->setFlash(__($empresas_validas . "<br/>" . $empresas_error, true));
+                 $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('El cronograma no pudo ser salvado. Por favor intente de nuevo.', true));
+            }
+        }
+
+        $tipo_pedido = $this->TipoPedido->find('list', array('fields' => 'TipoPedido.nombre_tipo_pedido', 'order' => 'TipoPedido.nombre_tipo_pedido', 'conditions' => array('TipoPedido.estado' => true)));
+        $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa', 'conditions' => array('Empresa.estado_empresa' => true, 'Empresa.parametro_cronograma' => true)));
+        $this->set(compact('empresas', 'tipo_pedido'));
+    }
 
     /**
      * Edit Calendar record by Id

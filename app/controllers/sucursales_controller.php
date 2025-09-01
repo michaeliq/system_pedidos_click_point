@@ -323,7 +323,7 @@ class SucursalesController extends AppController
             "order" => 'LocalidadRelRuta.nombre_rel' ,
             "conditions" => array(
                 "LocalidadRelRuta.id" => $sucursal_localidad["Sucursale"]["localidad_rel_rutas_id"],
-            )));
+            ))); 
             
         $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.empresa_id' => $this->data['Sucursale']['id_empresa'])));
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));

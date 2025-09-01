@@ -28,6 +28,7 @@
 <div>&nbsp;</div>
 <?php echo $this->Form->end(); ?>
 <div class="add"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nuevo Cronograma', true), array('action' => 'add'), array('escape' => false)); ?></div>
+<div class="add"><?php echo $this->Html->link(__('<i class="glyphicon glyphicon-plus-sign"></i> Nuevo Cronograma Masivo', true), array('action' => 'add_masive_schedule'), array('escape' => false)); ?></div>
 <div class="index">
     <table class="table table-striped table-bordered table-hover table-condensed">
         <tr>
