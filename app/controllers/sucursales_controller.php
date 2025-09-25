@@ -7,8 +7,18 @@ class SucursalesController extends AppController
     var $helpers = array('Html', 'Ajax', 'Javascript');
     var $components = array('RequestHandler', 'Auth', 'Permisos');
     var $uses = array(
-        'Sucursale', 'Regionale', 'Departamento', 'Municipio', 'Empresa', 'Plantilla', 'SucursalesPlantilla',
-        'SucursalesPresupuestosPedido', 'TipoPedido', 'LocalidadRelRuta'
+        'Sucursale',
+        'Regionale',
+        'Departamento',
+        'Municipio',
+        'Empresa',
+        'Plantilla',
+        'SucursalesPlantilla',
+        'SucursalesPresupuestosPedido',
+        'TipoPedido',
+        'LocalidadRelRuta',
+        'User',
+        'EmpresasAprobadore'
     );
 
     function isAuthorized()
@@ -195,7 +205,9 @@ class SucursalesController extends AppController
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
         $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));
         $plantillas = $this->Plantilla->find('list', array(
-            'fields' => 'Plantilla.nombre_plantilla', 'order' => 'Plantilla.nombre_plantilla', 'conditions' =>
+            'fields' => 'Plantilla.nombre_plantilla',
+            'order' => 'Plantilla.nombre_plantilla',
+            'conditions' =>
             array('Plantilla.id' => $array_plantillas)
         ));
         $this->set(compact('departamentos', 'municipios', 'plantillas', 'regionales'));
@@ -313,28 +325,33 @@ class SucursalesController extends AppController
             array_push($array_plantillas, 919);
         }
 
-        $localidades = $this->LocalidadRelRuta->find('list', array('fields' => 'LocalidadRelRuta.nombre_rel', "order" => 'LocalidadRelRuta.nombre_rel' ,"conditions" => array(
+        $localidades = $this->LocalidadRelRuta->find('list', array('fields' => 'LocalidadRelRuta.nombre_rel', "order" => 'LocalidadRelRuta.nombre_rel', "conditions" => array(
             "LocalidadRelRuta.codigo_sirbe" => $id
         )));
-        $sucursal_localidad = $this->Sucursale->find("first",array("conditions" => ["Sucursale.id" => $id], "fields" => ["localidad_rel_rutas_id"]));
-        $localidad = $this->LocalidadRelRuta->find('list', 
-        array(
-            'fields' => 'LocalidadRelRuta.nombre_rel', 
-            "order" => 'LocalidadRelRuta.nombre_rel' ,
-            "conditions" => array(
-                "LocalidadRelRuta.id" => $sucursal_localidad["Sucursale"]["localidad_rel_rutas_id"],
-            ))); 
-            
+        $sucursal_localidad = $this->Sucursale->find("first", array("conditions" => ["Sucursale.id" => $id], "fields" => ["localidad_rel_rutas_id"]));
+        $localidad = $this->LocalidadRelRuta->find(
+            'list',
+            array(
+                'fields' => 'LocalidadRelRuta.nombre_rel',
+                "order" => 'LocalidadRelRuta.nombre_rel',
+                "conditions" => array(
+                    "LocalidadRelRuta.id" => $sucursal_localidad["Sucursale"]["localidad_rel_rutas_id"],
+                )
+            )
+        );
+
         $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.empresa_id' => $this->data['Sucursale']['id_empresa'])));
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
         $municipios = $this->Municipio->find('list', array('fields' => 'Municipio.nombre_municipio', 'order' => 'Municipio.nombre_municipio'));
         $empresas = $this->Empresa->find('list', array('fields' => 'Empresa.nombre_empresa', 'order' => 'Empresa.nombre_empresa'));
         $plantillas = $this->Plantilla->find('list', array(
-            'fields' => 'Plantilla.nombre_plantilla', 'order' => 'Plantilla.nombre_plantilla', 'conditions' =>
+            'fields' => 'Plantilla.nombre_plantilla',
+            'order' => 'Plantilla.nombre_plantilla',
+            'conditions' =>
             //array('Plantilla.estado_plantilla' => true, 'Plantilla.empresa_id' => $this->data['Sucursale']['id_empresa'])
             array('Plantilla.id' => $array_plantillas)
         ));
-        $this->set(compact('departamentos', 'municipios', 'empresas', 'plantillas', 'regionales', "localidades","localidad"));
+        $this->set(compact('departamentos', 'municipios', 'empresas', 'plantillas', 'regionales', "localidades", "localidad"));
 
         $this->set('empresa', $this->Empresa->find('all', array('fields' => 'Empresa.nombre_empresa', 'conditions' => array('Empresa.id' => $this->data['Sucursale']['id_empresa']))));
     }
@@ -429,10 +446,10 @@ class SucursalesController extends AppController
         $sucursales_validas = array();
 
         $regionales = $this->Regionale->find('list', array('fields' => 'Regionale.nombre_regional', 'order' => 'Regionale.nombre_regional', 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.empresa_id' => $id_empresa)));
-        $this->set("regionales",$regionales);
+        $this->set("regionales", $regionales);
         $sucursales = $this->Sucursale->find('all', array(
             "conditions" => ["Sucursale.id_empresa" => $id_empresa],
-            "fields" => ["Sucursale.id","Sucursale.ceco_sucursal","Sucursale.oi_sucursal","Sucursale.nombre_sucursal","Sucursale.departamento_id","Sucursale.municipio_id","Sucursale.direccion_sucursal","Sucursale.telefono_sucursal","Sucursale.email_sucursal","Sucursale.nombre_contacto","Sucursale.telefono_contacto","Sucursale.email_contacto"]
+            "fields" => ["Sucursale.id", "Sucursale.ceco_sucursal", "Sucursale.oi_sucursal", "Sucursale.nombre_sucursal", "Sucursale.departamento_id", "Sucursale.municipio_id", "Sucursale.direccion_sucursal", "Sucursale.telefono_sucursal", "Sucursale.email_sucursal", "Sucursale.nombre_contacto", "Sucursale.telefono_contacto", "Sucursale.email_contacto"]
         ));
 
         if (!is_dir($dir_file)) {
@@ -440,12 +457,12 @@ class SucursalesController extends AppController
         }
         $this->set(compact("sucursales"));
 
-        
+
         if ($this->RequestHandler->isPost()) {
-            
+            $admin_user = $this->User->find('all', array('conditions' => array('User.rol_id' => 1)));
             $tipo_pedidos = $this->TipoPedido->find('all', array('conditions' => array('TipoPedido.estado' => true)));
-            $regional = $this->Regionale->find('first', array('fields' => ['Regionale.nombre_regional','Regionale.id'], 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.id' => $this->data["Sucursale"]["regional"])));
-           
+            $regional = $this->Regionale->find('first', array('fields' => ['Regionale.nombre_regional', 'Regionale.id'], 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.id' => $this->data["Sucursale"]["regional"])));
+
             if ($this->data['Sucursale']['archivo_csv']['name']) {
                 debug($this->data['Sucursale']['archivo_csv']);
                 if (($this->data['Sucursale']['archivo_csv']['type'] == 'text/csv') || ($this->data['Sucursale']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
@@ -495,27 +512,40 @@ class SucursalesController extends AppController
                                             "email_contacto" => $data_sucursale["CORREO_CONTACTO"],
                                         )
                                     );
+
                                     array_push($sucursales_validas, $sql_query_instert_array);
                                     $this->Sucursale->create();
                                     $this->Sucursale->save($sql_query_instert_array);
                                     $sucursale_id = null;
-                                    if($this->Sucursale->getInsertID()){
+                                    if ($this->Sucursale->getInsertID()) {
                                         $sucursale_id = $this->Sucursale->getInsertID();
-                                    }else{
+
+                                        //Añadir aprobadores con rol Admin
+                                        foreach ($admin_user as $user_):
+                                            $this->EmpresasAprobadore->create();
+                                            $data_sucursales = array(
+                                                'empresa_id' => $this->data["Sucursale"]["empresa_id"],
+                                                'user_id' => $user_["User"]["id"],
+                                                'sucursal_id' => $sucursale_id,
+                                                'regional_id' => $regional["Regionale"]["id"]
+                                            );
+                                            $this->EmpresasAprobadore->save($data_sucursales, FALSE);
+                                        endforeach;
+                                    } else {
                                         $sucursale_id = $data_sucursale["ID"];
                                     }
                                     $presupuestos = array();
 
                                     foreach ($tipo_pedidos as $tipo_pedido) :
                                         if (!empty($data_sucursale[$tipo_pedido["TipoPedido"]["nombre_tipo_pedido"]])) {
-                                            $presupuesto = $this->SucursalesPresupuestosPedido->find("first",array(
+                                            $presupuesto = $this->SucursalesPresupuestosPedido->find("first", array(
                                                 "conditions" => array(
                                                     "sucursal_id" => $sucursale_id,
                                                     "tipo_pedido_id" => $tipo_pedido["TipoPedido"]["id"]
                                                 ),
                                                 "fields" => ["id"]
                                             ));
-                                            
+
                                             $data_presupuesto = array(
                                                 "SucursalesPresupuestosPedido" => array(
                                                     'id' => $presupuesto["SucursalesPresupuestosPedido"]["id"],
@@ -526,11 +556,11 @@ class SucursalesController extends AppController
                                                 )
                                             );
                                             //debug($data_presupuesto);
-                                            array_push($presupuestos,$data_presupuesto);
+                                            array_push($presupuestos, $data_presupuesto);
                                         };
                                     endforeach;
-                                    if(count($presupuestos) > 0){
-                                        
+                                    if (count($presupuestos) > 0) {
+
                                         $this->SucursalesPresupuestosPedido->saveAll($presupuestos);
                                     }
                                 }
@@ -540,32 +570,32 @@ class SucursalesController extends AppController
 
 
                         $this->set("sucursales_validas", $sucursales_validas);
-                        $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa','Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
+                        $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa', 'Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
                         fclose($file);
                         unlink($dir_file . '/' . $this->data['Sucursale']['archivo_csv']['name']);
-                        $this->redirect("/sucursales/index/".$this->data["Sucursale"]["empresa_id"]);
+                        $this->redirect("/sucursales/index/" . $this->data["Sucursale"]["empresa_id"]);
                     } else {
                         $this->set("sucursales_validas", $sucursales_validas);
-                        $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa','Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
+                        $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa', 'Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
                         $this->Session->setFlash('El tamaño del archivo supera el maximo establecido (20MB).', 'flash_failure');
-                        $this->redirect("/sucursales/upload_sucursales_from_file/".$this->data["Sucursale"]["empresa_id"]);
+                        $this->redirect("/sucursales/upload_sucursales_from_file/" . $this->data["Sucursale"]["empresa_id"]);
                     }
                 } else {
                     $this->set("sucursales_validas", $sucursales_validas);
-                    $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa','Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
+                    $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa', 'Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
                     $this->Session->setFlash('El tipo de archivo no es el admitido para este proceso.', 'flash_failure');
-                    $this->redirect("/sucursales/upload_sucursales_from_file/".$this->data["Sucursale"]["empresa_id"]);
+                    $this->redirect("/sucursales/upload_sucursales_from_file/" . $this->data["Sucursale"]["empresa_id"]);
                 }
             } else {
                 $this->set("sucursales_validas", $sucursales_validas);
-                $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa','Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
+                $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa', 'Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
                 $this->Session->setFlash('Hubo un error al cargar el archivo. Verifique y vuelva a intentar.', 'flash_failure');
                 debug();
-                $this->redirect("/sucursales/upload_sucursales_from_file/".$this->data["Sucursale"]["empresa_id"]);
+                $this->redirect("/sucursales/upload_sucursales_from_file/" . $this->data["Sucursale"]["empresa_id"]);
             }
         } else {
             $this->set("sucursales_validas", $sucursales_validas);
-            $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa','Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
+            $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa', 'Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
         }
     }
 }
