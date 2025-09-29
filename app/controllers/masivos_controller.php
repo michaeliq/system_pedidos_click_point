@@ -478,6 +478,7 @@ class MasivosController extends AppController
                                         ));
                                     }
                                 }
+                                
                                 $this->PedidosMasivo->saveAll($sql_cargas);
                                 fclose($handle);
                             }
@@ -572,7 +573,7 @@ class MasivosController extends AppController
 
                                     $this->Session->setFlash(__('Las ordenes de pedido se crearon exitosamente.', true));
 
-                                    // Consultar si tiene pedidos pendientes de aprobaci�n para cargar
+                                    // Consultar si tiene pedidos pendientes de aprobación para cargar
                                     $pendiente_aprobacion = $this->Pedido->find('count', array('fields' => 'count(Pedido.id)', 'conditions' => array('Pedido.pedido_masivo' => $pedido_masivo, 'Pedido.observaciones' => 'Masivo', 'Pedido.pedido_estado_pedido' => '3', 'Pedido.empresa_id' => $this->Session->read('Auth.User.empresa_id'))));
                                     if ($pendiente_aprobacion > 0) {
                                         $this->Session->setFlash(__('Tiene ' . $pendiente_aprobacion . ' ordenes cargadas masivamente en estado: pendientes de aprobacion.<br> Debe aprobar estas ordenes primero para luego realizar una nueva carga masiva.', true));
