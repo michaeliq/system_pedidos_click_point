@@ -459,12 +459,19 @@ class SucursalesController extends AppController
 
 
         if ($this->RequestHandler->isPost()) {
+
             $admin_user = $this->User->find('all', array('conditions' => array('User.rol_id' => 1)));
             $tipo_pedidos = $this->TipoPedido->find('all', array('conditions' => array('TipoPedido.estado' => true)));
             $regional = $this->Regionale->find('first', array('fields' => ['Regionale.nombre_regional', 'Regionale.id'], 'conditions' => array('Regionale.estado_regional' => true, 'Regionale.id' => $this->data["Sucursale"]["regional"])));
 
+            $plantillas_data = null;
+
+            if (count($this->data['Sucursale']['plantillas']) > 0) {
+                $plantillas_data = $this->Plantilla->find('all', array('conditions' => array('Plantilla.id' => $this->data['Sucursale']['plantillas'])));
+            }
+
             if ($this->data['Sucursale']['archivo_csv']['name']) {
-                debug($this->data['Sucursale']['archivo_csv']);
+
                 if (($this->data['Sucursale']['archivo_csv']['type'] == 'text/csv') || ($this->data['Sucursale']['archivo_csv']['type'] == 'application/vnd.ms-excel')) {
                     if ($this->data['Sucursale']['archivo_csv']['size'] < $max_file) {
                         move_uploaded_file($this->data['Sucursale']['archivo_csv']['tmp_name'], $dir_file . '/' . $this->data['Sucursale']['archivo_csv']['name']);
@@ -493,6 +500,11 @@ class SucursalesController extends AppController
                                         $data_sucursale["existe"] = false;
                                     }
 
+                                    $plantilla_by_sucursale = "";
+                                    if (count($this->data['Sucursale']['plantillas']) > 0) {
+                                        $plantilla_by_sucursale = implode($this->data['Sucursale']['plantillas']);
+                                    }
+
                                     $sql_query_instert_array = array(
                                         "Sucursale" => array(
                                             "id_empresa" => $this->data["Sucursale"]["empresa_id"],
@@ -510,6 +522,7 @@ class SucursalesController extends AppController
                                             "nombre_contacto" => $data_sucursale["NOMBRE_CONTACTO"],
                                             "telefono_contacto" => $data_sucursale["TELEFONO_CONTACTO"],
                                             "email_contacto" => $data_sucursale["CORREO_CONTACTO"],
+                                            "plantilla_id" => $plantilla_by_sucursale,
                                         )
                                     );
 
@@ -531,6 +544,18 @@ class SucursalesController extends AppController
                                             );
                                             $this->EmpresasAprobadore->save($data_sucursales, FALSE);
                                         endforeach;
+
+                                        if (count($this->data['Sucursale']['plantillas']) > 0) {
+                                            foreach ($plantillas_data as $plantilla):
+                                                $this->SucursalesPlantilla->create();
+                                                $plantilla_sucursal = array(
+                                                    'sucursale_id' => $sucursale_id,
+                                                    'plantilla_id' => $plantilla["Plantilla"]["id"],
+                                                    'tipo_pedido_id' => $plantilla["TipoPedido"]["id"]
+                                                );
+                                                $this->SucursalesPlantilla->save($plantilla_sucursal);
+                                            endforeach;
+                                        }
                                     } else {
                                         $sucursale_id = $data_sucursale["ID"];
                                     }
@@ -594,6 +619,22 @@ class SucursalesController extends AppController
                 $this->redirect("/sucursales/upload_sucursales_from_file/" . $this->data["Sucursale"]["empresa_id"]);
             }
         } else {
+
+            $sql_plantillas = "SELECT id FROM plantillas WHERE (estado_plantilla = true AND empresa_id = " . $id_empresa . ") OR todas_empresas = true;";
+            $result = $this->Empresa->query($sql_plantillas);
+            $array_plantillas = array();
+
+            foreach ($result as $value):
+                array_push($array_plantillas, $value[0]['id']);
+            endforeach;
+
+            $plantillas = $this->Plantilla->find('list', array(
+                'fields' => 'Plantilla.nombre_plantilla',
+                'order' => 'Plantilla.nombre_plantilla',
+                'conditions' =>
+                array('Plantilla.id' => $array_plantillas)
+            ));
+            $this->set('plantillas', $plantillas);
             $this->set("sucursales_validas", $sucursales_validas);
             $this->set('empresa', $this->Empresa->find('first', array('fields' => ['Empresa.nombre_empresa', 'Empresa.id'], 'conditions' => array('Empresa.id' => $id_empresa))));
         }

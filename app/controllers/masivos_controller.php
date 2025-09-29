@@ -7,7 +7,7 @@ class MasivosController extends AppController
 {
 
     var $name = "Masivos";
-    var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'TipoCategoria', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore','Sucursale');
+    var $uses = array('Pedido', 'PedidosMasivo', 'Consecutivo', 'User', 'TipoPedido', 'TipoCategoria', 'Cronograma', 'TipoMovimiento', 'Empresa', 'EmpresasAprobadore','Sucursale','Plantilla');
     var $components = array('RequestHandler', 'Auth', 'Permisos', 'Tools', 'PedidosAuditoria');
 
     function isAuthorized()
@@ -428,12 +428,12 @@ class MasivosController extends AppController
                                             "fields" => array("id_empresa"),
                                         ));
 
-                                        $fecha_expiracion_formated = "";
+                                        /* $fecha_expiracion_formated = "";
                                         if($array_datos[8] == 0  || $array_datos[8] == ""){
                                             $fecha_expiracion_formated = date('Y-m-d H:i:s');
                                         }else{
                                             $fecha_expiracion_formated = DateTime::createFromFormat("Y-m-d",$array_datos[8]);
-                                        }
+                                        } */
 
                                         $nombre_empresa = $array_datos[0];
                                         $nombre_sucursal = null;
@@ -450,8 +450,9 @@ class MasivosController extends AppController
                                         $mes_pedido = $this->data['Masivo']['mes_pedido'];
                                         $clasificacion_pedido = $this->data['Masivo']['clasificacion_pedido'];
                                         $cadena_masivo = null;
-                                        $lote = $array_datos[7];
-                                        $fecha_expiracion = $fecha_expiracion_formated;
+                                        $lote = "N/A"; //$array_datos[7];
+                                        $fecha_expiracion = date('Y-m-d H:i:s'); //$fecha_expiracion_formated;
+                                        
                                         array_push($sql_cargas, array(
                                             "PedidosMasivo" => array(
                                                 "empresa_id" => $empresa_id,
