@@ -345,9 +345,15 @@ if (count($pedidos) > 0) {
                 "megaexpertos" => "Megaexpertos",
                 "ut_cce_amp_iv" => "UT CCE AMP IV",
             ])); */ ?> -->
+
+            <?php echo $this->Form->input('optional_report', array('type' => 'checkbox', 'label' => "Reporte CA", "checked" => "checked")); ?>
             <?php echo $this->Form->input('optional_report_shalom', array('type' => 'checkbox', 'label' => "Reporte Shalom")); ?>
             <?php echo $this->Form->input('optional_report_megaexpertos', array('type' => 'checkbox', 'label' => "Reporte Megaexpertos")); ?>
             <?php echo $this->Form->input('optional_report_click_point', array('type' => 'checkbox', 'label' => "Reporte Click Point")); ?>
+            <?php echo $this->Form->input('optional_report_ut_zoe', array('type' => 'checkbox', 'label' => "Reporte UT ZOE")); ?>
+            <?php echo $this->Form->input('optional_report_ut_biocenter', array('type' => 'checkbox', 'label' => "Reporte UT BIOCENTER")); ?>
+            <?php echo $this->Form->input('optional_report_consorcio_kapital', array('type' => 'checkbox', 'label' => "Reporte CONSORCIO KAPITAL")); ?>
+            <?php echo $this->Form->input('optional_report_consorcio_1a', array('type' => 'checkbox', 'label' => "Reporte CONSORCIO 1A")); ?>
             <?php echo $this->Form->input('optional_report_ut_cce_amp', array('type' => 'checkbox', 'label' => "Reporte UT CCE AMP IV")); ?>
         </div>
         <div>
@@ -496,6 +502,30 @@ if (count($pedidos) > 0) {
                         <h6>
 
                             <?php echo " " . $this->Html->link("Reporte CLICK POINT <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_click_point', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte UT ZOE <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_ut_zoe', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte UT BIOCENTER <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_ut_biocenter', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte CONSORCIO 1A <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_consorcio_1a', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+
+                            <?php echo " " . $this->Html->link("Reporte CONSORCIO KAPITAL <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_consorcio_kapital', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
                         </h6>
                     </button>
                     <button type="button" class="btn btn-primary btn-lg">

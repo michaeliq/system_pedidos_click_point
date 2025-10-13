@@ -1516,6 +1516,18 @@ class InformesController extends AppController
             if ($this->data['Pedido']["optional_report_ut_cce_amp"]) {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_ut_cce_amp'));
             } 
+            if ($this->data['Pedido']["optional_report_ut_zoe"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_ut_zoe'));
+            } 
+            if ($this->data['Pedido']["optional_report_ut_biocenter"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_ut_biocenter'));
+            } 
+            if ($this->data['Pedido']["optional_report_consorcio_1a"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_consorcio_1a'));
+            } 
+            if ($this->data['Pedido']["optional_report_consorcio_kapital"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_cons_kapital'));
+            } 
             
             return $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
 

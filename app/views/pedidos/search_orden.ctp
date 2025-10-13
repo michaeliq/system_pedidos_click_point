@@ -253,7 +253,27 @@
                     <button type="button" class="btn btn-primary btn-lg">
                         <h6>
 
-                            <?php echo " " . $this->Html->link("Reporte CLICK POINT <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_click_point', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                            <?php echo " " . $this->Html->link("Reporte CLICK p <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_click_point', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte UNION TEMPORAL ZOE <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_ut_zoe', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte CONSORCIO 1A <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_consorcio_1a', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte CONSORCIO KAPITAL <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_consorcio_kapital', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte UNION TEMPORAL BIOCENTER <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_ut_biocenter', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
                         </h6>
                     </button>
                     <button type="button" class="btn btn-primary btn-lg">

@@ -240,15 +240,29 @@ class EmpresasController extends AppController
                     "user_id" => $this->Session->read('Auth.User.id'),
                     "fecha_creacion" => "now()",
                 ));
+
+                //Añadir aprobadores con rol Admin
+                $admin_user = $this->User->find('all', array('conditions' => array('User.rol_id' => 1)));
+                foreach ($admin_user as $user_):
+                    $this->EmpresasAprobadore->create();
+                    $data_sucursales = array(
+                        'empresa_id' => $this->data["Sucursale"]["empresa_id"],
+                        'user_id' => $user_["User"]["id"],
+                        'sucursal_id' => $sucursale_id,
+                        'regional_id' => $regional["Regionale"]["id"]
+                    );
+                    $this->EmpresasAprobadore->save($data_sucursales, FALSE);
+                endforeach;
+
                 $this->Session->setFlash(__('Se ha creado la empresa ' . $this->data['Empresa']['nombre_empresa'] . '. ', true));
-                /* $this->redirect(array('action' => 'index')); */
+                
                 header("Location: ../regionales/index/" . $empresa_id);
             } else {
                 $this->Session->setFlash(__('La empresa no pudo ser salvada. Por favor intente de nuevo.', true));
             }
         }
 
-        $parametro_precio = array('1' => 'Precio Centro Aseo', '2' => 'Precio Venta'); // 2022-11-17 
+        $parametro_precio = array('1' => 'Precio Centro Aseo', '2' => 'Precio Venta');
         $users = $this->User->find('list', array('fields' => 'User.nombres_persona', 'order' => 'User.nombres_persona', 'conditions' => array('User.estado' => true, 'User.rol_id' => $this->Permisos->RolesInternos())));
         $vendedores = $this->Vendedore->find('list', array('fields' => 'Vendedore.nombre_vendedor', 'order' => 'Vendedore.nombre_vendedor', 'conditions' => array('Vendedore.estado_vendedor' => true)));
         $departamentos = $this->Departamento->find('list', array('fields' => 'Departamento.nombre_departamento', 'order' => 'Departamento.nombre_departamento'));
