@@ -174,9 +174,25 @@ class EmpresasController extends AppController
                         (SELECT id, id_empresa, regional_id, " . $this->data['EmpresasAprobadore']['user_id'] . " FROM sucursales WHERE id_empresa = " . $this->data['EmpresasAprobadore']['empresa_id_2'] . ");";
                 $this->EmpresasAprobadore->query($permisos_usuario);
 
-                $permisos_admin = "INSERT INTO empresas_aprobadores (sucursal_id,empresa_id,regional_id, user_id)
+                $admin_user = $this->User->find('all', array('conditions' => array('User.rol_id' => 1)));
+                foreach ($admin_user as $user_):
+                    /* $this->EmpresasAprobadore->create();
+                    $data_sucursales = array(
+                        'empresa_id' => $this->Empresa->getInsertID(),
+                        'user_id' => $user_["User"]["id"],
+                        "fecha_creacion" => "now()",
+                    );
+                    $this->EmpresasAprobadore->save($data_sucursales, FALSE); */
+                    $delete = "DELETE FROM empresas_aprobadores WHERE user_id IN (" . $user_["User"]["id"] . ")  AND empresa_id = " . $this->data['EmpresasAprobadore']['empresa_id'] . ";";
+                    $this->EmpresasAprobadore->query($delete);
+                    $permisos_admin = "INSERT INTO empresas_aprobadores (sucursal_id,empresa_id,regional_id, user_id)
+                        (SELECT id, id_empresa, regional_id," . $user_["User"]["id"] . "  FROM sucursales WHERE id_empresa = " . $this->data['EmpresasAprobadore']['empresa_id_2'] . ");";
+                    $this->EmpresasAprobadore->query($permisos_admin);
+                endforeach;
+
+                /* $permisos_admin = "INSERT INTO empresas_aprobadores (sucursal_id,empresa_id,regional_id, user_id)
                         (SELECT id, id_empresa, regional_id, 1  FROM sucursales WHERE id_empresa = " . $this->data['EmpresasAprobadore']['empresa_id_2'] . ");";
-                $this->EmpresasAprobadore->query($permisos_admin);
+                $this->EmpresasAprobadore->query($permisos_admin); */
             }
 
             $this->Session->setFlash(__('Se han asignado los permisos a los pedidos para el usuario seleccionado. ', true));
@@ -246,16 +262,15 @@ class EmpresasController extends AppController
                 foreach ($admin_user as $user_):
                     $this->EmpresasAprobadore->create();
                     $data_sucursales = array(
-                        'empresa_id' => $this->data["Sucursale"]["empresa_id"],
+                        'empresa_id' => $this->Empresa->getInsertID(),
                         'user_id' => $user_["User"]["id"],
-                        'sucursal_id' => $sucursale_id,
-                        'regional_id' => $regional["Regionale"]["id"]
+                        "fecha_creacion" => "now()",
                     );
                     $this->EmpresasAprobadore->save($data_sucursales, FALSE);
                 endforeach;
 
                 $this->Session->setFlash(__('Se ha creado la empresa ' . $this->data['Empresa']['nombre_empresa'] . '. ', true));
-                
+
                 header("Location: ../regionales/index/" . $empresa_id);
             } else {
                 $this->Session->setFlash(__('La empresa no pudo ser salvada. Por favor intente de nuevo.', true));
