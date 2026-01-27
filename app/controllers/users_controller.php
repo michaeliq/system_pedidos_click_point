@@ -343,7 +343,6 @@ class UsersController extends AppController {
         ini_set('memory_limit', '512M');
         // $permisos = $this->EmpresasAprobadore->find('all', array('conditions' => array('EmpresasAprobadore.user_id' => $this->Session->read('Auth.User.id'))));
         // print_r($permisos);
-
         $empresa = "SELECT parametro_tiempo_pedido FROM empresas WHERE id = " . $this->Session->read('Auth.User.empresa_id') . ";";
         $data_empresa = $this->Empresa->query($empresa);
         $tiempo_pedido = 2;

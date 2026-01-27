@@ -94,7 +94,7 @@ class DATABASE_CONFIG {
      //'encoding' => 'utf8'
     );
 
-    var $test = array(
+    /* var $test = array(
         'driver' => DB_DRIVER,
         'persistent' => false,
         'host' => DB_HOST,
@@ -102,5 +102,5 @@ class DATABASE_CONFIG {
         'password' => DB_PASSWORD,
         'database' => DB_NAME_TEST,
         'port' => DB_PORT
-    );
+    ); */
 }

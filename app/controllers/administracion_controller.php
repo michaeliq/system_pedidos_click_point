@@ -29,6 +29,7 @@ class AdministracionController extends AppController {
     }
 
     function index() {
+        
     }
 
 }
