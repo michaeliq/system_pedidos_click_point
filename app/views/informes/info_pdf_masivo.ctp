@@ -355,6 +355,7 @@ if (count($pedidos) > 0) {
             <?php echo $this->Form->input('optional_report_consorcio_kapital', array('type' => 'checkbox', 'label' => "Reporte CONSORCIO KAPITAL")); ?>
             <?php echo $this->Form->input('optional_report_consorcio_1a', array('type' => 'checkbox', 'label' => "Reporte CONSORCIO 1A")); ?>
             <?php echo $this->Form->input('optional_report_ut_cce_amp', array('type' => 'checkbox', 'label' => "Reporte UT CCE AMP IV")); ?>
+            <?php echo $this->Form->input('optional_report_limpio_plus', array('type' => 'checkbox', 'label' => "Reporte LIMPIO PLUS")); ?>
         </div>
         <div>
             <?php echo $this->Form->button('GENERAR PDF MASIVO', array('type' => 'submit', 'class' => 'btn btn-info  btn-xs')); ?>
@@ -531,6 +532,11 @@ if (count($pedidos) > 0) {
                     <button type="button" class="btn btn-primary btn-lg">
                         <h6>
                             <?php echo " " . $this->Html->link("Reporte UNION TEMPORAL CCE AMP IV 2022 <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_ut_cce_amp', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte LIMPIO PLUS <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_limpio_plus', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
                         </h6>
                     </button>
                     <div class="footer-container-btn">

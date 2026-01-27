@@ -1528,6 +1528,9 @@ class InformesController extends AppController
             if ($this->data['Pedido']["optional_report_consorcio_kapital"]) {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_cons_kapital'));
             } 
+            if ($this->data['Pedido']["optional_report_limpio_plus"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_limpio_plus'));
+            } 
             
             return $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));
 
