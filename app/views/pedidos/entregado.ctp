@@ -230,12 +230,7 @@ if (count($pedidos) > 0) {
                             <?php echo " " . $this->Html->link("Reporte CENTRO ASEO <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
                         </h6>
                     </button>
-                    <button type="button" class="btn btn-primary btn-lg">
-                        <h6>
-
-                            <?php echo " " . $this->Html->link("Reporte GRUPO EMPRESARIAL SHALOM <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_shalom', $pedido['Pedido']['id']), array('class' => '', 'target' => '_blank', 'escape' => false, 'style' => 'color:#fff')); ?>
-                        </h6>
-                    </button>
+                    
                     <button type="button" class="btn btn-primary btn-lg">
                         <h6>
 
@@ -276,6 +271,11 @@ if (count($pedidos) > 0) {
                     <button type="button" class="btn btn-primary btn-lg">
                         <h6>
                             <?php echo " " . $this->Html->link("Reporte LIMPIO PLUS <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_limpio_plus', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
+                        </h6>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <h6>
+                            <?php echo " " . $this->Html->link("Reporte CONSORCIO KLEAN Y LOGISTIC <p class='glyphicon glyphicon-print'></p>", array('controller' => 'pedidos', 'action' => 'pedido_pdf_klean_logist', $pedido['Pedido']['id']), array('class' => '', "target" => "_blank", 'escape' => false, 'style' => 'color:#fff')); ?>
                         </h6>
                     </button>
                     <div class="footer-container-btn">

@@ -1504,9 +1504,6 @@ class InformesController extends AppController
             }
             $this->Session->write('Pedido.pdf_masivos', $pedidos);
 
-            if ($this->data['Pedido']["optional_report_shalom"]) {
-                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_shalom'));
-            } 
             if ($this->data['Pedido']["optional_report_megaexpertos"]) {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_megaexpertos'));
             } 
@@ -1530,6 +1527,9 @@ class InformesController extends AppController
             } 
             if ($this->data['Pedido']["optional_report_limpio_plus"]) {
                 $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_limpio_plus'));
+            } 
+            if ($this->data['Pedido']["optional_report_klean_logist"]) {
+                $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo_klean_logist'));
             } 
             
             return $this->redirect(array('controller' => 'pedidos', 'action' => 'pedido_pdf_masivo'));

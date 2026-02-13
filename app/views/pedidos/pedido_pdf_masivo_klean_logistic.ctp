@@ -94,7 +94,7 @@ $pdf->setHeaderData($ln='', $lw=2, $ht='', $hs='<span align="center">N°. Pedido
 // add a page
 $pdf->AddPage();
 // Print a text
-$pdf->Image(K_PATH_IMAGES.'logo_limpio_plus.jpeg', 10, 11, 20, '', '', '', '', false, 300);
+$pdf->Image(K_PATH_IMAGES.'logo_klean_logistic.jpeg', 10, 11, 20, '', '', '', '', false, 300);
 $html = '<table cellspacing="1" cellpadding="1">
     <tr>
         <td style="border-top: 1px solid #000000;  border-right: 1px solid #000000;  border-left: 1px solid #000000; border-bottom: 1px solid #000000;" align="center"><h3>ORDEN DE ALISTAMIENTO</h3><br>GESTION DE LOGISTICA</td>
@@ -110,16 +110,16 @@ $html = '<table cellspacing="1" cellpadding="1">
     </tr>
     <tr>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DE:</b>  
-            UT LIMPIO PLUS
+            CONSORCIO KLEAN Y LOGISTIC
         </td>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>CLIENTE:</b> ' . $pedido['Sucursale']['regional_sucursal'] . '</td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DIRECCION:</b> Calle 77 # 28A 48</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>DIRECCION:</b> CR 72 H BIS 37 D 21 SUR BRR CARVAJAL</td>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>SEDE:</b> ' . $pedido['Sucursale']['nombre_sucursal'] . ' | <b>CIUDAD:</b> '.$pedido['Municipio2']['nombre_municipio'].'</td>
     </tr>
     <tr>
-        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>TELEFONO:</b> (601) 6068433 | <b>FECHA:</b> ' . $pedido['Pedido']['fecha_aprobado_pedido'] . '</td>
+        <td style="border-top: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><b>TELEFONO:</b> 3 1 7 3 6 4 3 6 3 9 | <b>FECHA:</b> ' . $pedido['Pedido']['fecha_aprobado_pedido'] . '</td>
         <td style="border-top: 1px solid #000000; border-right: 1px solid #000000;"><b>DIRECCION:</b> ' . $pedido['Sucursale']['direccion_sucursal'] . ' | <b>DEPARTAMENTO:</b> ' . $pedido['Departamento2']['nombre_departamento'] . '</td>
     </tr>
     <tr>
@@ -127,7 +127,8 @@ $html = '<table cellspacing="1" cellpadding="1">
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-right: 1px solid #000000;"><b>TEL:</b> '.$pedido['Sucursale']['telefono_sucursal'].' | <b># GUIA:</b> '.$pedido['Pedido']['guia_despacho'].'</td>
     </tr>
     <tr>
-        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por UT LIMPIO PLUS<br>Nit 901902611-1 | CR 24 # 40 - 77 Bogota - Tel: (601) 6068433.</b></td>
+        <td style=" border-bottom: 1px solid #000000; border-left: 1px solid #000000;"><b>Este  pedido es despachado por CONSORCIO KLEAN Y LOGISTIC<br>Nit 9 0 1 9 1 2 1 6 4-1 | CR 72 H BIS 37 D 21 SUR BRR CARVAJAL
+ - Tel: (601) 6068433.</b></td>
         <td style=" border-bottom: 1px solid #000000; border-right: 1px solid #000000; border-left: 1px solid #000000;"><span style="color:red"><b>N°. Pedido: #000' . $pedido['Pedido']['id'] . '</b></span><br><b>ORDEN INTERNA: '.$pedido['Sucursale']['oi_sucursal'].'</b><br><b>TIPO DE PEDIDO:</b> ' . $detalles['0']['TipoPedido']['nombre_tipo_pedido'] . '<br><span style="font-size: 29px;"><b>FECHA ENTREGA:</b> Desde el <b>'.$pedido['Pedido']['fecha_entrega_1'].'</b> hasta el <b>'.$pedido['Pedido']['fecha_entrega_2'].'</b></span><br><span style="font-size: 29px;"><b>MES PEDIDO:</b> '.$meses[$pedido['Pedido']['mes_pedido']].'</span><br><span style="font-size: 29px;"><b>CLASIFICACION:</b> '.$pedido['Pedido']['clasificacion_pedido'].'</span></td>
     </tr>
 </table>';
