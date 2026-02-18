@@ -356,6 +356,7 @@ if (count($pedidos) > 0) {
             <?php echo $this->Form->input('optional_report_consorcio_1a', array('type' => 'checkbox', 'label' => "Reporte CONSORCIO 1A")); ?>
             <?php echo $this->Form->input('optional_report_ut_cce_amp', array('type' => 'checkbox', 'label' => "Reporte UT CCE AMP IV")); ?>
             <?php echo $this->Form->input('optional_report_limpio_plus', array('type' => 'checkbox', 'label' => "Reporte LIMPIO PLUS")); ?>
+            <?php echo $this->Form->input('optional_report_klean_logist', array('type' => 'checkbox', 'label' => "Reporte KLEAN LOG")); ?>
         </div>
         <div>
             <?php echo $this->Form->button('GENERAR PDF MASIVO', array('type' => 'submit', 'class' => 'btn btn-info  btn-xs')); ?>
