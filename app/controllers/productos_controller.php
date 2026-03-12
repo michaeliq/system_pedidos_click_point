@@ -700,7 +700,7 @@ class ProductosController extends AppController
                                 } else {
                                     $data_productos = array();
                                     for ($i = 0; $i < count($headers); $i++) {
-                                        $data_productos[$headers[$i]] = strtoupper(trim($data[$i]));
+                                        $data_productos[$headers[$i]] = trim($data[$i]);
                                     }
                                     if (!empty($data_productos["COD"]) && ($data_productos["PRECIO_BG"] > 0 || $data_productos["PRECIO_NC"])) {
                                         $producto_from_db = $this->Producto->find("first", array(
