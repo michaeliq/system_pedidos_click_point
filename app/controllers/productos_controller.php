@@ -214,7 +214,7 @@ class ProductosController extends AppController
                 $where = str_replace('+', '"', $where);
                 array_push($conditions, $where);
             }
-            
+
 
             $this->paginate = array('limit' => 20);
             $this->helpers['Paginator'] = array('ajax' => 'Ajax');
@@ -536,7 +536,7 @@ class ProductosController extends AppController
             'PAR' => 'PAR',
             'ROLLO' => 'ROLLO'
         );
-        $this->set("producto",$this->Producto->read("",$id));
+        $this->set("producto", $this->Producto->read("", $id));
         $this->set(compact('tipoCategoria', 'unidadMedida'));
 
         $movimientosEntradas = $this->MovimientosEntradasDetalle->find('all', array(
@@ -629,7 +629,6 @@ class ProductosController extends AppController
             $categoria = str_split($producto_temp["ProductoTemp"]["codigo_producto"], 3)[0];
             array_push($data, array(
                 "Producto" => array(
-                    "id" => null,
                     "nombre_producto" => $producto_temp["ProductoTemp"]["nombre_producto"],
                     "codigo_producto" => $producto_temp["ProductoTemp"]["codigo_producto"],
                     "precio_producto_bs" => intval($producto_temp["ProductoTemp"]["precio_producto_bs"]),
@@ -640,7 +639,8 @@ class ProductosController extends AppController
                     "estado" => true,
                     "tipo_categoria_id" => $tipo_categorias[$categoria],
                     "capacidad_producto" => intval($producto_temp["ProductoTemp"]["capacidad_producto"]),
-                    "marca_producto" => $producto_temp["ProductoTemp"]["proveedor_producto"]
+                    "marca_producto" => $producto_temp["ProductoTemp"]["proveedor_producto"],
+                    "multiplo" => 1,
                 )
             ));
 
@@ -652,7 +652,10 @@ class ProductosController extends AppController
             }
         };
 
-        $this->Producto->saveAll($data);
+        $this->Producto->saveAll($data, array(
+            'validate' => false,
+            'atomic' => false
+        ));
 
         $this->ProductoTemp->deleteAll(array(
             "ProductoTemp.id" => $productos_ids
@@ -661,7 +664,6 @@ class ProductosController extends AppController
         $this->set("productos_validos", $productos_validos);
 
         $this->Session->setFlash('Se actualizaron ' . $updated . ' productos. Se han creado ' . $created . ' productos', 'flash_success');
-
         $this->redirect(array('controller' => 'productos', 'action' => 'add_many_products'));
     }
 
@@ -735,7 +737,8 @@ class ProductosController extends AppController
                                 "ProductoTemp.codigo_producto" => $products_temp_dalete
                             ), false);
 
-                            $this->ProductoTemp->saveAll($products_query_add);
+                            $products_temp = $this->ProductoTemp->saveAll($products_query_add);
+                            debug($products_temp);
 
                             $productos_ids = $this->ProductoTemp->find('list', [
                                 "conditions" => ["ProductoTemp.codigo_producto" => $products_temp_dalete],
@@ -746,7 +749,7 @@ class ProductosController extends AppController
 
                             fclose($file);
                             unlink($dir_file . '/' . $this->data['Producto']['archivo_csv']['name']);
-                            $this->Tools->rrmdir(explode("/",$dir_file)[0]);
+                            $this->Tools->rrmdir(explode("/", $dir_file)[0]);
 
                             $this->Session->setFlash('Hay ' . count($productos_validos) . ' productos validos para crear o actualizar. Revisa el listado de abajo.', 'flash_info');
 
